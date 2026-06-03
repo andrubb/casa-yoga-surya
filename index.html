@@ -323,6 +323,17 @@ section { padding:7rem 2rem; }
 .hero-botanicals .l3 { width:120px; bottom:12%; left:12%; opacity:.07; animation:drift3 38s ease-in-out infinite; }
 .hero-botanicals .l4 { width:76px;  bottom:18%; right:11%; opacity:.08; animation:drift1 30s ease-in-out infinite reverse; }
 
+/* Warm bokeh dots for depth */
+.hero-bokeh { position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+.hero-bokeh .bk { position:absolute; border-radius:50%; filter:blur(3px);
+  background:radial-gradient(circle, rgba(232,201,106,.55) 0%, rgba(232,201,106,0) 70%); }
+.hero-bokeh .b1 { width:80px;  height:80px;  top:16%; left:12%;  opacity:.45; animation:drift1 34s ease-in-out infinite; }
+.hero-bokeh .b2 { width:46px;  height:46px;  top:30%; right:16%; opacity:.4;  animation:drift2 28s ease-in-out infinite; }
+.hero-bokeh .b3 { width:120px; height:120px; bottom:14%; left:18%; opacity:.3;  animation:drift3 40s ease-in-out infinite; }
+.hero-bokeh .b4 { width:34px;  height:34px;  bottom:26%; right:22%; opacity:.5;  animation:drift1 24s ease-in-out infinite reverse; }
+.hero-bokeh .b5 { width:60px;  height:60px;  top:54%; left:46%;  opacity:.28; animation:drift2 36s ease-in-out infinite; }
+.lite .hero-bokeh { display:none; }
+
 .hero-content {
   position:relative; z-index:3;
   max-width:760px; margin:0 auto;
@@ -338,13 +349,24 @@ section { padding:7rem 2rem; }
   opacity:0; animation:fadeIn 1.1s ease .1s forwards;
 }
 .hero-sun {
-  width:100%; height:100%; position:relative;
+  width:100%; height:100%; position:relative; z-index:2;
   transition:transform .5s ease; transform-style:preserve-3d;
 }
 .hero-sun svg { width:100%; height:100%; display:block; overflow:visible; }
 
+/* Soft light rays radiating behind the sun */
+.hero-rays {
+  position:absolute; left:50%; top:50%; width:min(125vw,920px); aspect-ratio:1;
+  transform:translate(-50%,-50%); z-index:0; pointer-events:none; border-radius:50%;
+  background:repeating-conic-gradient(from 0deg, rgba(232,201,106,.11) 0deg 2.6deg, transparent 2.6deg 20deg);
+  -webkit-mask:radial-gradient(circle, transparent 11%, rgba(0,0,0,.85) 27%, transparent 60%);
+          mask:radial-gradient(circle, transparent 11%, rgba(0,0,0,.85) 27%, transparent 60%);
+  animation:spin 170s linear infinite;
+}
+.lite .hero-rays { display:none; }
+
 /* Orbiting golden particles */
-.sun-orbits { position:absolute; inset:0; pointer-events:none; }
+.sun-orbits { position:absolute; inset:0; pointer-events:none; z-index:1; }
 .orbit { position:absolute; }
 .orbit-a { inset:-13%; animation:spin 60s linear infinite; }
 .orbit-b { inset:-28%; animation:spin 90s linear infinite reverse; }
@@ -538,7 +560,12 @@ section { padding:7rem 2rem; }
   transition:box-shadow .5s, transform .6s var(--ease);
 }
 body.admin-mode .inst-photo { cursor:pointer; }
-.inst-card:hover .inst-photo { box-shadow:0 0 0 12px rgba(201,168,76,.16), 0 24px 56px rgba(201,168,76,.30); }
+.inst-card:hover .inst-photo { box-shadow:0 0 0 12px rgba(201,168,76,.16), 0 24px 56px rgba(201,168,76,.30); animation:ringPulse 2.4s ease-in-out infinite; }
+@keyframes ringPulse {
+  0%,100% { box-shadow:0 0 0 10px rgba(201,168,76,.16), 0 22px 50px rgba(201,168,76,.26); }
+  50%     { box-shadow:0 0 0 17px rgba(201,168,76,.07), 0 22px 50px rgba(201,168,76,.26); }
+}
+.lite .inst-card:hover .inst-photo { animation:none; }
 .inst-photo img {
   width:100%; height:100%; object-fit:cover;
   transition:transform .7s var(--ease);
@@ -565,6 +592,9 @@ body.admin-mode .inst-photo { cursor:pointer; }
 }
 body.admin-mode .inst-photo:hover .photo-edit-ov { opacity:1; pointer-events:auto; }
 .photo-edit-ov span { color:#fff; font-size:.62rem; letter-spacing:.15em; text-transform:uppercase; font-weight:500; }
+/* Any on-page admin affordance: hidden for public, shown only when authenticated */
+.admin-only { display:none !important; }
+body.admin-mode .admin-only { display:block !important; }
 
 .inst-body { padding:0 .5rem; max-width:420px; margin:0 auto; }
 .inst-spec {
@@ -1528,6 +1558,11 @@ footer {
 <section class="hero" id="inicio">
   <div class="hero-bg"></div>
 
+  <!-- Warm bokeh depth -->
+  <div class="hero-bokeh" aria-hidden="true">
+    <span class="bk b1"></span><span class="bk b2"></span><span class="bk b3"></span><span class="bk b4"></span><span class="bk b5"></span>
+  </div>
+
   <!-- Floating botanicals -->
   <div class="hero-botanicals" aria-hidden="true">
     <svg class="leaf l1" viewBox="0 0 100 100" fill="currentColor"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/><path d="M50 14V90" stroke="rgba(0,0,0,.12)" stroke-width="2" fill="none"/></svg>
@@ -1540,6 +1575,7 @@ footer {
 
     <!-- Sol del logo coronando el hero -->
     <div class="hero-sun-wrap" aria-hidden="true">
+      <div class="hero-rays"></div>
       <div class="sun-orbits">
         <div class="orbit orbit-a">
           <span class="pw" style="--a:0deg"><span class="pdot"></span></span>
@@ -2129,19 +2165,19 @@ footer {
       <p class="sec-sub">Conoce el espacio donde todo ocurre</p>
     </div>
     <div class="gallery-grid" id="gallery-grid">
-      <div class="gallery-item rv">
+      <div class="gallery-item rv-scale">
         <div class="gallery-ph">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
           <p>Próximamente</p>
         </div>
         <div class="gallery-ov"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
       </div>
-      <div class="gallery-item rv d1"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
-      <div class="gallery-item rv d2"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
-      <div class="gallery-item rv d1"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
-      <div class="gallery-item rv d2"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv-scale d1"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv-scale d2"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv-scale d1"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv-scale d2"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
     </div>
-    <div style="text-align:center;margin-top:2rem" id="gallery-add-btn-wrap" style="display:none">
+    <div class="admin-only" id="gallery-add-btn-wrap" style="text-align:center;margin-top:2rem">
       <button class="btn btn-outline-gold" onclick="addGalleryPhoto()">+ Agregar fotos</button>
       <input type="file" id="gallery-upload" accept="image/*" multiple style="display:none" onchange="handleGalleryUpload(this)">
     </div>
@@ -2913,7 +2949,7 @@ function applyGallery(){
   var zoom='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
   grid.innerHTML=gal.map(function(p,i){
     var d=i>0?' d'+Math.min(i,6):'';
-    return '<div class="gallery-item rv'+d+'" onclick="openLB(\''+encodeURIComponent(p.url||'')+'\')"><img src="'+p.url+'" alt="'+esc(p.cap||'Foto')+'" loading="lazy" decoding="async"><div class="gallery-ov">'+zoom+'</div></div>';
+    return '<div class="gallery-item rv-scale'+d+'" onclick="openLB(\''+encodeURIComponent(p.url||'')+'\')"><img src="'+p.url+'" alt="'+esc(p.cap||'Foto')+'" loading="lazy" decoding="async"><div class="gallery-ov">'+zoom+'</div></div>';
   }).join('');
   observeReveal(grid);
 }
@@ -3030,6 +3066,7 @@ function triggerSvcImg(i){ var inp=$('svc-file-'+i); if(inp) inp.click(); }
 window.triggerSvcImg=triggerSvcImg;
 
 function handleSvcImg(i, input){
+  if(!isAdmin()) return;
   if(!input.files||!input.files[0]) return;
   compress(input.files[0], 1400, 0.8, function(data){
     if(!IMGS.servicios) IMGS.servicios=['','','','','',''];
@@ -3054,7 +3091,10 @@ function applyAll(){
 }
 
 /* ─── PHOTO HANDLERS ─── */
+/* Defense-in-depth: every on-page upload requires an authenticated admin session */
+function isAdmin(){ return ADMIN_ON===true; }
 function handlePhoto(who, input){
+  if(!isAdmin()) return;
   if(!input.files||!input.files[0]) return;
   compress(input.files[0], 1200, 0.82, function(data){
     IMGS[who]=data;
@@ -3082,6 +3122,7 @@ function handleGalleryUploadAdm(input){ _handleGal(input); }
 window.handleGalleryUploadAdm=handleGalleryUploadAdm;
 
 function _handleGal(input){
+  if(!isAdmin()) return;
   if(!input.files||!input.files.length) return;
   var files=Array.from(input.files);
   var done=0;
@@ -3096,6 +3137,7 @@ function _handleGal(input){
 }
 
 function addGalleryPhoto(){
+  if(!isAdmin()) return;
   var inp=$('gallery-upload'); if(inp) inp.click();
 }
 window.addGalleryPhoto=addGalleryPhoto;
@@ -3505,12 +3547,14 @@ function applyPodThumb(idx, src){
 }
 
 function triggerPodThumb(idx){
+  if(!isAdmin()) return;
   var inp = $('pod-file-'+idx);
   if(inp) inp.click();
 }
 window.triggerPodThumb = triggerPodThumb;
 
 function handlePodThumb(idx, input){
+  if(!isAdmin()) return;
   if(!input.files||!input.files[0]) return;
   compress(input.files[0], 1200, 0.82, function(data){
     podThumbs[idx] = data;
