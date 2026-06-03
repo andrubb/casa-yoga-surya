@@ -142,7 +142,7 @@ section { padding:7rem 2rem; }
 .lite .sec-title .w, body:not(.js-r) .sec-title .w { opacity:1!important; transform:none!important; }
 
 @media(prefers-reduced-motion:reduce) {
-  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w { opacity:1!important; transform:none!important; transition:none!important; }
+  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w,.svc-item { opacity:1!important; transform:none!important; transition:none!important; }
   * { animation-duration:.001ms!important; animation-iteration-count:1!important; }
 }
 
@@ -530,12 +530,13 @@ section { padding:7rem 2rem; }
 
 .inst-photo {
   width:230px; height:230px; border-radius:50%;
-  margin:0 auto 1.7rem; overflow:hidden; position:relative; cursor:pointer;
+  margin:0 auto 1.7rem; overflow:hidden; position:relative; cursor:default;
   border:3px solid var(--gold);
   box-shadow:0 0 0 9px rgba(201,168,76,.10), 0 18px 44px rgba(201,168,76,.22);
   background:var(--green-mist);
   transition:box-shadow .5s, transform .6s var(--ease);
 }
+body.admin-mode .inst-photo { cursor:pointer; }
 .inst-card:hover .inst-photo { box-shadow:0 0 0 12px rgba(201,168,76,.16), 0 24px 56px rgba(201,168,76,.30); }
 .inst-photo img {
   width:100%; height:100%; object-fit:cover;
@@ -554,13 +555,14 @@ section { padding:7rem 2rem; }
   font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--green-light);
 }
 .inst-photo-ph p { font-size:.58rem; letter-spacing:.15em; color:var(--text-light); text-transform:uppercase; }
+/* Admin-only: edit overlay hidden entirely for public visitors */
 .photo-edit-ov {
   position:absolute; inset:0; border-radius:50%;
   background:rgba(26,26,26,.55);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:.5rem; opacity:0; transition:opacity .3s;
+  gap:.5rem; opacity:0; pointer-events:none; transition:opacity .3s;
 }
-.inst-photo:hover .photo-edit-ov { opacity:1; }
+body.admin-mode .inst-photo:hover .photo-edit-ov { opacity:1; pointer-events:auto; }
 .photo-edit-ov span { color:#fff; font-size:.62rem; letter-spacing:.15em; text-transform:uppercase; font-weight:500; }
 
 .inst-body { padding:0 .5rem; max-width:420px; margin:0 auto; }
@@ -609,11 +611,20 @@ section { padding:7rem 2rem; }
 .svc-panel { display:none; }
 .svc-panel.active {
   display:grid; grid-template-columns:1.05fr 1fr; gap:0; min-height:540px;
-  border-radius:6px; overflow:hidden;
+  border-radius:6px; overflow:hidden; position:relative;
   box-shadow:var(--shadow-warm); border:1px solid var(--border);
   animation:svcFade .7s var(--ease);
 }
 @keyframes svcFade { from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
+/* Golden shimmer sweep on hover */
+.svc-panel.active::before {
+  content:''; position:absolute; top:0; left:-65%; width:45%; height:100%; z-index:6;
+  background:linear-gradient(100deg, transparent, rgba(255,247,214,.22), transparent);
+  transform:skewX(-20deg); transition:left .9s var(--ease); pointer-events:none;
+}
+.svc-panel.active:hover::before { left:150%; }
+/* Admin-set service image (covers the icon when present) */
+.svc-img { display:none; }
 
 .svc-visual {
   position:relative; overflow:hidden; min-height:420px;
@@ -684,6 +695,18 @@ section { padding:7rem 2rem; }
   transition:transform .35s var(--ease), box-shadow .35s, background .35s;
 }
 .svc-item:hover { transform:translateX(4px); background:var(--white); box-shadow:0 8px 22px rgba(201,168,76,.14); }
+/* 80ms-staggered fade-up on scroll entrance */
+.js-r .svc-item { opacity:0; transform:translateY(20px);
+  transition:opacity .6s var(--ease), transform .45s var(--ease), box-shadow .35s, background .35s; }
+.js-r .servicios-sec.in-view .svc-item { opacity:1; transform:none; }
+.js-r .servicios-sec.in-view .svc-item:hover { transform:translateX(4px); }
+.js-r .servicios-sec.in-view .svc-item:nth-child(1){ transition-delay:.04s }
+.js-r .servicios-sec.in-view .svc-item:nth-child(2){ transition-delay:.12s }
+.js-r .servicios-sec.in-view .svc-item:nth-child(3){ transition-delay:.20s }
+.js-r .servicios-sec.in-view .svc-item:nth-child(4){ transition-delay:.28s }
+.js-r .servicios-sec.in-view .svc-item:nth-child(5){ transition-delay:.36s }
+.js-r .servicios-sec.in-view .svc-item:nth-child(6){ transition-delay:.44s }
+.lite .svc-item, body:not(.js-r) .svc-item { opacity:1!important; transform:none!important; }
 .svc-item-name { font-size:.85rem; font-weight:500; color:var(--text); margin-bottom:.15rem; }
 .svc-item-detail { font-size:.74rem; color:var(--text-light); }
 .svc-item-tags { display:flex; gap:.3rem; margin-top:.35rem; flex-wrap:wrap; }
@@ -1769,6 +1792,7 @@ footer {
         <div class="svc-visual-icon">
           <svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 13c4.5 6 4.5 15 0 22-4.5-7-4.5-16 0-22Z"/><path d="M32 35c-7-2.5-14 0-18.5 5.5 7.5 4.5 15 3 18.5-1.5"/><path d="M32 35c7-2.5 14 0 18.5 5.5-7.5 4.5-15 3-18.5-1.5"/><path d="M19 25c-2.5 6.5 0 13 4.5 17.5"/><path d="M45 25c2.5 6.5 0 13-4.5 17.5"/><path d="M11 41c4.5 8.5 12.5 13 21 13s16.5-4.5 21-13"/></svg>
         </div>
+        <img class="svc-img" id="svc-img-0" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Yoga · Movimiento · Respiración</div>
       </div>
       <div class="svc-content">
@@ -1802,6 +1826,7 @@ footer {
       <div class="svc-visual">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 28v8M16 20v24M24 25v14M32 10v44M40 22v20M48 16v32M56 28v8"/></svg></div>
+        <img class="svc-img" id="svc-img-1" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Sanación · Sonido · Vibración</div>
       </div>
       <div class="svc-content">
@@ -1826,6 +1851,7 @@ footer {
       <div class="svc-visual">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7c-4 18-4 35 2 50"/><path d="M41 7c4 18 4 35-2 50"/><circle cx="32" cy="29" r="5"/><path d="M32 34c-4 4-6.5 9-6.5 14M32 34c4 4 6.5 9 6.5 14"/></svg></div>
+        <img class="svc-img" id="svc-img-2" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Arte · Fuerza · Libertad</div>
       </div>
       <div class="svc-content">
@@ -1852,6 +1878,7 @@ footer {
       <div class="svc-visual">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M32 6 18 24l14 34 14-34L32 6Z"/><path d="M18 24h28M32 6v52M25 24l7 34M39 24l-7 34"/></svg></div>
+        <img class="svc-img" id="svc-img-3" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Energía · Purificación · Sanación</div>
       </div>
       <div class="svc-content">
@@ -1876,6 +1903,7 @@ footer {
       <div class="svc-visual">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M42 8a24 24 0 1 0 15 41A20 20 0 0 1 42 8Z"/><circle cx="50" cy="22" r="1.6" fill="currentColor" stroke="none"/><circle cx="55" cy="33" r="1.1" fill="currentColor" stroke="none"/></svg></div>
+        <img class="svc-img" id="svc-img-4" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Mujer · Ciclos · Empoderamiento</div>
       </div>
       <div class="svc-content">
@@ -1901,6 +1929,7 @@ footer {
       <div class="svc-visual">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M16 14h32l8 12-24 26L8 26l8-12Z"/><path d="M8 26h48M24 14l-8 12 16 26M40 14l8 12-16 26"/></svg></div>
+        <img class="svc-img" id="svc-img-5" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Cristales · Libros · Accesorios</div>
       </div>
       <div class="svc-content">
@@ -2463,6 +2492,7 @@ footer {
       <div class="adm-tabs">
         <button class="adm-tab on" onclick="showAdmTab('hero',this)">Hero</button>
         <button class="adm-tab" onclick="showAdmTab('instructores',this)">Instructores</button>
+        <button class="adm-tab" onclick="showAdmTab('servicios',this)">Servicios</button>
         <button class="adm-tab" onclick="showAdmTab('eventos',this)">Eventos</button>
         <button class="adm-tab" onclick="showAdmTab('galeria',this)">Galería</button>
         <button class="adm-tab" onclick="showAdmTab('podcast',this)">Podcast</button>
@@ -2503,6 +2533,13 @@ footer {
           <div class="adm-fg" style="margin-top:.75rem"><label class="adm-lbl">Rol / Título</label><input class="adm-field" id="a-david-role"></div>
           <div class="adm-fg"><label class="adm-lbl">Biografía</label><textarea class="adm-field adm-ta" id="a-david-bio"></textarea></div>
           <button class="adm-save" onclick="saveInstructors()">Guardar Instructores</button>
+        </div>
+
+        <!-- SERVICIOS (imágenes por servicio — solo admin) -->
+        <div class="adm-pane" id="pane-servicios">
+          <p class="adm-sec">Imágenes de Servicios</p>
+          <p style="font-size:.75rem;color:var(--text-soft);margin-bottom:1.25rem;line-height:1.6">Sube una imagen para cada servicio. Si no hay imagen, se muestra el ícono. Recomendado: horizontal, mínimo 900px de ancho. Solo visible para administradores.</p>
+          <div id="adm-svc-list" style="display:flex;flex-direction:column;gap:1rem"></div>
         </div>
 
         <!-- EVENTOS -->
@@ -2645,7 +2682,7 @@ var DEF = {
   contacto:{ wa:'50688302691', tel:'+506 8830 2691', email:'info@casayogasurya.com', ubicacion:'Vuelta de Jorco de Aserrí, San José, Costa Rica', ig:'casayogasurya' },
   textos:{ philo:'En Casa Yoga+Surya creemos que el bienestar es un camino integral — <strong>cuerpo, mente y espíritu</strong> en perfecta armonía. Un espacio donde la naturaleza, el sonido y la energía se unen para transformarte.', horario:'Clases todo el año · Te recomendamos reservar tu espacio con anticipación.', ctaT:'Comienza tu camino de bienestar', ctaS:'Cada clase, cada terapia, cada momento en Casa Yoga+Surya es un paso hacia tu mejor versión.', footerD:'Un espacio sagrado de sanación, movimiento y despertar espiritual en el corazón de Costa Rica.' }
 };
-var DEF_IMGS = { andrea:'', david:'', galeria:[], eventos:[] };
+var DEF_IMGS = { andrea:'', david:'', galeria:[], eventos:[], servicios:['','','','','',''] };
 var D, IMGS;
 
 /* ─── STORAGE ─── */
@@ -2665,7 +2702,8 @@ function loadAll(){
   try{ var raw=lsGet(SK_TEXT); D=raw?merge(DEF,JSON.parse(raw)):clone(DEF); }catch(e){ D=clone(DEF); }
   try{ var rawI=lsGet(SK_IMGS); IMGS=rawI?JSON.parse(rawI):clone(DEF_IMGS);
     if(!IMGS.galeria) IMGS.galeria=[];
-    if(!IMGS.eventos) IMGS.eventos=[]; }catch(e){ IMGS=clone(DEF_IMGS); }
+    if(!IMGS.eventos) IMGS.eventos=[];
+    if(!IMGS.servicios) IMGS.servicios=['','','','','','']; }catch(e){ IMGS=clone(DEF_IMGS); }
   try{ D.instructors.andrea.photo=IMGS.andrea||''; D.instructors.david.photo=IMGS.david||'';
     D.galeria=IMGS.galeria||[];
     if(D.eventos&&IMGS.eventos) D.eventos=D.eventos.map(function(ev,i){ return Object.assign({},ev,{img:IMGS.eventos[i]||''}); }); }catch(e){}
@@ -2681,7 +2719,7 @@ function saveText(){
   return ok;
 }
 function saveImgs(){
-  var imgs={ andrea:IMGS.andrea||'', david:IMGS.david||'', galeria:(IMGS.galeria||[]).map(function(g){ return {url:g.url||'',cap:g.cap||''}; }), eventos:IMGS.eventos||[] };
+  var imgs={ andrea:IMGS.andrea||'', david:IMGS.david||'', galeria:(IMGS.galeria||[]).map(function(g){ return {url:g.url||'',cap:g.cap||''}; }), eventos:IMGS.eventos||[], servicios:IMGS.servicios||['','','','','',''] };
   var ok=lsSet(SK_IMGS,JSON.stringify(imgs));
   if(!ok) toast('⚠ Fotos no guardadas — almacenamiento lleno','#c0392b');
   return ok;
@@ -2871,8 +2909,61 @@ function applyWhatsApp(){
   }
 }
 
+/* ─── PER-SERVICE IMAGES (admin-only upload) ─── */
+var SVC_NAMES = ['Yoga','Sonoterapia','Artes Aéreas','Terapias Energéticas','Femenino','Tienda & Espacios'];
+
+function applyServicios(){
+  var arr = IMGS.servicios || [];
+  for(var i=0;i<6;i++){
+    var img=$('svc-img-'+i);
+    if(!img) continue;
+    if(arr[i]){ img.src=arr[i]; img.style.display='block'; }
+    else { img.removeAttribute('src'); img.style.display='none'; }
+  }
+}
+
+function renderAdmSvc(){
+  var el=$('adm-svc-list'); if(!el) return;
+  var arr=IMGS.servicios||[];
+  var html='';
+  for(var i=0;i<6;i++){
+    var has=!!arr[i];
+    html+='<div style="display:grid;grid-template-columns:150px 1fr;gap:1rem;align-items:center;padding:1rem;background:var(--white);border:1px solid var(--border-g);border-radius:5px">'
+      + '<div style="aspect-ratio:4/3;background:var(--green-mist);border-radius:4px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center">'
+      + (has ? '<img src="'+arr[i]+'" alt="" style="width:100%;height:100%;object-fit:cover">' : '<span style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-light)">Sin imagen</span>')
+      + '</div>'
+      + '<div>'
+      + '<div style="font-family:\'Playfair Display\',serif;font-size:1rem;color:var(--text);margin-bottom:.6rem">'+esc(SVC_NAMES[i])+'</div>'
+      + '<div class="file-box" style="padding:.75rem" onclick="triggerSvcImg('+i+')"><div class="file-box-text">'+(has?'Cambiar imagen':'Subir imagen')+'</div><input type="file" id="svc-file-'+i+'" accept="image/*" style="display:none" onchange="handleSvcImg('+i+',this)"></div>'
+      + (has ? '<button class="adm-del" style="margin-top:.6rem" onclick="removeSvcImg('+i+')">Quitar imagen</button>' : '')
+      + '</div></div>';
+  }
+  el.innerHTML=html;
+}
+
+function triggerSvcImg(i){ var inp=$('svc-file-'+i); if(inp) inp.click(); }
+window.triggerSvcImg=triggerSvcImg;
+
+function handleSvcImg(i, input){
+  if(!input.files||!input.files[0]) return;
+  compress(input.files[0], 1400, 0.8, function(data){
+    if(!IMGS.servicios) IMGS.servicios=['','','','','',''];
+    IMGS.servicios[i]=data;
+    applyServicios(); saveImgs(); renderAdmSvc();
+    toast('✓ Imagen de servicio actualizada');
+  });
+}
+window.handleSvcImg=handleSvcImg;
+
+function removeSvcImg(i){
+  if(IMGS.servicios) IMGS.servicios[i]='';
+  applyServicios(); saveImgs(); renderAdmSvc();
+  toast('✓ Imagen eliminada');
+}
+window.removeSvcImg=removeSvcImg;
+
 function applyAll(){
-  applyHero(); applyInstructors(); applyEventos();
+  applyHero(); applyInstructors(); applyServicios(); applyEventos();
   applyGallery(); applyTestis(); applyContacto(); applyTextos();
   applyWhatsApp();
 }
@@ -3064,6 +3155,7 @@ window.openAdmin=openAdmin;
 function closeAdmin(){
   var p=$('admin-panel'); if(p) p.classList.remove('on');
   document.body.style.overflow=''; ADMIN_ON=false;
+  document.body.classList.remove('admin-mode');
   disablePodThumbEdits();
   var galBtn=$('gallery-add-btn-wrap'); if(galBtn) galBtn.style.display='none';
 }
@@ -3073,14 +3165,14 @@ function checkAdmin(){
   var inp=$('adm-pw'); var pw=inp?inp.value:'';
   if(pw===PW){
     ADMIN_ON=true;
+    document.body.classList.add('admin-mode');  /* reveals admin-only controls */
     var l=$('adm-login'), d=$('adm-dash'), err=$('adm-err');
     if(l) l.style.display='none'; if(d) d.classList.add('on');
     if(err) err.style.display='none'; if(inp) inp.value='';
     loadAdmFields();
-    // Enable photo overlays
+    // Enable photo overlays (click wiring; visibility is gated by body.admin-mode in CSS)
     ['andrea','david'].forEach(function(who){
       var ph=$('photo-'+who); if(!ph) return;
-      ph.style.cursor='pointer';
       ph.onclick=function(){ $('file-'+who)&&$('file-'+who).click(); };
     });
     var galBtn=$('gallery-add-btn-wrap'); if(galBtn) galBtn.style.display='block';
@@ -3100,6 +3192,7 @@ function showAdmTab(name, btn){
   if(name==='galeria')  renderAdmGal();
   if(name==='eventos')  renderAdmEv();
   if(name==='testimonios') renderAdmTesti();
+  if(name==='servicios') renderAdmSvc();
 }
 window.showAdmTab=showAdmTab;
 
@@ -3382,6 +3475,16 @@ function disablePodThumbEdits(){
 }
 
 /* ─── BOOT ─── */
+/* ─── SERVICE ITEMS STAGGER (scroll entrance) ─── */
+function initSvcStagger(){
+  var sec=document.querySelector('.servicios-sec'); if(!sec) return;
+  if(LITE || !('IntersectionObserver' in window)){ sec.classList.add('in-view'); return; }
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ sec.classList.add('in-view'); obs.disconnect(); } });
+  },{ threshold:0.15 });
+  obs.observe(sec);
+}
+
 function boot(){
   detectLite();
   _navEl=$('nav'); _progEl=$('scroll-prog');
@@ -3393,10 +3496,12 @@ function boot(){
   initCountUp();
   initSunTilt();
   initStickyBar();
+  initSvcStagger();
   onScrollFrame();
   // Safety: ensure all revealed after 3s (covers any observer edge cases)
   setTimeout(function(){
     document.querySelectorAll('.rv,.rv-left,.rv-right,.rv-scale,.rv-draw,.sec-title').forEach(function(el){ el.classList.add('on'); });
+    var ss=document.querySelector('.servicios-sec'); if(ss) ss.classList.add('in-view');
   }, 3000);
 }
 
