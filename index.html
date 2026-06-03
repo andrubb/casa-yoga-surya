@@ -1070,7 +1070,16 @@ body.admin-mode .admin-only { display:block !important; }
   transition:opacity .8s var(--ease), transform .8s var(--ease);
 }
 .testi-grid.is-carousel .testi-card.on { opacity:1; transform:none; pointer-events:auto; }
-.testi-dots { display:flex; justify-content:center; gap:.55rem; margin-top:2rem; }
+.testi-controls { display:flex; align-items:center; justify-content:center; gap:1.1rem; margin-top:2rem; }
+.testi-arrow {
+  width:44px; height:44px; min-height:44px; flex-shrink:0; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border); background:var(--white); color:var(--green);
+  cursor:pointer; transition:transform .35s var(--ease), background .3s, color .3s, border-color .3s, box-shadow .3s;
+}
+.testi-arrow:hover { background:var(--gold); border-color:var(--gold); color:#fff; transform:translateY(-2px); box-shadow:0 10px 22px rgba(201,168,76,.28); }
+.testi-arrow:active { transform:scale(.95); }
+.testi-dots { display:flex; justify-content:center; gap:.55rem; }
 .testi-dot {
   width:9px; height:9px; border-radius:50%; border:none; padding:0; cursor:pointer;
   background:var(--border-g); transition:transform .3s var(--ease), background .3s; min-height:auto;
@@ -2345,7 +2354,15 @@ footer {
           </div>
         </div>
       </div>
-      <div class="testi-dots" id="testi-dots"></div>
+      <div class="testi-controls">
+        <button class="testi-arrow" id="testi-prev" aria-label="Testimonio anterior">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="testi-dots" id="testi-dots"></div>
+        <button class="testi-arrow" id="testi-next" aria-label="Siguiente testimonio">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 </section>
@@ -2998,6 +3015,9 @@ function testiInit(){
     wrap._testiHover=1;
     wrap.addEventListener('mouseenter', function(){ clearInterval(testiTimer); });
     wrap.addEventListener('mouseleave', startTestiAuto);
+    var prev=$('testi-prev'), next=$('testi-next');
+    if(prev) prev.addEventListener('click', function(){ goTesti(testiIdx-1); startTestiAuto(); });
+    if(next) next.addEventListener('click', function(){ goTesti(testiIdx+1); startTestiAuto(); });
   }
 }
 
