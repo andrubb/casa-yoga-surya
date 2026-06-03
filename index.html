@@ -86,7 +86,8 @@ button { cursor:pointer; font-family:'Poppins',sans-serif; }
 .leaf-accent { position:absolute; color:var(--green-light); opacity:.12; pointer-events:none; z-index:0; }
 
 /* Golden wavy section divider */
-.divider { display:flex; align-items:center; justify-content:center; padding:.5rem 2rem; line-height:0; }
+.divider { display:flex; align-items:center; justify-content:center; padding:2.4rem 2rem; line-height:0; background:var(--cream-warm); }
+.divider.on-white { background:var(--white); }
 .divider svg { width:min(560px,80%); height:34px; overflow:visible; }
 .divider .dpath { fill:none; stroke:var(--gold); stroke-width:1.5; stroke-linecap:round; opacity:.55;
   stroke-dasharray:1200; stroke-dashoffset:1200; }
@@ -1027,9 +1028,25 @@ body.admin-mode .inst-photo:hover .photo-edit-ov { opacity:1; pointer-events:aut
    TESTIMONIOS
 ═══════════════════════════════════════ */
 .testi-sec { background:var(--white); }
+/* Fade carousel */
+.testi-carousel { position:relative; }
 .testi-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:1.75rem;
+  max-width:760px; margin:0 auto;
+  display:flex; flex-direction:column; gap:1.75rem;  /* no-JS fallback: stacked */
 }
+.testi-grid.is-carousel { display:grid; gap:0; }
+.testi-grid.is-carousel .testi-card {
+  grid-area:1 / 1; opacity:0; transform:translateY(10px); pointer-events:none;
+  transition:opacity .8s var(--ease), transform .8s var(--ease);
+}
+.testi-grid.is-carousel .testi-card.on { opacity:1; transform:none; pointer-events:auto; }
+.testi-dots { display:flex; justify-content:center; gap:.55rem; margin-top:2rem; }
+.testi-dot {
+  width:9px; height:9px; border-radius:50%; border:none; padding:0; cursor:pointer;
+  background:var(--border-g); transition:transform .3s var(--ease), background .3s; min-height:auto;
+}
+.testi-dot.on { background:var(--gold); transform:scale(1.3); }
+.testi-dot:hover { background:var(--gold-light); }
 .testi-card {
   position:relative; padding:2.4rem 2rem 2rem; border:1px solid var(--border-g);
   background:var(--cream-warm); border-radius:6px;
@@ -1390,7 +1407,6 @@ footer {
   .instructors-grid { grid-template-columns:1fr; max-width:480px; margin:0 auto; }
   .svc-panel.active { grid-template-columns:1fr; }
   .svc-visual { min-height:280px; }
-  .testi-grid { grid-template-columns:1fr 1fr; }
   .contacto-grid { grid-template-columns:1fr; gap:3rem; }
   .footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
   .stats-inner { grid-template-columns:repeat(2,1fr); gap:2.5rem 1rem; }
@@ -1404,7 +1420,6 @@ footer {
   section { padding:5rem 1.4rem; }
   .nav-links, .nav-cta { display:none; }
   .nav-ham { display:flex; }
-  .testi-grid { grid-template-columns:1fr; }
   .footer-grid { grid-template-columns:1fr; gap:2.5rem; text-align:center; }
   .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
   .gallery-item:first-child { grid-column:span 2; grid-row:span 1; }
@@ -1767,6 +1782,14 @@ footer {
   </div>
 </section>
 
+<!-- DIVIDER -->
+<div class="divider rv-draw" aria-hidden="true">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path class="dpath" d="M0,20 C150,40 300,2 450,20 C600,38 750,2 900,20 C1020,34 1110,8 1200,20"/>
+    <circle class="dgem" cx="600" cy="20" r="5"/>
+  </svg>
+</div>
+
 <!-- SERVICIOS -->
 <section class="servicios-sec grain" id="servicios">
   <div class="container">
@@ -1946,6 +1969,14 @@ footer {
   </div>
 </section>
 
+<!-- DIVIDER -->
+<div class="divider rv-draw" aria-hidden="true">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path class="dpath" d="M0,20 C150,40 300,2 450,20 C600,38 750,2 900,20 C1020,34 1110,8 1200,20"/>
+    <circle class="dgem" cx="600" cy="20" r="5"/>
+  </svg>
+</div>
+
 <!-- HORARIOS -->
 <section class="horarios-sec" id="horarios">
   <div class="container">
@@ -1962,7 +1993,7 @@ footer {
 
     <div class="sched-grid">
       <!-- Lunes -->
-      <div class="sched-day rv">
+      <div class="sched-day rv-left">
         <div class="sched-day-head">Lunes</div>
         <div class="class-card c-yoga">
           <div class="sch-time">6:30 PM</div>
@@ -1973,7 +2004,7 @@ footer {
         </div>
       </div>
       <!-- Martes -->
-      <div class="sched-day rv d1">
+      <div class="sched-day rv-right d1">
         <div class="sched-day-head">Martes</div>
         <div class="class-card c-yoga">
           <div class="sch-time">6:00 PM</div>
@@ -1984,7 +2015,7 @@ footer {
         </div>
       </div>
       <!-- Miércoles -->
-      <div class="sched-day rv d2">
+      <div class="sched-day rv-left d2">
         <div class="sched-day-head">Miércoles</div>
         <div class="class-card c-aerea">
           <div class="sch-time">4:00 PM</div>
@@ -2002,7 +2033,7 @@ footer {
         </div>
       </div>
       <!-- Jueves -->
-      <div class="sched-day rv d3">
+      <div class="sched-day rv-right d3">
         <div class="sched-day-head">Jueves</div>
         <div class="class-card c-aerea">
           <div class="sch-time">4:00 PM</div>
@@ -2020,7 +2051,7 @@ footer {
         </div>
       </div>
       <!-- Sábado -->
-      <div class="sched-day rv d4">
+      <div class="sched-day rv-left d4">
         <div class="sched-day-head">Sábado</div>
         <div class="class-card c-aerea">
           <div class="sch-time">9:30 AM</div>
@@ -2039,6 +2070,14 @@ footer {
     </div>
   </div>
 </section>
+
+<!-- DIVIDER -->
+<div class="divider rv-draw on-white" aria-hidden="true">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path class="dpath" d="M0,20 C150,40 300,2 450,20 C600,38 750,2 900,20 C1020,34 1110,8 1200,20"/>
+    <circle class="dgem" cx="600" cy="20" r="5"/>
+  </svg>
+</div>
 
 <!-- EVENTOS -->
 <div class="eventos-sec" id="eventos">
@@ -2071,6 +2110,14 @@ footer {
     </div>
   </div>
   <div class="ev-prog"><div class="ev-prog-bar" id="ev-bar"></div></div>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider rv-draw" aria-hidden="true">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path class="dpath" d="M0,20 C150,40 300,2 450,20 C600,38 750,2 900,20 C1020,34 1110,8 1200,20"/>
+    <circle class="dgem" cx="600" cy="20" r="5"/>
+  </svg>
 </div>
 
 <!-- GALERÍA -->
@@ -2226,40 +2273,43 @@ footer {
       <h2 class="sec-title">Lo que dicen <em>nuestros estudiantes</em></h2>
       <p class="sec-sub">Experiencias reales de transformación</p>
     </div>
-    <div class="testi-grid" id="testi-grid">
-      <div class="testi-card rv">
-        <div class="testi-q">"</div>
-        <p class="testi-text">Un espacio increíble de paz y sanación. Las clases con Andrea me han transformado completamente. La energía del lugar es única.</p>
-        <div class="testi-author">
-          <div class="testi-av">M</div>
-          <div>
-            <div class="testi-name">María González</div>
-            <div class="testi-stars">★★★★★</div>
+    <div class="testi-carousel rv">
+      <div class="testi-grid" id="testi-grid">
+        <div class="testi-card">
+          <div class="testi-q">"</div>
+          <p class="testi-text">Un espacio increíble de paz y sanación. Las clases con Andrea me han transformado completamente. La energía del lugar es única.</p>
+          <div class="testi-author">
+            <div class="testi-av">M</div>
+            <div>
+              <div class="testi-name">María González</div>
+              <div class="testi-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-q">"</div>
+          <p class="testi-text">Los baños de sonido son una experiencia que no se puede describir con palabras. Salgo completamente renovada. Totalmente recomendado.</p>
+          <div class="testi-author">
+            <div class="testi-av">L</div>
+            <div>
+              <div class="testi-name">Laura Méndez</div>
+              <div class="testi-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-q">"</div>
+          <p class="testi-text">Mi hija ama las clases de telas aéreas. David es extraordinario con los niños. Un ambiente seguro, divertido y profesional.</p>
+          <div class="testi-author">
+            <div class="testi-av">C</div>
+            <div>
+              <div class="testi-name">Carolina Rodríguez</div>
+              <div class="testi-stars">★★★★★</div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="testi-card rv d1">
-        <div class="testi-q">"</div>
-        <p class="testi-text">Los baños de sonido son una experiencia que no se puede describir con palabras. Salgo completamente renovada. Totalmente recomendado.</p>
-        <div class="testi-author">
-          <div class="testi-av">L</div>
-          <div>
-            <div class="testi-name">Laura Méndez</div>
-            <div class="testi-stars">★★★★★</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card rv d2">
-        <div class="testi-q">"</div>
-        <p class="testi-text">Mi hija ama las clases de telas aéreas. David es extraordinario con los niños. Un ambiente seguro, divertido y profesional.</p>
-        <div class="testi-author">
-          <div class="testi-av">C</div>
-          <div>
-            <div class="testi-name">Carolina Rodríguez</div>
-            <div class="testi-stars">★★★★★</div>
-          </div>
-        </div>
-      </div>
+      <div class="testi-dots" id="testi-dots"></div>
     </div>
   </div>
 </section>
@@ -2868,16 +2918,51 @@ function applyGallery(){
   observeReveal(grid);
 }
 
+var testiIdx=0, testiTimer=null, TESTI_DUR=5000;
 function applyTestis(){
   var grid=$('testi-grid');
   if(!grid) return;
   var ts=D.testimonios||[];
   if(!ts.length) return;
+  grid.classList.add('is-carousel');
   grid.innerHTML=ts.map(function(t,i){
-    var d=i>0?' d'+Math.min(i,6):'';
-    return '<div class="testi-card rv'+d+'"><div class="testi-q">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
+    return '<div class="testi-card'+(i===0?' on':'')+'"><div class="testi-q">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
   }).join('');
-  observeReveal(grid);
+  var dots=$('testi-dots');
+  if(dots){
+    dots.innerHTML=ts.map(function(t,i){ return '<button class="testi-dot'+(i===0?' on':'')+'" aria-label="Testimonio '+(i+1)+'"></button>'; }).join('');
+    Array.prototype.forEach.call(dots.children, function(b,i){ b.onclick=function(){ goTesti(i); startTestiAuto(); }; });
+  }
+  testiInit();
+}
+
+function goTesti(i){
+  var cards=document.querySelectorAll('#testi-grid .testi-card');
+  var dots=document.querySelectorAll('#testi-dots .testi-dot');
+  if(!cards.length) return;
+  if(cards[testiIdx]) cards[testiIdx].classList.remove('on');
+  if(dots[testiIdx]) dots[testiIdx].classList.remove('on');
+  testiIdx=(i+cards.length)%cards.length;
+  cards[testiIdx].classList.add('on');
+  if(dots[testiIdx]) dots[testiIdx].classList.add('on');
+}
+window.goTesti=goTesti;
+function startTestiAuto(){
+  clearInterval(testiTimer);
+  if(LITE) return;
+  var n=document.querySelectorAll('#testi-grid .testi-card').length;
+  if(n<2) return;
+  testiTimer=setInterval(function(){ goTesti(testiIdx+1); }, TESTI_DUR);
+}
+function testiInit(){
+  testiIdx=0;
+  startTestiAuto();
+  var wrap=document.querySelector('.testi-carousel');
+  if(wrap && !wrap._testiHover){
+    wrap._testiHover=1;
+    wrap.addEventListener('mouseenter', function(){ clearInterval(testiTimer); });
+    wrap.addEventListener('mouseleave', startTestiAuto);
+  }
 }
 
 function applyContacto(){
