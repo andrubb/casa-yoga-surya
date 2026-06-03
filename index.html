@@ -1,0 +1,3409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Yoga+Surya — Centro de Bienestar · Costa Rica</title>
+<meta name="description" content="Centro integral de bienestar en Vuelta de Jorco, Aserrí. Yoga, sonoterapia, terapias espirituales, danza aérea y más. Un espacio familiar de sanación en Costa Rica.">
+<meta name="theme-color" content="#2d5a3d">
+<meta property="og:title" content="Casa Yoga+Surya — Centro de Bienestar">
+<meta property="og:description" content="Yoga, sonoterapia, terapias espirituales y artes aéreas en Costa Rica.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+:root {
+  --white:       #ffffff;
+  --off:         #fafaf8;
+  --cream:       #f5f3ee;
+  --cream-warm:  #fdf8ed;
+  --cream-deep:  #f0e8d5;
+  --gold:        #c9a84c;
+  --gold-deep:   #b8952e;
+  --gold-light:  #e8c96a;
+  --gold-pale:   #f5ecd4;
+  --gold-mist:   #fdf8ed;
+  --green:       #2d5a3d;
+  --green-deep:  #1f4029;
+  --green-mid:   #3d7a54;
+  --green-light: #5a9e73;
+  --green-mist:  #eef5f1;
+  --rose:        #b07c8a;
+  --rose-mist:   #f5edf0;
+  --text:        #1a1a1a;
+  --text-soft:   #555550;
+  --text-light:  #888880;
+  --border:      rgba(201,168,76,0.18);
+  --border-g:    rgba(45,90,61,0.14);
+  --shadow-sm:   0 2px 20px rgba(120,95,30,0.06);
+  --shadow-md:   0 14px 40px rgba(201,168,76,0.14);
+  --shadow-lg:   0 28px 70px rgba(150,120,40,0.16);
+  --shadow-warm: 0 18px 50px rgba(201,168,76,0.16);
+  --ease:        cubic-bezier(.16,1,.3,1);
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; scroll-padding-top:90px; -webkit-text-size-adjust:100%; }
+body {
+  background:var(--white);
+  color:var(--text);
+  font-family:'Poppins', sans-serif;
+  font-weight:300;
+  font-size:1rem;
+  line-height:1.8;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--cream-warm); }
+::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
+
+h1,h2,h3 { font-family:'Playfair Display',serif; font-weight:400; line-height:1.15; letter-spacing:-.02em; }
+h4,h5,h6 { font-family:'Poppins',sans-serif; font-weight:500; }
+p { line-height:1.8; }
+img { max-width:100%; display:block; }
+a { text-decoration:none; }
+button { cursor:pointer; font-family:'Poppins',sans-serif; }
+
+/* ─── DECORATIVE HELPERS: grain, leaves, dividers ─── */
+.grain { position:relative; }
+.grain::before {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  opacity:.035; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.grain > * { position:relative; z-index:1; }
+
+.leaf-accent { position:absolute; color:var(--green-light); opacity:.12; pointer-events:none; z-index:0; }
+
+/* Golden wavy section divider */
+.divider { display:flex; align-items:center; justify-content:center; padding:.5rem 2rem; line-height:0; }
+.divider svg { width:min(560px,80%); height:34px; overflow:visible; }
+.divider .dpath { fill:none; stroke:var(--gold); stroke-width:1.5; stroke-linecap:round; opacity:.55;
+  stroke-dasharray:1200; stroke-dashoffset:1200; }
+.divider .dgem { fill:var(--gold); opacity:0; transition:opacity 1s ease .6s; }
+.js-r .rv-draw .dpath { stroke-dashoffset:1200; }
+.js-r .rv-draw.on .dpath { stroke-dashoffset:0; transition:stroke-dashoffset 1.6s var(--ease); }
+.js-r .rv-draw.on .dgem { opacity:.9; }
+body:not(.js-r) .divider .dpath, .lite .divider .dpath { stroke-dashoffset:0; }
+body:not(.js-r) .divider .dgem, .lite .divider .dgem { opacity:.9; }
+
+/* Scroll progress bar */
+#scroll-prog {
+  position:fixed; top:0; left:0; height:3px; width:0;
+  background:linear-gradient(90deg,var(--gold-light),var(--gold));
+  z-index:600; transition:width .1s linear; pointer-events:none;
+}
+
+/* Hide scrollbars on horizontal-scroll strips (tabs / schedule) */
+.svc-categories, .sched-grid { scrollbar-width:none; -ms-overflow-style:none; }
+.svc-categories::-webkit-scrollbar, .sched-grid::-webkit-scrollbar { width:0; height:0; display:none; }
+
+/* ═══════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════ */
+.container { max-width:1160px; margin:0 auto; padding:0 2rem; }
+section { padding:7rem 2rem; }
+
+/* ═══════════════════════════════════════
+   REVEAL ANIMATIONS
+═══════════════════════════════════════ */
+.rv, .rv-up, .rv-left, .rv-right, .rv-scale {
+  opacity:1; transform:none;
+  transition:opacity .9s var(--ease), transform .9s var(--ease);
+}
+.js-r .rv     { opacity:0; transform:translateY(28px); }
+.js-r .rv-left  { opacity:0; transform:translateX(-28px); }
+.js-r .rv-right { opacity:0; transform:translateX(28px); }
+.js-r .rv-scale { opacity:0; transform:scale(.95); }
+.js-r .rv.on, .js-r .rv-left.on, .js-r .rv-right.on, .js-r .rv-scale.on { opacity:1; transform:none; }
+.js-r .d1 { transition-delay:.08s; }
+.js-r .d2 { transition-delay:.16s; }
+.js-r .d3 { transition-delay:.24s; }
+.js-r .d4 { transition-delay:.32s; }
+.js-r .d5 { transition-delay:.40s; }
+.js-r .d6 { transition-delay:.48s; }
+
+/* Word-stagger for section titles */
+.js-r .sec-title .w {
+  display:inline-block; opacity:0; transform:translateY(28px);
+  transition:opacity .8s var(--ease), transform .8s var(--ease);
+}
+.js-r .sec-title.on .w { opacity:1; transform:none; }
+.lite .sec-title .w, body:not(.js-r) .sec-title .w { opacity:1!important; transform:none!important; }
+
+@media(prefers-reduced-motion:reduce) {
+  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w { opacity:1!important; transform:none!important; transition:none!important; }
+  * { animation-duration:.001ms!important; animation-iteration-count:1!important; }
+}
+
+/* ═══════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════ */
+.sec-header { text-align:center; margin-bottom:4.5rem; }
+.sec-label {
+  display:inline-flex; align-items:center; gap:.75rem;
+  font-size:.6rem; font-weight:600; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:1rem;
+}
+.sec-label::before, .sec-label::after {
+  content:''; display:block; width:28px; height:1px; background:var(--gold);
+}
+.sec-title { font-size:clamp(2rem,3.5vw,2.8rem); color:var(--text); margin-bottom:.6rem; }
+.sec-title em { color:var(--green); font-style:italic; }
+.sec-sub { font-family:'Playfair Display',serif; font-style:italic; color:var(--text-soft); font-size:1.02rem; }
+
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+  font-family:'Poppins',sans-serif; font-size:.72rem;
+  font-weight:500; letter-spacing:.12em; text-transform:uppercase;
+  border:none; cursor:pointer; text-decoration:none;
+  padding:1rem 2.1rem; min-height:48px; border-radius:2px;
+  position:relative; overflow:hidden;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .4s var(--ease), color .4s var(--ease);
+}
+.btn:active { transform:scale(.98); }
+.btn > * { position:relative; z-index:1; }
+/* Golden shimmer sweep shared by filled buttons */
+.btn-gold::before, .btn-green::before {
+  content:''; position:absolute; top:0; left:-75%; width:50%; height:100%; z-index:0;
+  background:linear-gradient(100deg, transparent, rgba(255,247,214,.55), transparent);
+  transform:skewX(-20deg); transition:left .7s var(--ease);
+}
+.btn-gold:hover::before, .btn-green:hover::before { left:130%; }
+
+.btn-gold { background:var(--gold); color:#fff; }
+.btn-gold:hover { background:var(--gold-deep); transform:translateY(-3px); box-shadow:0 14px 32px rgba(201,168,76,.38); }
+
+.btn-green { background:var(--green); color:#fff; }
+.btn-green:hover { background:var(--green-mid); transform:translateY(-3px); box-shadow:0 14px 32px rgba(201,168,76,.30); }
+
+.btn-outline-gold { border:1.5px solid var(--gold); color:var(--gold-deep); background:transparent; }
+.btn-outline-gold:hover { background:var(--gold); color:#fff; transform:translateY(-3px); box-shadow:0 14px 32px rgba(201,168,76,.30); }
+
+.btn-outline-white { border:1.5px solid rgba(255,255,255,.6); color:#fff; background:transparent; }
+.btn-outline-white:hover { background:rgba(255,255,255,.14); transform:translateY(-3px); }
+
+.btn-white { background:#fff; color:var(--green); }
+.btn-white:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+
+/* ═══════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════ */
+#nav {
+  position:fixed; top:0; left:0; right:0; z-index:400;
+  padding:1.5rem 0; transition:all .4s;
+}
+#nav.solid {
+  background:rgba(253,248,237,.92);
+  backdrop-filter:blur(20px) saturate(1.1);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 4px 30px rgba(150,120,40,.07);
+  padding:.9rem 0;
+}
+.nav-inner {
+  max-width:1160px; margin:0 auto; padding:0 2rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo { display:flex; align-items:center; gap:.65rem; }
+.nav-sun {
+  width:32px; height:32px; flex-shrink:0;
+  transition:transform 1.2s var(--ease);
+}
+.nav-logo:hover .nav-sun { transform:rotate(360deg); }
+.ns-rays { transform-origin:center; animation:sunSpin 60s linear infinite; }
+.ns-core { animation:sunPulse 4s ease-in-out infinite; }
+@keyframes sunSpin { to { transform:rotate(360deg); } }
+@keyframes sunPulse { 0%,100%{opacity:.9} 50%{opacity:1} }
+.lite .ns-rays { animation:none; }
+
+.nav-brand-main {
+  font-family:'Playfair Display',serif; font-size:1.1rem;
+  color:var(--text); letter-spacing:.02em; font-weight:400;
+}
+.nav-brand-sub {
+  display:block; font-size:.52rem; letter-spacing:.28em;
+  color:var(--gold); text-transform:uppercase; font-weight:500; margin-top:.05rem;
+}
+.nav-links { display:flex; gap:2.2rem; list-style:none; }
+.nav-links a {
+  font-size:.68rem; letter-spacing:.08em; font-weight:400;
+  color:var(--text-soft); text-transform:uppercase; transition:color .3s;
+  position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-4px; left:0; right:0;
+  height:1px; background:var(--gold);
+  transform:scaleX(0); transition:transform .3s; transform-origin:center;
+}
+.nav-links a:hover { color:var(--green); }
+.nav-links a:hover::after { transform:scaleX(1); background:var(--green); }
+.nav-cta { font-size:.66rem; padding:.6rem 1.5rem; }
+.nav-ham {
+  display:none; background:none; border:none;
+  flex-direction:column; gap:5px; padding:.3rem;
+}
+.nav-ham span { display:block; width:22px; height:1.5px; background:var(--text); transition:all .3s; }
+
+/* Mobile drawer */
+.mob-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.5);
+  z-index:499; opacity:0; pointer-events:none; transition:opacity .35s;
+}
+.mob-overlay.on { opacity:1; pointer-events:all; }
+.mob-drawer {
+  position:fixed; top:0; right:-340px; bottom:0; width:300px;
+  background:linear-gradient(165deg, var(--cream-warm) 0%, var(--cream-deep) 100%);
+  z-index:500;
+  padding:4rem 2rem 2rem;
+  transition:right .45s cubic-bezier(.16,1,.3,1);
+  display:flex; flex-direction:column; gap:.25rem;
+  box-shadow:-20px 0 60px rgba(120,90,30,.18);
+  border-left:1px solid var(--border);
+}
+.mob-drawer.open { right:0; }
+.mob-close {
+  position:absolute; top:1.25rem; right:1.25rem;
+  background:none; border:none; font-size:1.4rem;
+  color:var(--text-soft); cursor:pointer; padding:.3rem;
+}
+.mob-drawer a {
+  display:block; padding:.85rem 0;
+  font-size:.8rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--text-soft); border-bottom:1px solid var(--border-g);
+  transition:color .3s;
+}
+.mob-drawer a:hover { color:var(--green); }
+.mob-wa {
+  margin-top:1.5rem; background:var(--green); color:#fff;
+  text-align:center; padding:1rem; font-size:.75rem;
+  letter-spacing:.12em; font-weight:500; text-transform:uppercase;
+  display:block; transition:background .3s;
+}
+.mob-wa:hover { background:var(--green-mid); }
+
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+.hero {
+  min-height:100vh; min-height:100svh;
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  padding:7rem 1.5rem 5rem;
+}
+
+/* Warm cream → deep-cream gradient with radial golden glow */
+.hero-bg {
+  position:absolute; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 42%, rgba(232,201,106,.22) 0%, rgba(201,168,76,.07) 38%, transparent 70%),
+    linear-gradient(165deg, var(--cream-warm) 0%, #f6efdd 55%, var(--cream-deep) 100%);
+}
+.hero-pattern { display:none; }
+
+/* Floating botanicals */
+.hero-botanicals { position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+.hero-botanicals .leaf { position:absolute; color:var(--green-light); }
+.hero-botanicals .l1 { width:90px;  top:14%; left:7%;  opacity:.10; animation:drift1 26s ease-in-out infinite; }
+.hero-botanicals .l2 { width:64px;  top:24%; right:9%; opacity:.09; animation:drift2 32s ease-in-out infinite; }
+.hero-botanicals .l3 { width:120px; bottom:12%; left:12%; opacity:.07; animation:drift3 38s ease-in-out infinite; }
+.hero-botanicals .l4 { width:76px;  bottom:18%; right:11%; opacity:.08; animation:drift1 30s ease-in-out infinite reverse; }
+
+.hero-content {
+  position:relative; z-index:3;
+  max-width:760px; margin:0 auto;
+  display:flex; flex-direction:column; align-items:center;
+  animation:breathe 9s ease-in-out infinite;
+}
+
+/* Sun crowning the hero */
+.hero-sun-wrap {
+  width:clamp(150px,21vw,224px); aspect-ratio:1;
+  margin:0 auto 1.6rem; position:relative;
+  perspective:900px;
+  opacity:0; animation:fadeIn 1.1s ease .1s forwards;
+}
+.hero-sun {
+  width:100%; height:100%; position:relative;
+  transition:transform .5s ease; transform-style:preserve-3d;
+}
+.hero-sun svg { width:100%; height:100%; display:block; overflow:visible; }
+
+/* Orbiting golden particles */
+.sun-orbits { position:absolute; inset:0; pointer-events:none; }
+.orbit { position:absolute; }
+.orbit-a { inset:-13%; animation:spin 60s linear infinite; }
+.orbit-b { inset:-28%; animation:spin 90s linear infinite reverse; }
+.pw { position:absolute; inset:0; transform:rotate(var(--a)); }
+.pw .pdot {
+  position:absolute; top:0; left:50%; margin-left:-3.5px;
+  width:7px; height:7px; border-radius:50%;
+  background:var(--gold-light); box-shadow:0 0 10px 1px rgba(232,201,106,.6);
+}
+.orbit-b .pdot { width:5px; height:5px; margin-left:-2.5px; opacity:.7; box-shadow:0 0 8px 1px rgba(232,201,106,.45); }
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:.8rem;
+  font-size:.58rem; letter-spacing:.32em; font-weight:600; text-transform:uppercase;
+  color:var(--gold-deep); margin-bottom:1.5rem;
+  opacity:0; animation:slideUp .8s var(--ease) .25s forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content:''; display:block; width:26px; height:1px; background:var(--gold);
+}
+
+.hero-h1 {
+  font-family:'Playfair Display',serif; font-style:italic; font-weight:500;
+  font-size:clamp(3.4rem,8.5vw,6.6rem);
+  line-height:.98; letter-spacing:-.02em; color:#1a1a1a;
+  opacity:0; animation:slideUp .9s var(--ease) .4s forwards;
+}
+.hero-h1 .accent { color:#1a1a1a; }
+.hero-sub-name {
+  display:block;
+  font-family:'Playfair Display',serif; font-style:italic; font-weight:500;
+  font-size:clamp(2rem,5.5vw,3.6rem);
+  background:linear-gradient(100deg, var(--gold-deep), var(--gold-light) 55%, var(--gold-deep));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  line-height:1.1; margin-top:.1rem;
+  opacity:0; animation:slideUp .9s var(--ease) .55s forwards;
+}
+
+.hero-divider {
+  width:70px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:1.7rem auto;
+  opacity:0; animation:slideUp .8s var(--ease) .7s forwards;
+}
+
+.hero-tagline {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:clamp(1.05rem,1.6vw,1.2rem); color:var(--text-soft); line-height:1.9;
+  max-width:520px; margin:0 auto;
+  opacity:0; animation:slideUp .9s var(--ease) .82s forwards;
+}
+
+.hero-btns {
+  display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:2.4rem;
+  opacity:0; animation:slideUp .9s var(--ease) .96s forwards;
+}
+
+.hero-badges {
+  display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; margin-top:2.8rem;
+  opacity:0; animation:slideUp .8s var(--ease) 1.14s forwards;
+}
+.hero-badge {
+  display:flex; align-items:center; gap:.5rem;
+  font-size:.62rem; color:var(--text-light); letter-spacing:.06em;
+}
+.hero-badge-dot {
+  width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0;
+}
+
+.hero-scroll-hint {
+  position:absolute; bottom:1.8rem; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.4rem;
+  z-index:3;
+  opacity:0; animation:fadeIn 1s ease 1.8s forwards;
+}
+.hero-scroll-hint span {
+  font-size:.52rem; letter-spacing:.2em; text-transform:uppercase; color:var(--text-light);
+}
+.scroll-line {
+  width:1px; height:40px;
+  background:linear-gradient(to bottom, var(--gold), transparent);
+  animation:scrollDrop 2.4s ease-in-out infinite;
+}
+@keyframes scrollDrop {
+  0%,100% { transform:translateY(0); opacity:1; }
+  50% { transform:translateY(8px); opacity:.4; }
+}
+@media(max-width:768px) { .hero-scroll-hint { display:none; } }
+
+@keyframes slideUp { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.006)} }
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes drift1 { 0%,100%{transform:translate(0,0) rotate(0)} 50%{transform:translate(18px,-22px) rotate(8deg)} }
+@keyframes drift2 { 0%,100%{transform:translate(0,0) rotate(0)} 50%{transform:translate(-16px,18px) rotate(-10deg)} }
+@keyframes drift3 { 0%,100%{transform:translate(0,0) rotate(0)} 50%{transform:translate(14px,16px) rotate(6deg)} }
+
+/* Low-end / reduced motion: calm everything */
+.lite .hero-content { animation:none; }
+.lite .orbit, .lite .hero-botanicals .leaf { animation:none; }
+.lite .sun-orbits { display:none; }
+@keyframes raysRotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* ═══════════════════════════════════════
+   PHILOSOPHY BAND
+═══════════════════════════════════════ */
+.philo-band {
+  background:linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+  padding:5.5rem 2rem; text-align:center; position:relative; overflow:hidden;
+}
+.philo-band::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 60% 80% at 20% 50%, rgba(201,168,76,.14) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(201,168,76,.09) 0%, transparent 60%);
+}
+.philo-quote {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:clamp(1.15rem,2.5vw,1.7rem);
+  color:rgba(255,255,255,.9); max-width:740px; margin:0 auto;
+  line-height:1.85; position:relative;
+}
+.philo-quote strong { color:var(--gold-light); font-style:normal; font-weight:400; }
+.philo-mark {
+  display:block; font-family:'Playfair Display',serif;
+  font-size:5rem; line-height:.6; color:rgba(201,168,76,.3);
+  margin-bottom:1rem;
+}
+
+/* ═══════════════════════════════════════
+   STATS
+═══════════════════════════════════════ */
+.stats-bar {
+  background:var(--cream-warm);
+  padding:4.5rem 2rem;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.stats-inner {
+  max-width:1160px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:2rem; text-align:center;
+}
+.stat { position:relative; }
+.stat:not(:last-child)::after {
+  content:''; position:absolute; right:-1rem; top:50%; transform:translateY(-50%);
+  width:1px; height:54px; background:var(--border);
+}
+.stat-num {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.6rem,4vw,3.3rem);
+  color:var(--green); line-height:1; margin-bottom:.4rem;
+}
+.stat-lbl {
+  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-light); font-weight:500;
+}
+
+/* ═══════════════════════════════════════
+   SOBRE — HISTORIA FAMILIAR
+═══════════════════════════════════════ */
+.sobre { background:var(--cream-warm); }
+.sobre-story {
+  max-width:680px; margin:0 auto 5rem;
+}
+.sobre-story p {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:1.12rem; color:var(--text-soft); line-height:1.95; margin-bottom:1rem;
+  text-align:left;
+}
+.sobre-story p:first-of-type::first-letter {
+  font-family:'Playfair Display',serif; font-style:normal;
+  float:left; font-size:3.6rem; line-height:.82; padding:.35rem .6rem 0 0;
+  color:var(--gold); font-weight:500;
+}
+
+.instructors-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:3rem;
+}
+.inst-card {
+  background:transparent; border:none; text-align:center;
+  padding:1.5rem 1rem; transition:transform .55s var(--ease);
+}
+.inst-card:hover { transform:translateY(-6px); }
+
+.inst-photo {
+  width:230px; height:230px; border-radius:50%;
+  margin:0 auto 1.7rem; overflow:hidden; position:relative; cursor:pointer;
+  border:3px solid var(--gold);
+  box-shadow:0 0 0 9px rgba(201,168,76,.10), 0 18px 44px rgba(201,168,76,.22);
+  background:var(--green-mist);
+  transition:box-shadow .5s, transform .6s var(--ease);
+}
+.inst-card:hover .inst-photo { box-shadow:0 0 0 12px rgba(201,168,76,.16), 0 24px 56px rgba(201,168,76,.30); }
+.inst-photo img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .7s var(--ease);
+}
+.inst-card:hover .inst-photo img { transform:scale(1.06); }
+.inst-photo-ph {
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.9rem; color:var(--green);
+  background:linear-gradient(160deg, var(--green-mist) 0%, #e8ede9 100%);
+}
+.inst-photo-ph-icon {
+  width:64px; height:64px; border-radius:50%;
+  background:rgba(45,90,61,.12); display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--green-light);
+}
+.inst-photo-ph p { font-size:.58rem; letter-spacing:.15em; color:var(--text-light); text-transform:uppercase; }
+.photo-edit-ov {
+  position:absolute; inset:0; border-radius:50%;
+  background:rgba(26,26,26,.55);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.5rem; opacity:0; transition:opacity .3s;
+}
+.inst-photo:hover .photo-edit-ov { opacity:1; }
+.photo-edit-ov span { color:#fff; font-size:.62rem; letter-spacing:.15em; text-transform:uppercase; font-weight:500; }
+
+.inst-body { padding:0 .5rem; max-width:420px; margin:0 auto; }
+.inst-spec {
+  font-size:.58rem; letter-spacing:.25em; font-weight:600;
+  text-transform:uppercase; color:var(--gold-deep); margin-bottom:.6rem;
+}
+.inst-name { font-family:'Playfair Display',serif; font-style:italic; font-size:1.9rem; color:var(--text); margin-bottom:.35rem; }
+.inst-role {
+  font-family:'Playfair Display',serif; font-style:italic;
+  color:var(--green); font-size:.9rem; margin-bottom:1.2rem;
+}
+.inst-bio {
+  font-size:.88rem; color:var(--text-soft); line-height:1.9;
+  margin-bottom:1.5rem;
+}
+.certs-row { display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:1.6rem; justify-content:center; }
+.cert {
+  font-size:.58rem; letter-spacing:.08em; font-weight:500;
+  padding:.28rem .8rem; border-radius:20px;
+  background:var(--gold-mist); border:1px solid var(--border);
+  color:#8a6a20; text-transform:uppercase;
+}
+.inst-cta { font-size:.68rem; }
+
+/* ═══════════════════════════════════════
+   SERVICIOS
+═══════════════════════════════════════ */
+.servicios-sec { background:var(--cream-warm); }
+
+/* Category tabs — pills */
+.svc-categories {
+  display:flex; justify-content:center; gap:.4rem;
+  margin:0 auto 3.5rem; flex-wrap:wrap; max-width:fit-content;
+}
+.svc-cat-btn {
+  padding:.7rem 1.5rem; min-height:44px; border-radius:30px;
+  font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; font-weight:500;
+  background:var(--white); border:1px solid var(--border-g); color:var(--text-light);
+  transition:all .35s var(--ease); cursor:pointer;
+}
+.svc-cat-btn.active { background:var(--green); color:#fff; border-color:var(--green); box-shadow:0 8px 20px rgba(45,90,61,.22); }
+.svc-cat-btn:not(.active):hover { background:var(--green-mist); color:var(--green); border-color:var(--border); transform:translateY(-2px); }
+
+/* Category panels */
+.svc-panel { display:none; }
+.svc-panel.active {
+  display:grid; grid-template-columns:1.05fr 1fr; gap:0; min-height:540px;
+  border-radius:6px; overflow:hidden;
+  box-shadow:var(--shadow-warm); border:1px solid var(--border);
+  animation:svcFade .7s var(--ease);
+}
+@keyframes svcFade { from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
+
+.svc-visual {
+  position:relative; overflow:hidden; min-height:420px;
+  background:var(--green);
+}
+.svc-visual-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 25%, rgba(201,168,76,.20) 0%, transparent 60%),
+    linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+}
+.svc-visual-icon {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1.5rem;
+}
+.svc-ic { width:128px; height:128px; color:rgba(255,255,255,.16); }
+.svc-visual-label {
+  position:absolute; bottom:2rem; left:2rem;
+  font-size:.58rem; letter-spacing:.28em; text-transform:uppercase;
+  color:rgba(255,255,255,.5); font-weight:500;
+}
+.svc-visual img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; filter:brightness(.66) saturate(1.1);
+}
+
+.svc-content {
+  background:var(--white); position:relative;
+  padding:3.5rem 3rem;
+  display:flex; flex-direction:column; justify-content:center;
+  border-top:3px solid var(--gold);
+}
+/* Botanical corner decoration — fades in on hover */
+.svc-content::after {
+  content:''; position:absolute; top:18px; right:18px; width:62px; height:62px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23c9a84c'%3E%3Cpath d='M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z'/%3E%3C/svg%3E") center/contain no-repeat;
+  opacity:.05; transform:rotate(-8deg) scale(.9); transform-origin:top right;
+  transition:opacity .5s var(--ease), transform .5s var(--ease); pointer-events:none;
+}
+.svc-panel.active:hover .svc-content::after { opacity:.16; transform:rotate(0) scale(1); }
+.svc-content-cat {
+  font-size:.58rem; letter-spacing:.28em; font-weight:600; text-transform:uppercase;
+  color:var(--gold-deep); margin-bottom:.6rem;
+}
+.svc-content-title { font-family:'Playfair Display',serif; font-size:2.1rem; color:var(--text); margin-bottom:.5rem; line-height:1.2; }
+.svc-content-title em { color:var(--green); font-style:italic; }
+.svc-instructor-row {
+  display:flex; align-items:center; gap:.75rem; margin-bottom:1.2rem;
+  padding-bottom:1.2rem; border-bottom:1px solid var(--border-g);
+}
+.svc-instr-av {
+  width:38px; height:38px; border-radius:50%;
+  background:var(--green); color:#fff; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.9rem; font-weight:500;
+}
+.svc-instr-name { font-size:.8rem; font-weight:500; color:var(--text); }
+.svc-instr-role { font-size:.7rem; color:var(--text-light); }
+.svc-desc {
+  font-size:.9rem; color:var(--text-soft); line-height:1.85; margin-bottom:1.8rem;
+}
+.svc-items { display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.8rem; }
+.svc-item {
+  display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;
+  padding:.95rem 1.1rem; border-radius:4px;
+  background:var(--cream-warm); border:1px solid var(--border-g);
+  border-left:3px solid var(--gold);
+  transition:transform .35s var(--ease), box-shadow .35s, background .35s;
+}
+.svc-item:hover { transform:translateX(4px); background:var(--white); box-shadow:0 8px 22px rgba(201,168,76,.14); }
+.svc-item-name { font-size:.85rem; font-weight:500; color:var(--text); margin-bottom:.15rem; }
+.svc-item-detail { font-size:.74rem; color:var(--text-light); }
+.svc-item-tags { display:flex; gap:.3rem; margin-top:.35rem; flex-wrap:wrap; }
+.svc-item-tag {
+  font-size:.55rem; letter-spacing:.08em; font-weight:600;
+  text-transform:uppercase; padding:.14rem .55rem; border-radius:20px;
+  background:var(--green-mist); color:var(--green); border:1px solid var(--border-g);
+}
+.svc-price {
+  font-family:'Playfair Display',serif; font-size:.95rem; font-weight:500;
+  color:var(--gold-deep); white-space:nowrap; flex-shrink:0;
+}
+
+/* ═══════════════════════════════════════
+   HORARIOS
+═══════════════════════════════════════ */
+.horarios-sec { background:var(--white); }
+
+/* Legend */
+.sched-legend {
+  display:flex; justify-content:center; flex-wrap:wrap; gap:1.5rem;
+  margin-bottom:3rem;
+}
+.sched-leg { display:flex; align-items:center; gap:.5rem; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-light); font-weight:500; }
+.sched-leg .dot { width:12px; height:12px; border-radius:50%; }
+.sched-leg.yoga .dot { background:var(--green); }
+.sched-leg.aerea .dot { background:var(--gold); }
+.sched-leg.terapia .dot { background:var(--rose); }
+
+/* Day-column grid */
+.sched-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; align-items:start;
+}
+.sched-day { display:flex; flex-direction:column; gap:.85rem; }
+.sched-day-head {
+  text-align:center; font-size:.64rem; font-weight:600; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--green); padding-bottom:.7rem;
+  border-bottom:1px solid var(--border); margin-bottom:.2rem;
+}
+.class-card {
+  background:var(--cream-warm); border:1px solid var(--border-g);
+  border-top:3px solid var(--gold); border-radius:5px;
+  padding:1rem .95rem; transition:transform .4s var(--ease), box-shadow .4s;
+}
+.class-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-warm); }
+.class-card.c-yoga    { border-top-color:var(--green); }
+.class-card.c-aerea   { border-top-color:var(--gold); }
+.class-card.c-terapia { border-top-color:var(--rose); }
+.sch-time { font-family:'Playfair Display',serif; font-size:.95rem; color:var(--gold-deep); margin-bottom:.2rem; }
+.sch-class { font-size:.84rem; font-weight:500; color:var(--text); line-height:1.35; margin-bottom:.15rem; }
+.sch-prof { font-size:.72rem; color:var(--text-light); margin-bottom:.5rem; }
+.sch-tags { display:flex; gap:.3rem; margin-bottom:.7rem; flex-wrap:wrap; }
+.sch-tag {
+  font-size:.52rem; letter-spacing:.06em; font-weight:600; text-transform:uppercase;
+  padding:.12rem .5rem; border-radius:20px;
+}
+.sch-tag-p { background:rgba(45,90,61,.1); color:var(--green); border:1px solid var(--border-g); }
+.sch-tag-v { background:rgba(201,168,76,.12); color:#8a6a20; border:1px solid var(--border); }
+.class-resv {
+  display:inline-flex; align-items:center; gap:.35rem;
+  font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600;
+  color:var(--green); transition:color .3s; min-height:auto;
+}
+.class-resv:hover { color:var(--gold-deep); }
+.class-resv svg { width:11px; height:11px; }
+.horario-nota {
+  text-align:center; font-family:'Playfair Display',serif; font-style:italic;
+  color:var(--text-soft); font-size:.95rem; margin-top:2.5rem;
+}
+.sch-empty { font-size:.75rem; color:var(--text-light); font-style:italic; }
+.sch-cta { text-align:center; margin-top:1.5rem; }
+
+/* ═══════════════════════════════════════
+   EVENTOS
+═══════════════════════════════════════ */
+.eventos-sec {
+  background:linear-gradient(160deg, var(--cream-deep) 0%, var(--cream) 100%);
+  position:relative; overflow:hidden; min-height:600px;
+}
+.eventos-slides { position:absolute; inset:0; }
+.ev-slide {
+  position:absolute; inset:0; display:grid; grid-template-columns:1.05fr 1fr;
+  opacity:0; transition:opacity 1.1s ease; pointer-events:none;
+}
+.ev-slide.active { opacity:1; pointer-events:all; }
+.ev-media { position:relative; overflow:hidden; }
+.ev-media img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  transition:transform 6s ease;
+}
+.ev-slide.active .ev-media img { transform:scale(1.06); }
+.ev-media-ph {
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse 70% 60% at 40% 35%, rgba(201,168,76,.22), transparent 60%), linear-gradient(150deg, var(--green) 0%, var(--green-deep) 100%);
+  display:flex; align-items:center; justify-content:center;
+}
+.ev-media-ph .ev-glyph {
+  font-family:'Playfair Display',serif; font-size:11rem; line-height:1;
+  color:rgba(255,247,214,.16); pointer-events:none; user-select:none;
+}
+.ev-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(120deg, rgba(45,90,61,.15), transparent 50%, rgba(201,168,76,.18));
+  opacity:0; transition:opacity .6s ease;
+}
+.ev-slide.active:hover .ev-overlay { opacity:1; }
+/* Golden date badge */
+.ev-date-badge {
+  position:absolute; top:1.6rem; left:1.6rem; z-index:2;
+  width:78px; height:78px; border-radius:50%;
+  background:rgba(253,248,237,.95); border:2px solid var(--gold);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  box-shadow:0 10px 28px rgba(150,120,40,.28);
+}
+.ev-date-badge .evb-d { font-family:'Playfair Display',serif; font-size:1.6rem; line-height:1; color:var(--gold-deep); }
+.ev-date-badge .evb-m { font-size:.52rem; letter-spacing:.16em; text-transform:uppercase; color:var(--green); font-weight:600; margin-top:.15rem; }
+
+.ev-content {
+  padding:4.5rem clamp(2rem,5vw,4rem);
+  display:flex; flex-direction:column; justify-content:center;
+  background:var(--white);
+  border-left:3px solid var(--gold);
+}
+.ev-tag {
+  display:inline-flex; align-items:center; gap:.6rem;
+  font-size:.58rem; letter-spacing:.28em; font-weight:600; text-transform:uppercase;
+  color:var(--gold-deep); margin-bottom:1.3rem;
+}
+.ev-tag::before { content:''; display:block; width:22px; height:1px; background:var(--gold); }
+.ev-fecha { font-size:.68rem; letter-spacing:.12em; color:var(--text-light); text-transform:uppercase; margin-bottom:.5rem; }
+.ev-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3vw,2.7rem); color:var(--text); margin-bottom:1rem; line-height:1.18; }
+.ev-desc {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:.98rem; color:var(--text-soft); line-height:1.85; margin-bottom:1.6rem;
+  border-bottom:1px solid var(--border); padding-bottom:1.6rem;
+}
+.ev-price { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--gold-deep); margin-bottom:1.5rem; }
+.ev-btns { display:flex; gap:.75rem; flex-wrap:wrap; }
+.ev-ui {
+  position:absolute; bottom:2.2rem; right:clamp(2rem,5vw,4rem); z-index:3;
+  display:flex; align-items:center; gap:1.4rem;
+}
+.ev-dots { display:flex; gap:.5rem; }
+.ev-dot {
+  width:26px; height:2px; background:var(--border-g);
+  border:none; padding:0; cursor:pointer; transition:all .4s;
+}
+.ev-dot.on { background:var(--gold); width:40px; }
+.ev-arrows { display:flex; gap:.5rem; }
+.ev-arrow {
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid var(--border); background:var(--white); color:var(--green);
+  font-size:1rem; display:flex; align-items:center; justify-content:center;
+  transition:all .3s; cursor:pointer;
+}
+.ev-arrow:hover { background:var(--green); border-color:var(--green); color:#fff; }
+.ev-count { font-size:.62rem; letter-spacing:.15em; color:var(--text-light); }
+.ev-prog { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(201,168,76,.14); }
+.ev-prog-bar { height:100%; background:var(--gold); width:0; transition:width linear; }
+.ev-promo-badge {
+  display:inline-block; font-size:.55rem; letter-spacing:.18em; text-transform:uppercase;
+  font-weight:600; color:var(--gold-deep); background:var(--gold-mist);
+  border:1px solid var(--border); border-radius:20px; padding:.25rem .8rem; margin-bottom:1rem;
+}
+
+/* ═══════════════════════════════════════
+   GALERÍA
+═══════════════════════════════════════ */
+.galeria-sec { background:var(--cream-warm); }
+.gallery-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:260px 260px;
+  gap:8px;
+}
+.gallery-item {
+  overflow:hidden; position:relative; cursor:pointer; border-radius:5px;
+  background:var(--green-mist);
+}
+.gallery-item:first-child { grid-column:span 2; grid-row:span 2; }
+.gallery-item img { width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease); }
+.gallery-item:hover img { transform:scale(1.06); }
+.gallery-ph {
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.75rem;
+  background:linear-gradient(160deg, var(--green-mist) 0%, var(--cream-deep) 100%);
+}
+.gallery-ph svg { opacity:.22; color:var(--green); }
+.gallery-ph p { font-size:.6rem; letter-spacing:.15em; color:var(--text-light); text-transform:uppercase; }
+.gallery-ov {
+  position:absolute; inset:0;
+  background:linear-gradient(160deg, rgba(45,90,61,.25), rgba(201,168,76,.40));
+  opacity:0; transition:opacity .4s;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff;
+}
+.gallery-item:hover .gallery-ov { opacity:1; }
+
+/* ═══════════════════════════════════════
+   PODCAST
+═══════════════════════════════════════ */
+.podcast-sec { background:linear-gradient(165deg, #1c3a28 0%, #122418 100%); padding:6rem 2rem; }
+.podcast-header { text-align:center; margin-bottom:3.5rem; }
+.podcast-header .sec-label { color:var(--gold-light); }
+.podcast-header .sec-label::before,
+.podcast-header .sec-label::after { background:var(--gold-light); }
+.podcast-header .sec-title { color:rgba(255,255,255,.92); }
+.podcast-header .sec-title em { color:var(--gold-light); }
+.podcast-header .sec-sub { color:rgba(255,255,255,.45); }
+
+.podcast-cards {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem;
+  max-width:1160px; margin:0 auto;
+}
+
+/* Card container */
+.pod-card {
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(201,168,76,.14);
+  overflow:hidden; transition:all .45s var(--ease); border-radius:6px;
+  display:flex; flex-direction:column;
+}
+.pod-card:hover { border-color:rgba(201,168,76,.45); transform:translateY(-5px); box-shadow:0 24px 50px rgba(0,0,0,.4); }
+
+/* Thumbnail area — the key new feature */
+.pod-thumb {
+  position:relative; width:100%; aspect-ratio:16/9;
+  background:#13241a; overflow:hidden; flex-shrink:0;
+  cursor:pointer;
+}
+.pod-thumb img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .6s var(--ease);
+}
+.pod-card:hover .pod-thumb img { transform:scale(1.06); }
+
+/* Placeholder when no thumbnail */
+.pod-thumb-ph {
+  width:100%; height:100%;
+  background:radial-gradient(ellipse at 40% 30%, rgba(201,168,76,.16), transparent 60%), linear-gradient(135deg, #1c3a28 0%, #102016 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.75rem;
+}
+.pod-thumb-ph-ep {
+  font-family:'Playfair Display',serif; font-size:3.5rem; line-height:1;
+  color:rgba(201,168,76,.18); font-weight:400;
+}
+.pod-thumb-ph-label {
+  font-size:.58rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(255,255,255,.2);
+}
+
+/* Play button overlay */
+.pod-play-ov {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.35);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .3s;
+}
+.pod-card:hover .pod-play-ov { opacity:1; }
+.pod-play-btn {
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(201,168,76,.9);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .25s, background .25s;
+}
+.pod-play-btn:hover { background:var(--gold); transform:scale(1.1); }
+.pod-play-btn svg { width:20px; height:20px; fill:#fff; margin-left:3px; }
+
+/* Ep badge on thumbnail */
+.pod-ep-badge {
+  position:absolute; top:.75rem; left:.75rem;
+  background:var(--gold); color:#fff;
+  font-size:.55rem; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; padding:.22rem .65rem;
+}
+
+/* Admin thumb edit overlay */
+.pod-thumb-edit {
+  position:absolute; bottom:0; left:0; right:0;
+  background:rgba(0,0,0,.7); padding:.5rem;
+  display:flex; align-items:center; justify-content:center; gap:.4rem;
+  opacity:0; transition:opacity .3s; cursor:pointer;
+  font-size:.58rem; color:rgba(255,255,255,.7); letter-spacing:.08em; text-transform:uppercase;
+}
+.pod-thumb:hover .pod-thumb-edit { opacity:1; }
+
+/* Card body */
+.pod-body { padding:1.4rem; flex:1; display:flex; flex-direction:column; }
+.pod-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:.6rem; }
+.pod-fecha { font-size:.62rem; color:rgba(255,255,255,.3); letter-spacing:.08em; }
+.pod-source {
+  font-size:.55rem; letter-spacing:.1em; font-weight:600; text-transform:uppercase;
+  color:rgba(201,168,76,.6); background:rgba(201,168,76,.08);
+  padding:.18rem .55rem; border:1px solid rgba(201,168,76,.2);
+}
+.pod-title {
+  font-family:'Playfair Display',serif;
+  font-size:1rem; color:rgba(255,255,255,.88);
+  line-height:1.35; margin-bottom:.6rem; flex:1;
+}
+.pod-desc {
+  font-size:.78rem; color:rgba(255,255,255,.42); line-height:1.7;
+  margin-bottom:1.1rem;
+}
+.pod-plats { display:flex; gap:.4rem; flex-wrap:wrap; }
+.pod-plat {
+  font-size:.55rem; letter-spacing:.1em; font-weight:600; text-transform:uppercase;
+  padding:.3rem .7rem; text-decoration:none;
+  border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.4);
+  transition:all .25s;
+}
+.pod-plat.yt:hover { border-color:#ff4444; color:#ff4444; }
+.pod-plat.sp:hover { border-color:#1db954; color:#1db954; }
+.pod-plat.ap:hover { border-color:#d162f5; color:#d162f5; }
+
+/* ═══════════════════════════════════════
+   TESTIMONIOS
+═══════════════════════════════════════ */
+.testi-sec { background:var(--white); }
+.testi-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.75rem;
+}
+.testi-card {
+  position:relative; padding:2.4rem 2rem 2rem; border:1px solid var(--border-g);
+  background:var(--cream-warm); border-radius:6px;
+  transition:transform .45s var(--ease), box-shadow .45s, border-color .45s;
+}
+.testi-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-warm); border-color:var(--border); }
+.testi-q {
+  font-family:'Playfair Display',serif;
+  font-size:4.5rem; line-height:.6; color:var(--gold); opacity:.32;
+  margin-bottom:.2rem; height:2rem;
+}
+.testi-text {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:.95rem; color:var(--text-soft); line-height:1.85; margin-bottom:1.5rem;
+}
+.testi-author { display:flex; align-items:center; gap:.75rem; }
+.testi-av {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--green); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:1rem; font-weight:500; flex-shrink:0;
+  box-shadow:0 0 0 4px rgba(201,168,76,.14);
+}
+.testi-name { font-family:'Playfair Display',serif; font-style:italic; font-size:.95rem; color:var(--text); }
+.testi-stars { color:var(--gold); font-size:.72rem; margin-top:.1rem; letter-spacing:.1em; }
+
+/* ═══════════════════════════════════════
+   CTA
+═══════════════════════════════════════ */
+.cta-sec {
+  background:var(--gold); padding:7rem 2rem; text-align:center;
+  position:relative; overflow:hidden;
+}
+.cta-sec::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(160deg, rgba(255,255,255,.12) 0%, transparent 60%);
+}
+.cta-sun-bg {
+  position:absolute; right:-80px; top:-80px; width:400px; height:400px;
+  background:radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 60%);
+  pointer-events:none;
+}
+.cta-title { font-size:clamp(2rem,4vw,3rem); color:#fff; margin-bottom:.6rem; position:relative; }
+.cta-sub {
+  font-family:'Playfair Display',serif; font-style:italic;
+  color:rgba(255,255,255,.85); font-size:1.05rem;
+  margin-bottom:2.5rem; max-width:520px; margin-left:auto; margin-right:auto;
+  position:relative;
+}
+.cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; position:relative; }
+
+/* ═══════════════════════════════════════
+   CONTACTO
+═══════════════════════════════════════ */
+.contacto-sec { background:var(--cream-warm); }
+.contacto-grid { display:grid; grid-template-columns:1fr 1.1fr; gap:5rem; align-items:start; }
+.contacto-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3vw,2.4rem); color:var(--text); margin-bottom:.4rem; }
+.contacto-sub {
+  font-family:'Playfair Display',serif; font-style:italic;
+  color:var(--text-soft); margin-bottom:2.5rem; font-size:1rem;
+}
+.c-item { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1.5rem; }
+.c-icon {
+  width:48px; height:48px; flex-shrink:0; border-radius:50%;
+  background:var(--white); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--green); font-size:1rem; transition:all .35s var(--ease);
+}
+.c-item:hover .c-icon { background:var(--green); color:#fff; border-color:var(--green); transform:translateY(-2px); }
+.c-lbl {
+  font-size:.58rem; letter-spacing:.18em; font-weight:600;
+  text-transform:uppercase; color:var(--gold-deep); margin-bottom:.2rem;
+}
+.c-val { font-size:.88rem; color:var(--text); }
+.c-val a { color:var(--text); transition:color .3s; }
+.c-val a:hover { color:var(--green); }
+.soc-row { display:flex; gap:.6rem; margin-top:2.25rem; }
+.soc-btn {
+  width:46px; height:46px; border-radius:50%; border:1px solid var(--border-g);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--text-light); transition:all .35s var(--ease); text-decoration:none;
+}
+.soc-btn:hover { background:var(--gold); border-color:var(--gold); color:#fff; transform:translateY(-3px); box-shadow:0 10px 24px rgba(201,168,76,.3); }
+
+/* Map frame with botanical corners */
+.map-frame { position:relative; margin-top:2rem; border:1px solid var(--border); border-radius:6px; overflow:hidden; box-shadow:var(--shadow-sm); }
+.map-frame iframe { display:block; filter:saturate(.9); }
+
+/* Form box */
+.form-box { background:var(--white); padding:2.5rem; border:1px solid var(--border); border-radius:6px; box-shadow:var(--shadow-warm); }
+.form-box-title { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--text); margin-bottom:.25rem; }
+.form-box-sub {
+  font-family:'Playfair Display',serif; font-style:italic;
+  color:var(--text-soft); font-size:.9rem; margin-bottom:1.75rem;
+}
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+/* Floating-label fields */
+.fl-group { position:relative; margin-bottom:1.1rem; }
+.fl-input {
+  width:100%; border:1px solid var(--border-g); background:var(--cream-warm);
+  padding:1.35rem 1rem .55rem; font-family:'Poppins',sans-serif;
+  font-size:.9rem; color:var(--text); outline:none; border-radius:4px;
+  transition:border-color .3s, box-shadow .3s, background .3s;
+}
+.fl-input:focus { border-color:var(--gold); background:var(--white); box-shadow:0 0 0 3px rgba(201,168,76,.13); }
+.fl-area { min-height:120px; resize:vertical; padding-top:1.5rem; }
+.fl-label {
+  position:absolute; left:1rem; top:1rem; pointer-events:none;
+  font-size:.88rem; color:var(--text-light); transition:all .25s var(--ease);
+}
+.fl-input:focus + .fl-label,
+.fl-input:not(:placeholder-shown) + .fl-label {
+  top:.42rem; font-size:.55rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--gold-deep); font-weight:600;
+}
+.fl-static .fl-label {
+  position:static; display:block; margin-bottom:.4rem;
+  font-size:.58rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--text-light); font-weight:600;
+}
+.fl-sel {
+  width:100%; border:1px solid var(--border-g); background:var(--cream-warm);
+  padding:.85rem 1rem; font-family:'Poppins',sans-serif; font-size:.9rem; color:var(--text);
+  outline:none; border-radius:4px; appearance:none; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23c9a84c' stroke-width='1.6'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 1rem center;
+  transition:border-color .3s, box-shadow .3s, background-color .3s;
+}
+.fl-sel:focus { border-color:var(--gold); background-color:var(--white); box-shadow:0 0 0 3px rgba(201,168,76,.13); }
+
+@keyframes waPulse {
+  0%   { box-shadow:0 0 0 0 rgba(37,211,102,.42); }
+  70%  { box-shadow:0 0 0 14px rgba(37,211,102,0); }
+  100% { box-shadow:0 0 0 0 rgba(37,211,102,0); }
+}
+.wa-btn-full {
+  display:flex; align-items:center; justify-content:center; gap:.75rem;
+  width:100%; background:#25d366; color:#fff;
+  padding:1.1rem; min-height:54px; font-size:.78rem; letter-spacing:.12em; font-weight:600;
+  text-transform:uppercase; border:none; cursor:pointer; border-radius:4px;
+  margin-top:.6rem; transition:transform .35s var(--ease), background .3s;
+  animation:waPulse 3s ease-in-out infinite;
+}
+.wa-btn-full:hover { background:#1ebe5d; transform:translateY(-2px); }
+.wa-btn-full:active { transform:scale(.99); }
+.wa-btn-full svg { flex-shrink:0; }
+.lite .wa-btn-full { animation:none; }
+.form-note { font-size:.7rem; color:var(--text-light); text-align:center; margin-top:.75rem; }
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+footer {
+  background:linear-gradient(165deg, var(--green) 0%, var(--green-deep) 100%);
+  padding:0 2rem 1.5rem;
+  border-top:3px solid var(--gold);
+  position:relative;
+}
+.footer-top {
+  text-align:center; padding:3.5rem 0 2.5rem;
+  border-bottom:1px solid rgba(201,168,76,.18);
+  margin-bottom:3rem; max-width:1160px; margin-left:auto; margin-right:auto;
+}
+.footer-sun { width:54px; height:54px; margin:0 auto .9rem; }
+.footer-sun svg { width:100%; height:100%; display:block; }
+.footer-brand-name { font-family:'Playfair Display',serif; font-style:italic; font-size:1.7rem; color:#fff; }
+.footer-brand-sub { display:block; font-size:.54rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold-light); font-weight:500; margin-top:.35rem; }
+.footer-grid {
+  max-width:1160px; margin:0 auto;
+  display:grid; grid-template-columns:1.8fr 1fr 1fr 1fr;
+  gap:3rem; margin-bottom:3rem;
+}
+.fl-brand { font-family:'Playfair Display',serif; font-size:1.25rem; color:rgba(255,255,255,.92); }
+.fl-sub { font-size:.52rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold-light); font-weight:500; margin:.1rem 0 1.25rem; display:block; }
+.fl-desc { font-size:.84rem; color:rgba(255,255,255,.45); line-height:1.85; }
+.fc-head { font-size:.58rem; letter-spacing:.25em; font-weight:600; text-transform:uppercase; color:var(--gold-light); margin-bottom:1.25rem; }
+.fc ul { list-style:none; }
+.fc ul li { margin-bottom:.65rem; }
+.fc ul a { font-size:.82rem; color:rgba(255,255,255,.5); transition:color .3s, padding-left .3s; position:relative; }
+.fc ul a:hover { color:var(--gold-light); padding-left:.4rem; }
+.footer-bottom {
+  max-width:1160px; margin:0 auto;
+  padding-top:1.5rem; border-top:1px solid rgba(255,255,255,.08);
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:1rem;
+}
+.footer-copy { font-size:.66rem; color:rgba(255,255,255,.4); letter-spacing:.05em; }
+.footer-admin-link {
+  font-size:.58rem; color:rgba(255,255,255,.25); letter-spacing:.08em;
+  cursor:pointer; transition:color .3s; background:none; border:none; padding:0;
+}
+.footer-admin-link:hover { color:var(--gold-light); }
+
+/* ═══════════════════════════════════════
+   STICKY MOBILE WHATSAPP BAR
+═══════════════════════════════════════ */
+.mob-wa-bar {
+  display:none;
+  position:fixed; left:0; right:0; bottom:0; z-index:450;
+  align-items:center; justify-content:center; gap:.6rem;
+  background:#25d366; color:#fff;
+  padding:1rem; min-height:56px;
+  font-size:.74rem; letter-spacing:.1em; font-weight:600; text-transform:uppercase;
+  box-shadow:0 -6px 24px rgba(0,0,0,.18);
+  transform:translateY(110%); transition:transform .45s var(--ease);
+}
+.mob-wa-bar.show { transform:translateY(0); }
+.mob-wa-bar svg { flex-shrink:0; }
+
+/* ═══════════════════════════════════════
+   LIGHTBOX
+═══════════════════════════════════════ */
+#lightbox {
+  position:fixed; inset:0; z-index:800;
+  background:rgba(0,0,0,.92); display:none;
+  align-items:center; justify-content:center;
+  padding:2rem;
+}
+#lightbox.on { display:flex; }
+#lb-img { max-width:90vw; max-height:90vh; object-fit:contain; }
+#lb-close {
+  position:absolute; top:1.5rem; right:1.5rem;
+  background:none; border:none; color:#fff; font-size:1.75rem; cursor:pointer; opacity:.7;
+}
+#lb-close:hover { opacity:1; }
+
+/* ═══════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════ */
+#admin-panel {
+  position:fixed; inset:0; z-index:900; display:none;
+  align-items:center; justify-content:center;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(8px);
+}
+#admin-panel.on { display:flex; }
+.adm-box {
+  background:var(--cream-warm); border:1px solid var(--border);
+  width:min(860px, 95vw); max-height:90vh; border-radius:8px;
+  display:flex; flex-direction:column; overflow:hidden;
+  box-shadow:0 40px 90px rgba(60,45,15,.4);
+}
+.adm-header {
+  padding:1.25rem 1.75rem; background:var(--white);
+  border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.adm-title { font-family:'Playfair Display',serif; font-size:1.15rem; color:var(--green); }
+.adm-close {
+  background:none; border:none; color:var(--text-light);
+  font-size:1.4rem; cursor:pointer; padding:.2rem; transition:color .3s;
+}
+.adm-close:hover { color:var(--text); }
+.adm-login { padding:2.5rem; }
+.adm-login-title { font-size:1rem; color:var(--text-soft); margin-bottom:1.25rem; font-weight:400; }
+.adm-pw {
+  background:var(--white); border:1px solid var(--border-g);
+  padding:.9rem 1.25rem; width:100%; color:var(--text); font-family:'Poppins',sans-serif;
+  font-size:.9rem; outline:none; margin-bottom:.75rem; border-radius:4px; transition:border-color .3s, box-shadow .3s;
+}
+.adm-pw:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,.13); }
+.adm-login-btn {
+  background:var(--gold); color:#fff; border:none; padding:1rem 2rem; border-radius:4px;
+  font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:500;
+  cursor:pointer; transition:all .3s; width:100%;
+}
+.adm-login-btn:hover { background:var(--gold-deep); }
+.adm-err { color:#c0392b; font-size:.75rem; margin-top:.5rem; display:none; }
+.adm-dash { display:none; flex:1; overflow:hidden; flex-direction:column; }
+.adm-dash.on { display:flex; }
+.adm-tabs {
+  display:flex; border-bottom:1px solid var(--border); background:var(--white);
+  overflow-x:auto; flex-shrink:0;
+}
+.adm-tab {
+  padding:.85rem 1.25rem; font-size:.62rem; letter-spacing:.12em;
+  text-transform:uppercase; font-weight:500;
+  background:none; border:none; color:var(--text-light);
+  cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent;
+  margin-bottom:-1px; transition:all .3s;
+}
+.adm-tab.on { color:var(--gold-deep); border-bottom-color:var(--gold); }
+.adm-tab:hover:not(.on) { color:var(--green); }
+.adm-body { flex:1; overflow-y:auto; padding:1.75rem; background:var(--cream-warm); }
+.adm-pane { display:none; }
+.adm-pane.on { display:block; }
+.adm-sec { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-deep); font-weight:600; margin-bottom:1.25rem; }
+.adm-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.adm-fg { display:flex; flex-direction:column; gap:.35rem; margin-bottom:.85rem; }
+.adm-lbl { font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); font-weight:600; }
+.adm-field {
+  background:var(--white); border:1px solid var(--border-g);
+  padding:.8rem 1rem; width:100%; color:var(--text);
+  font-family:'Poppins',sans-serif; font-size:.85rem; outline:none; border-radius:4px;
+  transition:border-color .3s, box-shadow .3s;
+}
+.adm-field:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,.13); }
+.adm-ta { min-height:90px; resize:vertical; }
+.adm-save {
+  background:var(--green); color:#fff; border:none; border-radius:4px;
+  padding:.9rem 1.75rem; font-size:.68rem; letter-spacing:.12em;
+  text-transform:uppercase; font-weight:600; cursor:pointer; transition:background .3s; margin-top:.5rem;
+}
+.adm-save:hover { background:var(--green-mid); }
+.adm-add {
+  background:transparent; border:1px dashed var(--gold); color:var(--gold-deep);
+  padding:.85rem 1.5rem; width:100%; margin-top:1rem; border-radius:4px;
+  font-family:'Poppins',sans-serif; font-size:.62rem; letter-spacing:.12em;
+  font-weight:600; text-transform:uppercase; cursor:pointer; transition:all .3s;
+}
+.adm-add:hover { border-color:var(--gold-deep); color:var(--gold); background:var(--gold-mist); }
+.adm-del {
+  background:transparent; border:1px solid rgba(192,57,43,.35);
+  color:#c0392b; padding:.4rem .8rem; font-size:.6rem; border-radius:4px;
+  letter-spacing:.08em; cursor:pointer; font-family:'Poppins',sans-serif; transition:all .3s;
+}
+.adm-del:hover { border-color:#c0392b; background:rgba(192,57,43,.08); }
+.adm-card {
+  background:var(--white); border:1px solid var(--border-g);
+  padding:1rem; margin-bottom:.7rem; border-radius:5px; border-left:3px solid var(--gold);
+  display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;
+}
+.adm-card-n { font-family:'Playfair Display',serif; font-size:.95rem; color:var(--text); margin-bottom:.15rem; }
+.adm-card-s { font-size:.72rem; color:var(--text-light); }
+.svc-adm-tabs {
+  display:flex; gap:0; flex-wrap:wrap; margin-bottom:1.25rem; border:1px solid var(--border-g); border-radius:4px; overflow:hidden;
+}
+.svc-adm-tab {
+  padding:.6rem 1rem; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+  background:var(--white); border:none; color:var(--text-light); cursor:pointer;
+  border-right:1px solid var(--border-g); font-weight:600; transition:all .3s; font-family:'Poppins',sans-serif;
+}
+.svc-adm-tab:last-child { border-right:none; }
+.svc-adm-tab.on { background:var(--green-mist); color:var(--green); }
+.file-box {
+  border:1.5px dashed var(--gold); background:var(--gold-mist);
+  padding:1.5rem; text-align:center; cursor:pointer; transition:all .3s; position:relative; border-radius:5px;
+}
+.file-box:hover { border-color:var(--gold-deep); background:#f8efd6; }
+.file-box input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.file-box-icon { font-size:1.75rem; margin-bottom:.4rem; opacity:.6; }
+.file-box-text { font-size:.72rem; color:var(--text-soft); letter-spacing:.08em; }
+.adm-storage { font-size:.62rem; color:var(--text-light); text-align:right; margin-top:1rem; }
+
+/* Toast */
+#toast {
+  position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+  background:var(--green); color:#fff;
+  padding:.75rem 2rem; font-size:.72rem; letter-spacing:.1em;
+  z-index:999; opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap;
+}
+#toast.show { opacity:1; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media(max-width:1024px) {
+  .instructors-grid { grid-template-columns:1fr; max-width:480px; margin:0 auto; }
+  .svc-panel.active { grid-template-columns:1fr; }
+  .svc-visual { min-height:280px; }
+  .testi-grid { grid-template-columns:1fr 1fr; }
+  .contacto-grid { grid-template-columns:1fr; gap:3rem; }
+  .footer-grid { grid-template-columns:1fr 1fr; gap:2rem; }
+  .stats-inner { grid-template-columns:repeat(2,1fr); gap:2.5rem 1rem; }
+  .stat:nth-child(2)::after { display:none; }
+  .ev-slide { grid-template-columns:1fr; grid-template-rows:240px 1fr; }
+  .ev-content { padding:2.5rem; }
+  .podcast-cards { grid-template-columns:1fr 1fr; max-width:760px; }
+  .sched-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:768px) {
+  section { padding:5rem 1.4rem; }
+  .nav-links, .nav-cta { display:none; }
+  .nav-ham { display:flex; }
+  .testi-grid { grid-template-columns:1fr; }
+  .footer-grid { grid-template-columns:1fr; gap:2.5rem; text-align:center; }
+  .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
+  .gallery-item:first-child { grid-column:span 2; grid-row:span 1; }
+  .gallery-item { aspect-ratio:1; }
+  .svc-categories { width:100%; flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; padding-bottom:.5rem; -webkit-overflow-scrolling:touch; }
+  .svc-cat-btn { flex:0 0 auto; }
+  .svc-content { padding:2.5rem 1.6rem; }
+  .adm-row { grid-template-columns:1fr; }
+  .podcast-cards { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .sec-header { margin-bottom:3rem; }
+  /* Schedule → horizontal scroll of day columns */
+  .sched-grid {
+    grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:78%;
+    overflow-x:auto; gap:1rem; padding-bottom:1rem; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sched-day { scroll-snap-align:start; }
+  /* Sticky mobile WhatsApp bar */
+  .mob-wa-bar { display:flex; }
+  /* Buttons full width, stacked */
+  .hero-btns { flex-direction:column; width:100%; max-width:340px; }
+  .hero-btns .btn { width:100%; }
+  .ev-ui { right:1.4rem; bottom:1.4rem; }
+}
+@media(max-width:480px) {
+  section { padding:4.5rem 1.2rem; }
+  .gallery-grid { grid-template-columns:1fr 1fr; }
+  .hero-h1 { font-size:clamp(3rem,13vw,3.6rem); }
+  .hero-sub-name { font-size:clamp(1.9rem,9vw,2.4rem); }
+  .stats-inner { grid-template-columns:repeat(2,1fr); }
+  .cta-btns .btn, .ev-btns .btn { width:100%; }
+  .ev-content { padding:2rem 1.4rem; }
+  .ev-date-badge { width:64px; height:64px; top:1rem; left:1rem; }
+  .ev-date-badge .evb-d { font-size:1.3rem; }
+  .form-box { padding:1.75rem 1.4rem; }
+  .sobre-story p:first-of-type::first-letter { font-size:3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-prog" aria-hidden="true"></div>
+
+<!-- OVERLAY + DRAWER -->
+<div class="mob-overlay" id="mob-ov" onclick="closeDrawer()"></div>
+<nav class="mob-drawer" id="mob-drawer">
+  <button class="mob-close" onclick="closeDrawer()">×</button>
+  <a href="#sobre" onclick="closeDrawer()">Nosotros</a>
+  <a href="#servicios" onclick="closeDrawer()">Servicios</a>
+  <a href="#horarios" onclick="closeDrawer()">Horarios</a>
+  <a href="#eventos" onclick="closeDrawer()">Eventos</a>
+  <a href="#galeria" onclick="closeDrawer()">Galería</a>
+  <a href="#podcast" onclick="closeDrawer()">Podcast</a>
+  <a href="#contacto" onclick="closeDrawer()">Contacto</a>
+  <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20información%20sobre%20Casa%20Yoga%2BSurya" target="_blank" class="mob-wa">Reservar clase ↗</a>
+</nav>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#inicio" class="nav-logo" style="text-decoration:none">
+      <svg class="nav-sun" viewBox="-16 -16 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Rayos curvados tipo llama — igual al logo -->
+        <g class="ns-rays" fill="#f0c020">
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(30)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(60)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(90)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(120)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(150)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(180)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(210)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(240)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(270)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(300)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(330)"/>
+        </g>
+        <g class="ns-core">
+          <circle r="8.5" fill="#f0c020"/>
+          <circle r="8.5" fill="none" stroke="#1a0a00" stroke-width=".8"/>
+          <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#a30000" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#a30000" stroke-width="1.4" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <div>
+        <span class="nav-brand-main">Casa Yoga+Surya</span>
+        <span class="nav-brand-sub">Centro de Bienestar · Costa Rica</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#sobre">Nosotros</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#horarios">Horarios</a></li>
+      <li><a href="#eventos">Eventos</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20en%20Casa%20Yoga%2BSurya" target="_blank" class="btn btn-green nav-cta">Reservar</a>
+    <button class="nav-ham" id="nav-ham" aria-label="Menú"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+
+  <!-- Floating botanicals -->
+  <div class="hero-botanicals" aria-hidden="true">
+    <svg class="leaf l1" viewBox="0 0 100 100" fill="currentColor"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/><path d="M50 14V90" stroke="rgba(0,0,0,.12)" stroke-width="2" fill="none"/></svg>
+    <svg class="leaf l2" viewBox="0 0 100 100" fill="currentColor"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/><path d="M50 14V90" stroke="rgba(0,0,0,.12)" stroke-width="2" fill="none"/></svg>
+    <svg class="leaf l3" viewBox="0 0 100 100" fill="currentColor"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/><path d="M50 14V90" stroke="rgba(0,0,0,.12)" stroke-width="2" fill="none"/></svg>
+    <svg class="leaf l4" viewBox="0 0 100 100" fill="currentColor"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/><path d="M50 14V90" stroke="rgba(0,0,0,.12)" stroke-width="2" fill="none"/></svg>
+  </div>
+
+  <div class="hero-content">
+
+    <!-- Sol del logo coronando el hero -->
+    <div class="hero-sun-wrap" aria-hidden="true">
+      <div class="sun-orbits">
+        <div class="orbit orbit-a">
+          <span class="pw" style="--a:0deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:60deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:120deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:180deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:240deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:300deg"><span class="pdot"></span></span>
+        </div>
+        <div class="orbit orbit-b">
+          <span class="pw" style="--a:45deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:135deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:225deg"><span class="pdot"></span></span>
+          <span class="pw" style="--a:315deg"><span class="pdot"></span></span>
+        </div>
+      </div>
+      <div class="hero-sun">
+      <svg viewBox="-260 -260 520 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs>
+        <radialGradient id="sgBody" cx="42%" cy="38%" r="60%">
+          <stop offset="0%"   stop-color="#ffe566"/>
+          <stop offset="50%"  stop-color="#f5c800"/>
+          <stop offset="100%" stop-color="#d4a000"/>
+        </radialGradient>
+      </defs>
+
+      <!-- RAYOS — todo el grupo gira lentamente (60s) -->
+      <g style="animation:raysRotate 60s linear infinite; transform-origin:0px 0px;">
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(30)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(60)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(90)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(120)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(150)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(180)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(210)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(240)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(270)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(300)"/>
+        <path d="M -14,88  C -40,110  -30,160  -10,230
+                 C   0,215    5,200    4,185
+                 C  12,160   22,130   16,90
+                 Z"
+              fill="#f5c800" transform="rotate(330)"/>
+      </g>
+
+      <!-- CUERPO FIJO — no gira -->
+      <circle r="86" fill="url(#sgBody)"/>
+      <circle r="86" fill="none" stroke="#111" stroke-width="6"/>
+      <!-- Cruz roja del logo -->
+      <line x1="0" y1="-46" x2="0" y2="46" stroke="#b50000" stroke-width="12" stroke-linecap="round"/>
+      <line x1="-46" y1="0" x2="46" y2="0" stroke="#b50000" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+      </div><!-- /hero-sun -->
+    </div><!-- /hero-sun-wrap -->
+
+    <p class="hero-eyebrow">Centro de Bienestar · Aserrí, Costa Rica</p>
+    <h1 class="hero-h1">
+      Casa <span class="accent">Yoga</span>
+      <span class="hero-sub-name" id="hero-script">+Surya</span>
+    </h1>
+    <div class="hero-divider"></div>
+    <p class="hero-tagline" id="hero-tagline">Yoga, terapias espirituales y artes aéreas<br>en un espacio familiar creado con amor.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20una%20clase%20en%20Casa%20Yoga%2BSurya" target="_blank" class="btn btn-green" id="hero-btn1">Reservar clase</a>
+      <a href="#servicios" class="btn btn-outline-gold" id="hero-btn2">Ver servicios</a>
+    </div>
+    <div class="hero-badges">
+      <span class="hero-badge"><span class="hero-badge-dot"></span>Yoga certificado</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>Terapias espirituales</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>Artes aéreas</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>Todas las edades</span>
+    </div>
+  </div><!-- /hero-content -->
+
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY BAND -->
+<div class="philo-band">
+  <blockquote class="philo-quote rv" id="philo-text">
+    <span class="philo-mark">"</span>
+    En Casa Yoga+Surya creemos que el bienestar es un camino integral —
+    <strong>cuerpo, mente y espíritu</strong> en perfecta armonía.
+    Un espacio donde la naturaleza, el sonido y la energía se unen para transformarte.
+  </blockquote>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat rv">
+      <div class="stat-num" data-count="8" data-suffix="+">0</div>
+      <div class="stat-lbl">Años de experiencia</div>
+    </div>
+    <div class="stat rv d1">
+      <div class="stat-num" data-count="5" data-suffix="+">0</div>
+      <div class="stat-lbl">Modalidades de yoga</div>
+    </div>
+    <div class="stat rv d2">
+      <div class="stat-num" data-count="6" data-suffix="+">0</div>
+      <div class="stat-lbl">Disciplinas aéreas</div>
+    </div>
+    <div class="stat rv d3">
+      <div class="stat-num">∞</div>
+      <div class="stat-lbl">Transformaciones</div>
+    </div>
+  </div>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider rv-draw" aria-hidden="true">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+    <path class="dpath" d="M0,20 C150,40 300,2 450,20 C600,38 750,2 900,20 C1020,34 1110,8 1200,20"/>
+    <circle class="dgem" cx="600" cy="20" r="5"/>
+  </svg>
+</div>
+
+<!-- SOBRE NOSOTROS -->
+<section class="sobre grain" id="sobre">
+  <div class="container">
+    <div class="sec-header rv">
+      <p class="sec-label">Quiénes Somos</p>
+      <h2 class="sec-title">Una familia, <em>una misión</em></h2>
+      <p class="sec-sub">Bienestar compartido desde el corazón de Aserrí</p>
+    </div>
+
+    <div class="sobre-story rv">
+      <p>Casa Yoga+Surya nació de algo simple y profundo: el deseo de compartir lo que amamos. Andrea y David somos una familia que encontró en el bienestar no solo una profesión, sino un estilo de vida. Desde las montañas de Vuelta de Jorco, creamos un espacio donde cada persona encuentra su camino de sanación, movimiento y despertar.</p>
+    </div>
+
+    <div class="instructors-grid">
+      <!-- Andrea -->
+      <div class="inst-card rv rv-left">
+        <div class="inst-photo" id="photo-andrea">
+          <div class="inst-photo-ph" id="ph-andrea">
+            <div class="inst-photo-ph-icon">A</div>
+            <p>Foto de Andrea Marín</p>
+          </div>
+          <img id="img-andrea" src="" alt="Andrea Marín" style="display:none">
+          <input type="file" id="file-andrea" accept="image/*" style="display:none" onchange="handlePhoto('andrea',this)">
+          <div class="photo-edit-ov">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+            <span>Cambiar foto</span>
+          </div>
+        </div>
+        <div class="inst-body">
+          <p class="inst-spec">Yoga · Terapias · Espiritual</p>
+          <h3 class="inst-name">Andrea Marín</h3>
+          <p class="inst-role" id="role-andrea">Maestra de Parapsicología · Terapeuta Espiritual</p>
+          <p class="inst-bio" id="bio-andrea">Con más de 8 años de dedicación al bienestar holístico, Andrea es Graduada en Metafísica y Ciencias Espirituales con Diploma en Maestro de Parapsicología y Terapeuta Espiritual (2024). Invitada en Susurros Podcast (episodios #16, #38 y #67) hablando sobre Registros Akáshicos, terapias energéticas y reencarnación. Su vocación nació de una búsqueda personal que la llevó a descubrir el poder sanador del yoga, el sonido y la energía.</p>
+          <div class="certs-row">
+            <span class="cert">Yoga Certificada</span>
+            <span class="cert">Moon Mother</span>
+            <span class="cert">Sonoterapia</span>
+            <span class="cert">Gaia Reiki</span>
+            <span class="cert">Registros Akáshicos</span>
+          </div>
+          <a href="https://wa.me/50688302691?text=Hola%20Andrea!%20Me%20gustaría%20conocer%20más%20sobre%20tus%20servicios" target="_blank" class="btn btn-green inst-cta">Escribir a Andrea</a>
+        </div>
+      </div>
+
+      <!-- David -->
+      <div class="inst-card rv rv-right">
+        <div class="inst-photo" id="photo-david">
+          <div class="inst-photo-ph" id="ph-david">
+            <div class="inst-photo-ph-icon">D</div>
+            <p>Foto de David Jiménez</p>
+          </div>
+          <img id="img-david" src="" alt="David Jiménez" style="display:none">
+          <input type="file" id="file-david" accept="image/*" style="display:none" onchange="handlePhoto('david',this)">
+          <div class="photo-edit-ov">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+            <span>Cambiar foto</span>
+          </div>
+        </div>
+        <div class="inst-body">
+          <p class="inst-spec">Disciplinas Aéreas</p>
+          <h3 class="inst-name">David Jiménez</h3>
+          <p class="inst-role" id="role-david">Especialista en Disciplinas Aéreas · Instructor Certificado</p>
+          <p class="inst-bio" id="bio-david">David es el especialista en disciplinas aéreas de Casa Yoga+Surya. Con formación y experiencia en danza aérea, telas, lira, pole, trapecio y cuerda aérea, trabaja con niños y adultos de todos los niveles. Su enfoque combina fuerza, coordinación y expresión artística, creando un espacio seguro y motivador para que cada alumno explore sus límites.</p>
+          <div class="certs-row">
+            <span class="cert">Danza Aérea</span>
+            <span class="cert">Telas Aéreas</span>
+            <span class="cert">Lira · Aro</span>
+            <span class="cert">Pole Sport</span>
+            <span class="cert">Trapecio</span>
+          </div>
+          <a href="https://wa.me/50688302691?text=Hola%20David!%20Me%20gustaría%20información%20sobre%20las%20disciplinas%20aéreas" target="_blank" class="btn btn-green inst-cta">Escribir a David</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="servicios-sec grain" id="servicios">
+  <div class="container">
+    <div class="sec-header rv">
+      <p class="sec-label">Nuestros Servicios</p>
+      <h2 class="sec-title">Todo lo que <em>necesitas</em></h2>
+      <p class="sec-sub">Clases, terapias y disciplinas para tu bienestar integral</p>
+    </div>
+
+    <div class="svc-categories rv">
+      <button class="svc-cat-btn active" onclick="showSvc(0,this)">Yoga</button>
+      <button class="svc-cat-btn" onclick="showSvc(1,this)">Sonoterapia</button>
+      <button class="svc-cat-btn" onclick="showSvc(2,this)">Artes Aéreas</button>
+      <button class="svc-cat-btn" onclick="showSvc(3,this)">Terapias</button>
+      <button class="svc-cat-btn" onclick="showSvc(4,this)">Femenino</button>
+      <button class="svc-cat-btn" onclick="showSvc(5,this)">Tienda</button>
+    </div>
+
+    <!-- Yoga -->
+    <div class="svc-panel active" id="svc-0">
+      <div class="svc-visual">
+        <div class="svc-visual-bg"></div>
+        <div class="svc-visual-icon">
+          <svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 13c4.5 6 4.5 15 0 22-4.5-7-4.5-16 0-22Z"/><path d="M32 35c-7-2.5-14 0-18.5 5.5 7.5 4.5 15 3 18.5-1.5"/><path d="M32 35c7-2.5 14 0 18.5 5.5-7.5 4.5-15 3-18.5-1.5"/><path d="M19 25c-2.5 6.5 0 13 4.5 17.5"/><path d="M45 25c2.5 6.5 0 13-4.5 17.5"/><path d="M11 41c4.5 8.5 12.5 13 21 13s16.5-4.5 21-13"/></svg>
+        </div>
+        <div class="svc-visual-label">Yoga · Movimiento · Respiración</div>
+      </div>
+      <div class="svc-content">
+        <p class="svc-content-cat">Cuerpo & Movimiento</p>
+        <h3 class="svc-content-title">Clases de <em>Yoga</em></h3>
+        <div class="svc-instructor-row">
+          <div class="svc-instr-av">A</div>
+          <div><div class="svc-instr-name">Andrea Marín</div><div class="svc-instr-role">Instructora Certificada</div></div>
+        </div>
+        <p class="svc-desc">Diversas modalidades de yoga para todos los niveles. Clases presenciales y virtuales, enfocadas en el cuerpo, la respiración y la conciencia interior.</p>
+        <div class="svc-items" id="svc-items-0">
+          <div class="svc-item">
+            <div><div class="svc-item-name">Yoga Anusara</div><div class="svc-item-detail">Lun 6:30pm · Mar 6:00pm · Prof. Andrea Marín</div><div class="svc-item-tags"><span class="svc-item-tag">Presencial</span><span class="svc-item-tag">Virtual</span></div></div>
+            <div class="svc-price">₡20,000 / ₡30,000</div>
+          </div>
+          <div class="svc-item">
+            <div><div class="svc-item-name">Yoga-Pesas</div><div class="svc-item-detail">Miér 7:00pm · Prof. Andrea y David</div></div>
+            <div class="svc-price">₡20,000</div>
+          </div>
+          <div class="svc-item">
+            <div><div class="svc-item-name">Yoga Dinámico</div><div class="svc-item-detail">Jue 7:00pm · Prof. Noelia F.</div></div>
+            <div class="svc-price">₡20,000</div>
+          </div>
+        </div>
+        <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20información%20sobre%20las%20clases%20de%20yoga" target="_blank" class="btn btn-green">Reservar clase</a>
+      </div>
+    </div>
+
+    <!-- Sonoterapia -->
+    <div class="svc-panel" id="svc-1">
+      <div class="svc-visual">
+        <div class="svc-visual-bg"></div>
+        <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 28v8M16 20v24M24 25v14M32 10v44M40 22v20M48 16v32M56 28v8"/></svg></div>
+        <div class="svc-visual-label">Sanación · Sonido · Vibración</div>
+      </div>
+      <div class="svc-content">
+        <p class="svc-content-cat">Sanación Sonora</p>
+        <h3 class="svc-content-title">Sono<em>terapia</em></h3>
+        <div class="svc-instructor-row">
+          <div class="svc-instr-av">A</div>
+          <div><div class="svc-instr-name">Andrea Marín</div><div class="svc-instr-role">Terapeuta de Sonido</div></div>
+        </div>
+        <p class="svc-desc">Sanación profunda a través del sonido y las vibraciones. Una experiencia única y transformadora con cuencos tibetanos y gong Meinl.</p>
+        <div class="svc-items">
+          <div class="svc-item"><div><div class="svc-item-name">Baño de Sonido Grupal</div><div class="svc-item-detail">Cuencos tibetanos y gong Meinl. Relajación profunda colectiva.</div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Sesión Individual</div><div class="svc-item-detail">Sesión personalizada con cuencos tibetanos sobre el cuerpo.</div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Gong Bath</div><div class="svc-item-detail">Experiencia de inmersión sonora con gong ceremonial Meinl.</div></div><div class="svc-price">Consultar</div></div>
+        </div>
+        <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20información%20sobre%20sonoterapia" target="_blank" class="btn btn-green">Reservar sesión</a>
+      </div>
+    </div>
+
+    <!-- Artes Aéreas -->
+    <div class="svc-panel" id="svc-2">
+      <div class="svc-visual">
+        <div class="svc-visual-bg"></div>
+        <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7c-4 18-4 35 2 50"/><path d="M41 7c4 18 4 35-2 50"/><circle cx="32" cy="29" r="5"/><path d="M32 34c-4 4-6.5 9-6.5 14M32 34c4 4 6.5 9 6.5 14"/></svg></div>
+        <div class="svc-visual-label">Arte · Fuerza · Libertad</div>
+      </div>
+      <div class="svc-content">
+        <p class="svc-content-cat">Arte & Expresión en el Aire</p>
+        <h3 class="svc-content-title">Disciplinas <em>Aéreas</em></h3>
+        <div class="svc-instructor-row">
+          <div class="svc-instr-av">D</div>
+          <div><div class="svc-instr-name">David Jiménez</div><div class="svc-instr-role">Especialista en Artes Aéreas</div></div>
+        </div>
+        <p class="svc-desc">Arte, fuerza y libertad en el aire. David trabaja con niños y adultos en todas las disciplinas aéreas, creando un espacio seguro y estimulante.</p>
+        <div class="svc-items">
+          <div class="svc-item"><div><div class="svc-item-name">Telas Aéreas</div><div class="svc-item-detail">Miér y Jue 4pm (Kids) · Sáb adultos</div><div class="svc-item-tags"><span class="svc-item-tag">Niños</span><span class="svc-item-tag">Adultos</span></div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Danza Aérea</div><div class="svc-item-detail">Sáb 9:30am · Expresión artística en el aire</div><div class="svc-item-tags"><span class="svc-item-tag">Adultos</span></div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Lira / Aro Aéreo</div><div class="svc-item-detail">Fuerza, flexibilidad y gracia en aro metálico</div><div class="svc-item-tags"><span class="svc-item-tag">Niños</span><span class="svc-item-tag">Adultos</span></div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Pole Dance & Sport</div><div class="svc-item-detail">Arte, fuerza y expresión corporal en barra vertical</div><div class="svc-item-tags"><span class="svc-item-tag">Adultos</span></div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Trapecio & Cuerda Aérea</div><div class="svc-item-detail">Disciplinas clásicas de circo. Fuerza y coordinación.</div><div class="svc-item-tags"><span class="svc-item-tag">Niños</span><span class="svc-item-tag">Adultos</span></div></div><div class="svc-price">Consultar</div></div>
+        </div>
+        <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20información%20sobre%20las%20clases%20aéreas" target="_blank" class="btn btn-green">Consultar con David</a>
+      </div>
+    </div>
+
+    <!-- Terapias -->
+    <div class="svc-panel" id="svc-3">
+      <div class="svc-visual">
+        <div class="svc-visual-bg"></div>
+        <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M32 6 18 24l14 34 14-34L32 6Z"/><path d="M18 24h28M32 6v52M25 24l7 34M39 24l-7 34"/></svg></div>
+        <div class="svc-visual-label">Energía · Purificación · Sanación</div>
+      </div>
+      <div class="svc-content">
+        <p class="svc-content-cat">Energía & Purificación</p>
+        <h3 class="svc-content-title">Limpieza <em>Energética</em></h3>
+        <div class="svc-instructor-row">
+          <div class="svc-instr-av">A</div>
+          <div><div class="svc-instr-name">Andrea Marín</div><div class="svc-instr-role">Gaia Reiki · Registros Akáshicos</div></div>
+        </div>
+        <p class="svc-desc">Libera bloqueos y restaura el flujo vital de tu campo energético. Sesiones diseñadas para purificar y armonizar tu energía personal y tu espacio.</p>
+        <div class="svc-items">
+          <div class="svc-item"><div><div class="svc-item-name">Limpieza Energética Profunda</div><div class="svc-item-detail">Purificación del campo áurico y liberación de energías densas.</div></div><div class="svc-price">₡25,000</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Armonización de Espacios</div><div class="svc-item-detail">Purificación energética de hogares, oficinas o espacios.</div></div><div class="svc-price">Según tamaño</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Tarot & Registros Akáshicos</div><div class="svc-item-detail">Lectura de Tarot y acceso a los Registros Akáshicos para guía y claridad.</div></div><div class="svc-price">Consultar</div></div>
+        </div>
+        <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20información%20sobre%20terapias%20energéticas" target="_blank" class="btn btn-green">Agendar sesión</a>
+      </div>
+    </div>
+
+    <!-- Femenino -->
+    <div class="svc-panel" id="svc-4">
+      <div class="svc-visual">
+        <div class="svc-visual-bg"></div>
+        <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M42 8a24 24 0 1 0 15 41A20 20 0 0 1 42 8Z"/><circle cx="50" cy="22" r="1.6" fill="currentColor" stroke="none"/><circle cx="55" cy="33" r="1.1" fill="currentColor" stroke="none"/></svg></div>
+        <div class="svc-visual-label">Mujer · Ciclos · Empoderamiento</div>
+      </div>
+      <div class="svc-content">
+        <p class="svc-content-cat">Salud & Empoderamiento Femenino</p>
+        <h3 class="svc-content-title">Terapias <em>Femeninas</em></h3>
+        <div class="svc-instructor-row">
+          <div class="svc-instr-av">A</div>
+          <div><div class="svc-instr-name">Andrea Marín</div><div class="svc-instr-role">Moon Mother Certificada</div></div>
+        </div>
+        <p class="svc-desc">Un espacio sagrado de reconexión, sanación y empoderamiento desde la esencia femenina. Servicios especializados para la salud y el bienestar integral de la mujer.</p>
+        <div class="svc-items">
+          <div class="svc-item"><div><div class="svc-item-name">Bendición de Útero</div><div class="svc-item-detail">Ritual de reconexión y sanación del centro creativo femenino.</div></div><div class="svc-price">₡25,000</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Terapia Menstrual Madre Tierra</div><div class="svc-item-detail">Acompañamiento en el ciclo femenino con conexión a la tierra.</div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Moon Mother</div><div class="svc-item-detail">Acompañamiento sagrado basado en la energía lunar y los ciclos.</div></div><div class="svc-price">Consultar</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Acompañamiento Femenino</div><div class="svc-item-detail">Guía en el camino de despertar y empoderamiento femenino.</div></div><div class="svc-price">Consultar</div></div>
+        </div>
+        <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20información%20sobre%20las%20terapias%20femeninas" target="_blank" class="btn btn-green">Reservar terapia</a>
+      </div>
+    </div>
+
+    <!-- Tienda -->
+    <div class="svc-panel" id="svc-5">
+      <div class="svc-visual">
+        <div class="svc-visual-bg"></div>
+        <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M16 14h32l8 12-24 26L8 26l8-12Z"/><path d="M8 26h48M24 14l-8 12 16 26M40 14l8 12-16 26"/></svg></div>
+        <div class="svc-visual-label">Cristales · Libros · Accesorios</div>
+      </div>
+      <div class="svc-content">
+        <p class="svc-content-cat">Más que Clases</p>
+        <h3 class="svc-content-title">Tienda & <em>Espacios</em></h3>
+        <p class="svc-desc">Productos de bienestar, cristales, libros y accesorios para tu práctica espiritual. Nuestro espacio también está disponible para talleres y eventos especiales.</p>
+        <div class="svc-items">
+          <div class="svc-item"><div><div class="svc-item-name">Tienda Espiritual</div><div class="svc-item-detail">Cristales, sahumerios, libros espirituales, accesorios de yoga y más.</div></div><div class="svc-price">Varios precios</div></div>
+          <div class="svc-item"><div><div class="svc-item-name">Alquiler del Espacio</div><div class="svc-item-detail">Salón disponible para talleres, retiros y eventos especiales.</div></div><div class="svc-price">Consultar</div></div>
+        </div>
+        <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20información%20sobre%20la%20tienda%20o%20el%20espacio" target="_blank" class="btn btn-green">Consultar</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HORARIOS -->
+<section class="horarios-sec" id="horarios">
+  <div class="container">
+    <div class="sec-header rv">
+      <p class="sec-label">Horario de Clases</p>
+      <h2 class="sec-title">Encuentra tu <em>momento</em></h2>
+      <p class="sec-sub">Clases para todos los ritmos de vida</p>
+    </div>
+    <div class="sched-legend rv">
+      <span class="sched-leg yoga"><span class="dot"></span>Yoga</span>
+      <span class="sched-leg aerea"><span class="dot"></span>Artes Aéreas</span>
+      <span class="sched-leg terapia"><span class="dot"></span>Terapias</span>
+    </div>
+
+    <div class="sched-grid">
+      <!-- Lunes -->
+      <div class="sched-day rv">
+        <div class="sched-day-head">Lunes</div>
+        <div class="class-card c-yoga">
+          <div class="sch-time">6:30 PM</div>
+          <div class="sch-class">Yoga Anusara</div>
+          <div class="sch-prof">Andrea Marín</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span><span class="sch-tag sch-tag-v">Virtual</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Yoga%20Anusara%20(Lunes%206:30pm)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <!-- Martes -->
+      <div class="sched-day rv d1">
+        <div class="sched-day-head">Martes</div>
+        <div class="class-card c-yoga">
+          <div class="sch-time">6:00 PM</div>
+          <div class="sch-class">Yoga Anusara</div>
+          <div class="sch-prof">Andrea Marín</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span><span class="sch-tag sch-tag-v">Virtual</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Yoga%20Anusara%20(Martes%206:00pm)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <!-- Miércoles -->
+      <div class="sched-day rv d2">
+        <div class="sched-day-head">Miércoles</div>
+        <div class="class-card c-aerea">
+          <div class="sch-time">4:00 PM</div>
+          <div class="sch-class">Telas Kids</div>
+          <div class="sch-prof">David Jiménez</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Telas%20Kids%20(Miércoles%204pm)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="class-card c-yoga">
+          <div class="sch-time">7:00 PM</div>
+          <div class="sch-class">Yoga-Pesas</div>
+          <div class="sch-prof">Andrea & David</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Yoga-Pesas%20(Miércoles%207pm)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <!-- Jueves -->
+      <div class="sched-day rv d3">
+        <div class="sched-day-head">Jueves</div>
+        <div class="class-card c-aerea">
+          <div class="sch-time">4:00 PM</div>
+          <div class="sch-class">Telas Kids</div>
+          <div class="sch-prof">David Jiménez</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Telas%20Kids%20(Jueves%204pm)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="class-card c-yoga">
+          <div class="sch-time">7:00 PM</div>
+          <div class="sch-class">Yoga Dinámico</div>
+          <div class="sch-prof">Noelia F.</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Yoga%20Dinámico%20(Jueves%207pm)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <!-- Sábado -->
+      <div class="sched-day rv d4">
+        <div class="sched-day-head">Sábado</div>
+        <div class="class-card c-aerea">
+          <div class="sch-time">9:30 AM</div>
+          <div class="sch-class">Danza Aérea & Pole</div>
+          <div class="sch-prof">David Jiménez</div>
+          <div class="sch-tags"><span class="sch-tag sch-tag-p">Presencial</span></div>
+          <a class="class-resv" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20reservar%20Danza%20Aérea%20y%20Pole%20(Sábado%209:30am)">Reservar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <p class="horario-nota rv" id="horario-nota">Clases todo el año · Te recomendamos reservar tu espacio con anticipación.</p>
+
+    <div class="sch-cta rv">
+      <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustaría%20matricularme%20en%20una%20clase%20de%20Casa%20Yoga%2BSurya" target="_blank" class="btn btn-green">Matricularme ahora</a>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTOS -->
+<div class="eventos-sec" id="eventos">
+  <div class="eventos-slides" id="ev-slides">
+    <!-- JS rendered -->
+    <div class="ev-slide active">
+      <div class="ev-media">
+        <div class="ev-media-ph"><span class="ev-glyph">☾</span></div>
+        <div class="ev-overlay"></div>
+        <div class="ev-date-badge"><span class="evb-d">25</span><span class="evb-m">Abr</span></div>
+      </div>
+      <div class="ev-content">
+        <span class="ev-tag">Taller</span>
+        <div class="ev-fecha">Sábado 25 de Abril · 4pm a 7pm</div>
+        <h2 class="ev-title">Taller de Alimentación Consciente y Real</h2>
+        <p class="ev-desc">Nutre tu cuerpo, enraíza tu esencia. Desde el principio de Saucha — Limpieza, Claridad y Armonía. Incluye té energético cultivado en Casa Yoga Surya y bocadillo saludable.</p>
+        <div class="ev-price">₡18,000</div>
+        <div class="ev-btns">
+          <a href="https://wa.me/50688302691?text=Hola!%20Me%20interesa%20el%20Taller%20de%20Alimentación%20Consciente" target="_blank" class="btn btn-gold">Reservar lugar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ev-ui">
+    <div class="ev-dots" id="ev-dots"></div>
+    <span class="ev-count" id="ev-count"></span>
+    <div class="ev-arrows">
+      <button class="ev-arrow" onclick="evPrev()">←</button>
+      <button class="ev-arrow" onclick="evNext()">→</button>
+    </div>
+  </div>
+  <div class="ev-prog"><div class="ev-prog-bar" id="ev-bar"></div></div>
+</div>
+
+<!-- GALERÍA -->
+<section class="galeria-sec grain" id="galeria">
+  <div class="container">
+    <div class="sec-header rv">
+      <p class="sec-label">Nuestro Espacio</p>
+      <h2 class="sec-title">Un lugar para <em>reconectar</em></h2>
+      <p class="sec-sub">Conoce el espacio donde todo ocurre</p>
+    </div>
+    <div class="gallery-grid" id="gallery-grid">
+      <div class="gallery-item rv">
+        <div class="gallery-ph">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          <p>Próximamente</p>
+        </div>
+        <div class="gallery-ov"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      </div>
+      <div class="gallery-item rv d1"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv d2"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv d1"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+      <div class="gallery-item rv d2"><div class="gallery-ph"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div></div>
+    </div>
+    <div style="text-align:center;margin-top:2rem" id="gallery-add-btn-wrap" style="display:none">
+      <button class="btn btn-outline-gold" onclick="addGalleryPhoto()">+ Agregar fotos</button>
+      <input type="file" id="gallery-upload" accept="image/*" multiple style="display:none" onchange="handleGalleryUpload(this)">
+    </div>
+  </div>
+</section>
+
+<!-- PODCAST -->
+<section class="podcast-sec" id="podcast">
+  <div class="podcast-header rv">
+    <p class="sec-label">En los Medios</p>
+    <h2 class="sec-title">Andrea en <em>Susurros Podcast</em></h2>
+    <p class="sec-sub">Conversaciones sobre espiritualidad, registros akáshicos y terapias energéticas</p>
+  </div>
+  <div class="podcast-cards" id="pod-cards">
+
+    <!-- Card 1 — EP #67 -->
+    <div class="pod-card rv">
+      <div class="pod-thumb" id="pod-thumb-0">
+        <div class="pod-thumb-ph" id="pod-thumb-ph-0">
+          <div class="pod-thumb-ph-ep">#67</div>
+          <div class="pod-thumb-ph-label">Susurros Podcast</div>
+        </div>
+        <img id="pod-thumb-img-0" src="" alt="Ep #67" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div class="pod-ep-badge">Ep. #67</div>
+        <div class="pod-play-ov">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </a>
+        </div>
+        <div class="pod-thumb-edit" id="pod-edit-0" style="display:none" onclick="triggerPodThumb(0)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 16l-1 4 4-1L20 6l-3-3L4 16z"/></svg>
+          Cambiar miniatura
+        </div>
+        <input type="file" id="pod-file-0" accept="image/*" style="display:none" onchange="handlePodThumb(0,this)">
+      </div>
+      <div class="pod-body">
+        <div class="pod-meta">
+          <span class="pod-fecha">11 Feb 2025</span>
+          <span class="pod-source">Susurros Podcast</span>
+        </div>
+        <h3 class="pod-title">Reencarnación — ¿Realmente Regresamos?</h3>
+        <p class="pod-desc">Andrea Marín como invitada contrastando ideas sobre la reencarnación y su relación con el camino espiritual.</p>
+        <div class="pod-plats">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-plat yt">▶ YouTube</a>
+          <a href="https://open.spotify.com/show/susurrospodcast" target="_blank" class="pod-plat sp">Spotify</a>
+          <a href="https://podcasts.apple.com" target="_blank" class="pod-plat ap">Apple</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 — EP #38 -->
+    <div class="pod-card rv d1">
+      <div class="pod-thumb" id="pod-thumb-1">
+        <div class="pod-thumb-ph" id="pod-thumb-ph-1">
+          <div class="pod-thumb-ph-ep">#38</div>
+          <div class="pod-thumb-ph-label">Susurros Podcast</div>
+        </div>
+        <img id="pod-thumb-img-1" src="" alt="Ep #38" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div class="pod-ep-badge">Ep. #38</div>
+        <div class="pod-play-ov">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </a>
+        </div>
+        <div class="pod-thumb-edit" id="pod-edit-1" style="display:none" onclick="triggerPodThumb(1)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 16l-1 4 4-1L20 6l-3-3L4 16z"/></svg>
+          Cambiar miniatura
+        </div>
+        <input type="file" id="pod-file-1" accept="image/*" style="display:none" onchange="handlePodThumb(1,this)">
+      </div>
+      <div class="pod-body">
+        <div class="pod-meta">
+          <span class="pod-fecha">5 Feb 2025</span>
+          <span class="pod-source">Susurros Podcast</span>
+        </div>
+        <h3 class="pod-title">Registros Akáshicos y Rituales</h3>
+        <p class="pod-desc">Descubre todo sobre los Registros Akáshicos — qué son, cómo funcionan y su papel en los rituales espirituales.</p>
+        <div class="pod-plats">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-plat yt">▶ YouTube</a>
+          <a href="https://open.spotify.com/show/susurrospodcast" target="_blank" class="pod-plat sp">Spotify</a>
+          <a href="https://podcasts.apple.com" target="_blank" class="pod-plat ap">Apple</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 — EP #16 -->
+    <div class="pod-card rv d2">
+      <div class="pod-thumb" id="pod-thumb-2">
+        <div class="pod-thumb-ph" id="pod-thumb-ph-2">
+          <div class="pod-thumb-ph-ep">#16</div>
+          <div class="pod-thumb-ph-label">Susurros Podcast</div>
+        </div>
+        <img id="pod-thumb-img-2" src="" alt="Ep #16" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div class="pod-ep-badge">Ep. #16</div>
+        <div class="pod-play-ov">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </a>
+        </div>
+        <div class="pod-thumb-edit" id="pod-edit-2" style="display:none" onclick="triggerPodThumb(2)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 16l-1 4 4-1L20 6l-3-3L4 16z"/></svg>
+          Cambiar miniatura
+        </div>
+        <input type="file" id="pod-file-2" accept="image/*" style="display:none" onchange="handlePodThumb(2,this)">
+      </div>
+      <div class="pod-body">
+        <div class="pod-meta">
+          <span class="pod-fecha">10 Abr 2024</span>
+          <span class="pod-source">Susurros Podcast</span>
+        </div>
+        <h3 class="pod-title">Terapias Energéticas, Portales & Registros</h3>
+        <p class="pod-desc">Terapias energéticas, Registros Akáshicos, historias y más. Un episodio fascinante junto a Andrea Marín.</p>
+        <div class="pod-plats">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-plat yt">▶ YouTube</a>
+          <a href="https://open.spotify.com/show/susurrospodcast" target="_blank" class="pod-plat sp">Spotify</a>
+          <a href="https://podcasts.apple.com" target="_blank" class="pod-plat ap">Apple</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testi-sec" id="testimonios">
+  <div class="container">
+    <div class="sec-header rv">
+      <p class="sec-label">Testimonios</p>
+      <h2 class="sec-title">Lo que dicen <em>nuestros estudiantes</em></h2>
+      <p class="sec-sub">Experiencias reales de transformación</p>
+    </div>
+    <div class="testi-grid" id="testi-grid">
+      <div class="testi-card rv">
+        <div class="testi-q">"</div>
+        <p class="testi-text">Un espacio increíble de paz y sanación. Las clases con Andrea me han transformado completamente. La energía del lugar es única.</p>
+        <div class="testi-author">
+          <div class="testi-av">M</div>
+          <div>
+            <div class="testi-name">María González</div>
+            <div class="testi-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card rv d1">
+        <div class="testi-q">"</div>
+        <p class="testi-text">Los baños de sonido son una experiencia que no se puede describir con palabras. Salgo completamente renovada. Totalmente recomendado.</p>
+        <div class="testi-author">
+          <div class="testi-av">L</div>
+          <div>
+            <div class="testi-name">Laura Méndez</div>
+            <div class="testi-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card rv d2">
+        <div class="testi-q">"</div>
+        <p class="testi-text">Mi hija ama las clases de telas aéreas. David es extraordinario con los niños. Un ambiente seguro, divertido y profesional.</p>
+        <div class="testi-author">
+          <div class="testi-av">C</div>
+          <div>
+            <div class="testi-name">Carolina Rodríguez</div>
+            <div class="testi-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="cta-sun-bg"></div>
+  <h2 class="cta-title rv" id="cta-title">Comienza tu camino de bienestar</h2>
+  <p class="cta-sub rv" id="cta-sub">Cada clase, cada terapia, cada momento en Casa Yoga+Surya es un paso hacia tu mejor versión.</p>
+  <div class="cta-btns rv">
+    <a href="https://wa.me/50688302691?text=Hola!%20Quiero%20comenzar%20en%20Casa%20Yoga%2BSurya" target="_blank" class="btn btn-white">Reservar ahora por WhatsApp</a>
+    <a href="#servicios" class="btn btn-outline-white">Ver todos los servicios</a>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contacto-sec grain" id="contacto">
+  <div class="container">
+    <div class="sec-header rv">
+      <p class="sec-label">Contacto</p>
+      <h2 class="sec-title">Estamos para <em>recibirte</em></h2>
+      <p class="sec-sub">Con gusto respondemos tus preguntas</p>
+    </div>
+    <div class="contacto-grid">
+      <div class="rv rv-left">
+        <h3 class="contacto-title">Encuéntranos</h3>
+        <p class="contacto-sub">Escríbenos o visítanos en Vuelta de Jorco, Aserrí</p>
+
+        <div class="c-item">
+          <div class="c-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.01 2.82 2 2 0 012 .68h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.49a16 16 0 006.29 6.29l1.17-1.17a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="c-lbl">WhatsApp</div>
+            <div class="c-val"><a href="https://wa.me/50688302691" target="_blank" id="c-tel">+506 8830 2691</a></div>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="c-lbl">Email</div>
+            <div class="c-val"><a href="mailto:info@casayogasurya.com" id="c-email">info@casayogasurya.com</a></div>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="c-lbl">Ubicación</div>
+            <div class="c-val" id="c-ubic">Vuelta de Jorco de Aserrí, San José, Costa Rica</div>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </div>
+          <div>
+            <div class="c-lbl">Instagram</div>
+            <div class="c-val"><a href="https://instagram.com/casayogasurya" target="_blank" id="c-ig">@casayogasurya</a></div>
+          </div>
+        </div>
+
+        <div class="soc-row">
+          <a href="https://instagram.com/casayogasurya" target="_blank" class="soc-btn" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://wa.me/50688302691" target="_blank" class="soc-btn" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+
+        <!-- Google Maps -->
+        <div class="map-frame">
+          <svg class="leaf-accent" style="width:60px;top:-14px;left:-14px;transform:rotate(-25deg);color:var(--green)" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/></svg>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3932.6!2d-84.04!3d9.78!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sVuelta%20de%20Jorco%2C%20Aserrí!5e0!3m2!1ses!2scr!4v1" width="100%" height="220" style="border:0;display:block" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+
+      <div class="rv rv-right">
+        <div class="form-box">
+          <h3 class="form-box-title">Envíanos un mensaje</h3>
+          <p class="form-box-sub">Te responderemos por WhatsApp a la brevedad</p>
+
+          <div class="form-row">
+            <div class="fl-group">
+              <input class="fl-input" id="form-name" type="text" placeholder=" ">
+              <label class="fl-label">Nombre *</label>
+            </div>
+            <div class="fl-group">
+              <input class="fl-input" id="form-phone" type="tel" placeholder=" ">
+              <label class="fl-label">Teléfono</label>
+            </div>
+          </div>
+          <div class="fl-group fl-static">
+            <label class="fl-label">Servicio de interés</label>
+            <select class="fl-sel" id="form-service">
+              <option value="">Seleccionar...</option>
+              <option>Yoga Anusara</option>
+              <option>Yoga-Pesas</option>
+              <option>Yoga Dinámico</option>
+              <option>Sonoterapia / Baño de Sonido</option>
+              <option>Telas Aéreas</option>
+              <option>Danza Aérea</option>
+              <option>Lira / Aro Aéreo</option>
+              <option>Pole Dance & Sport</option>
+              <option>Trapecio & Cuerda Aérea</option>
+              <option>Limpieza Energética</option>
+              <option>Terapias Femeninas</option>
+              <option>Tarot / Registros Akáshicos</option>
+              <option>Alquiler del Espacio</option>
+              <option>Tienda Espiritual</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="fl-group">
+            <textarea class="fl-input fl-area" id="form-msg" placeholder=" "></textarea>
+            <label class="fl-label">Mensaje</label>
+          </div>
+          <button class="wa-btn-full" onclick="sendWA()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar por WhatsApp
+          </button>
+          <p class="form-note">Al enviar, se abrirá WhatsApp con tu mensaje listo. Respondemos en menos de 24 horas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-sun" aria-hidden="true">
+      <svg viewBox="-16 -16 32 32" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#e8c96a">
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(45)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(90)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(135)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(180)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(225)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(270)"/>
+          <path d="M-2,9 C-3.2,12 -1,15.5 0,20 C1,15.5 3.2,12 2,9 C1,10 -1,10 -2,9 Z" transform="rotate(315)"/>
+        </g>
+        <circle r="8.5" fill="#e8c96a"/>
+        <circle r="8.5" fill="none" stroke="#1f4029" stroke-width=".8"/>
+        <line x1="0" y1="-4.5" x2="0" y2="4.5" stroke="#b50000" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="-4.5" y1="0" x2="4.5" y2="0" stroke="#b50000" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="footer-brand-name">Casa Yoga+Surya</div>
+    <span class="footer-brand-sub">Centro de Bienestar · Costa Rica</span>
+  </div>
+  <div class="footer-grid">
+    <div>
+      <div class="fl-brand">Casa Yoga+Surya</div>
+      <span class="fl-sub">Bienestar integral · Aserrí</span>
+      <p class="fl-desc" id="footer-desc">Un espacio sagrado de sanación, movimiento y despertar espiritual en el corazón de Costa Rica.</p>
+    </div>
+    <div class="fc">
+      <p class="fc-head">Servicios</p>
+      <ul>
+        <li><a href="#servicios">Yoga</a></li>
+        <li><a href="#servicios">Sonoterapia</a></li>
+        <li><a href="#servicios">Artes Aéreas</a></li>
+        <li><a href="#servicios">Terapias</a></li>
+        <li><a href="#servicios">Terapias Femeninas</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <p class="fc-head">Información</p>
+      <ul>
+        <li><a href="#sobre">Quiénes Somos</a></li>
+        <li><a href="#horarios">Horarios</a></li>
+        <li><a href="#eventos">Eventos</a></li>
+        <li><a href="#galeria">Galería</a></li>
+        <li><a href="#podcast">Podcast</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <p class="fc-head">Contacto</p>
+      <ul>
+        <li><a href="https://wa.me/50688302691" target="_blank">+506 8830 2691</a></li>
+        <li><a href="mailto:info@casayogasurya.com">info@casayogasurya.com</a></li>
+        <li><a href="https://instagram.com/casayogasurya" target="_blank">@casayogasurya</a></li>
+        <li><a href="#contacto">Vuelta de Jorco, Aserrí</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Casa Yoga+Surya. Todos los derechos reservados.</span>
+    <button class="footer-admin-link" onclick="openAdmin()">Admin</button>
+  </div>
+</footer>
+
+<!-- STICKY MOBILE WHATSAPP BAR -->
+<a class="mob-wa-bar" id="mob-wa-bar" target="_blank" href="https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20en%20Casa%20Yoga%2BSurya">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  Reservar por WhatsApp
+</a>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lb-close" onclick="closeLB()">×</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
+<!-- TOAST -->
+<div id="toast">✓ Guardado</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="adm-box">
+    <div class="adm-header">
+      <span class="adm-title">Panel de Administración — Casa Yoga+Surya</span>
+      <button class="adm-close" onclick="closeAdmin()">×</button>
+    </div>
+    <!-- Login -->
+    <div class="adm-login" id="adm-login">
+      <p class="adm-login-title">Ingresa tu contraseña para continuar</p>
+      <input class="adm-pw" id="adm-pw" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkAdmin()">
+      <button class="adm-login-btn" onclick="checkAdmin()">Entrar</button>
+      <p class="adm-err" id="adm-err">Contraseña incorrecta</p>
+    </div>
+    <!-- Dashboard -->
+    <div class="adm-dash" id="adm-dash">
+      <div class="adm-tabs">
+        <button class="adm-tab on" onclick="showAdmTab('hero',this)">Hero</button>
+        <button class="adm-tab" onclick="showAdmTab('instructores',this)">Instructores</button>
+        <button class="adm-tab" onclick="showAdmTab('eventos',this)">Eventos</button>
+        <button class="adm-tab" onclick="showAdmTab('galeria',this)">Galería</button>
+        <button class="adm-tab" onclick="showAdmTab('podcast',this)">Podcast</button>
+        <button class="adm-tab" onclick="showAdmTab('testimonios',this)">Testimonios</button>
+        <button class="adm-tab" onclick="showAdmTab('contacto',this)">Contacto</button>
+        <button class="adm-tab" onclick="showAdmTab('textos',this)">Textos</button>
+      </div>
+      <div class="adm-body">
+
+        <!-- HERO -->
+        <div class="adm-pane on" id="pane-hero">
+          <p class="adm-sec">Texto del Hero</p>
+          <div class="adm-fg"><label class="adm-lbl">Nombre principal (+Surya)</label><input class="adm-field" id="a-script" placeholder="+Surya"></div>
+          <div class="adm-fg"><label class="adm-lbl">Tagline</label><textarea class="adm-field adm-ta" id="a-tagline"></textarea></div>
+          <div class="adm-fg"><label class="adm-lbl">Botón 1 — Texto</label><input class="adm-field" id="a-b1t"></div>
+          <div class="adm-fg"><label class="adm-lbl">Botón 1 — URL</label><input class="adm-field" id="a-b1u"></div>
+          <div class="adm-fg"><label class="adm-lbl">Botón 2 — Texto</label><input class="adm-field" id="a-b2t"></div>
+          <div class="adm-fg"><label class="adm-lbl">Botón 2 — URL</label><input class="adm-field" id="a-b2u"></div>
+          <button class="adm-save" onclick="saveHero()">Guardar Hero</button>
+        </div>
+
+        <!-- INSTRUCTORES -->
+        <div class="adm-pane" id="pane-instructores">
+          <p class="adm-sec">Andrea Marín</p>
+          <div class="file-box" onclick="document.getElementById('file-andrea').click()">
+            <div class="file-box-icon">📷</div>
+            <div class="file-box-text">Subir foto de Andrea</div>
+            <input type="file" id="file-andrea-adm" accept="image/*" style="display:none" onchange="handlePhotoAdm('andrea',this)">
+          </div>
+          <div class="adm-fg" style="margin-top:.75rem"><label class="adm-lbl">Rol / Título</label><input class="adm-field" id="a-andrea-role"></div>
+          <div class="adm-fg"><label class="adm-lbl">Biografía</label><textarea class="adm-field adm-ta" id="a-andrea-bio"></textarea></div>
+          <p class="adm-sec" style="margin-top:1.5rem">David Jiménez</p>
+          <div class="file-box" onclick="document.getElementById('file-david-adm').click()">
+            <div class="file-box-icon">📷</div>
+            <div class="file-box-text">Subir foto de David</div>
+            <input type="file" id="file-david-adm" accept="image/*" style="display:none" onchange="handlePhotoAdm('david',this)">
+          </div>
+          <div class="adm-fg" style="margin-top:.75rem"><label class="adm-lbl">Rol / Título</label><input class="adm-field" id="a-david-role"></div>
+          <div class="adm-fg"><label class="adm-lbl">Biografía</label><textarea class="adm-field adm-ta" id="a-david-bio"></textarea></div>
+          <button class="adm-save" onclick="saveInstructors()">Guardar Instructores</button>
+        </div>
+
+        <!-- EVENTOS -->
+        <div class="adm-pane" id="pane-eventos">
+          <p class="adm-sec">Eventos</p>
+          <div id="adm-ev-list"></div>
+          <button class="adm-add" onclick="addEvento()">+ Agregar evento</button>
+        </div>
+
+        <!-- GALERÍA -->
+        <div class="adm-pane" id="pane-galeria">
+          <p class="adm-sec">Galería de Fotos</p>
+          <div class="file-box">
+            <div class="file-box-icon">🖼</div>
+            <div class="file-box-text">Subir fotos (múltiples)</div>
+            <input type="file" accept="image/*" multiple onchange="handleGalleryUploadAdm(this)">
+          </div>
+          <div id="adm-gal-list" style="margin-top:1rem"></div>
+          <p class="adm-storage" id="adm-storage"></p>
+        </div>
+
+        <!-- PODCAST MINIATURAS -->
+        <div class="adm-pane" id="pane-podcast">
+          <p class="adm-sec">Miniaturas del Podcast</p>
+          <p style="font-size:.75rem;color:rgba(255,255,255,.3);margin-bottom:1.25rem;line-height:1.6">Sube la miniatura o foto de portada de cada episodio. Se mostrará en la tarjeta del podcast. Recomendado: 16:9, mínimo 800×450px.</p>
+
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            <!-- Ep #67 -->
+            <div style="display:grid;grid-template-columns:160px 1fr;gap:1rem;align-items:center;padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)">
+              <div style="aspect-ratio:16/9;background:#111;overflow:hidden;position:relative">
+                <img id="adm-pod-prev-0" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none">
+                <div id="adm-pod-ph-0" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;color:rgba(201,168,76,.3)">#67</div>
+              </div>
+              <div>
+                <div style="font-size:.75rem;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:.25rem">Ep. #67 — Reencarnación</div>
+                <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin-bottom:.75rem">11 de febrero 2025</div>
+                <div class="file-box" style="padding:.75rem" onclick="triggerPodThumb(0)">
+                  <div class="file-box-text">Subir miniatura</div>
+                  <input type="file" id="pod-file-adm-0" accept="image/*" style="display:none" onchange="handlePodThumbAdm(0,this)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Ep #38 -->
+            <div style="display:grid;grid-template-columns:160px 1fr;gap:1rem;align-items:center;padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)">
+              <div style="aspect-ratio:16/9;background:#111;overflow:hidden;position:relative">
+                <img id="adm-pod-prev-1" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none">
+                <div id="adm-pod-ph-1" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;color:rgba(201,168,76,.3)">#38</div>
+              </div>
+              <div>
+                <div style="font-size:.75rem;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:.25rem">Ep. #38 — Registros Akáshicos</div>
+                <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin-bottom:.75rem">5 de febrero 2025</div>
+                <div class="file-box" style="padding:.75rem" onclick="triggerPodThumb(1)">
+                  <div class="file-box-text">Subir miniatura</div>
+                  <input type="file" id="pod-file-adm-1" accept="image/*" style="display:none" onchange="handlePodThumbAdm(1,this)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Ep #16 -->
+            <div style="display:grid;grid-template-columns:160px 1fr;gap:1rem;align-items:center;padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)">
+              <div style="aspect-ratio:16/9;background:#111;overflow:hidden;position:relative">
+                <img id="adm-pod-prev-2" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none">
+                <div id="adm-pod-ph-2" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;color:rgba(201,168,76,.3)">#16</div>
+              </div>
+              <div>
+                <div style="font-size:.75rem;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:.25rem">Ep. #16 — Terapias Energéticas</div>
+                <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin-bottom:.75rem">10 de abril 2024</div>
+                <div class="file-box" style="padding:.75rem" onclick="triggerPodThumb(2)">
+                  <div class="file-box-text">Subir miniatura</div>
+                  <input type="file" id="pod-file-adm-2" accept="image/*" style="display:none" onchange="handlePodThumbAdm(2,this)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TESTIMONIOS -->
+        <div class="adm-pane" id="pane-testimonios">
+          <p class="adm-sec">Testimonios</p>
+          <div id="adm-testi-list"></div>
+          <button class="adm-add" onclick="addTestiPrompt()">+ Agregar testimonio</button>
+        </div>
+
+        <!-- CONTACTO -->
+        <div class="adm-pane" id="pane-contacto">
+          <p class="adm-sec">Información de Contacto</p>
+          <div class="adm-row">
+            <div class="adm-fg"><label class="adm-lbl">WhatsApp (número)</label><input class="adm-field" id="a-wa" placeholder="50688302691"></div>
+            <div class="adm-fg"><label class="adm-lbl">Teléfono visible</label><input class="adm-field" id="a-tel" placeholder="+506 8830 2691"></div>
+          </div>
+          <div class="adm-fg"><label class="adm-lbl">Email</label><input class="adm-field" id="a-email"></div>
+          <div class="adm-fg"><label class="adm-lbl">Ubicación</label><input class="adm-field" id="a-ubicacion"></div>
+          <div class="adm-fg"><label class="adm-lbl">Instagram (sin @)</label><input class="adm-field" id="a-ig"></div>
+          <button class="adm-save" onclick="saveContacto()">Guardar Contacto</button>
+        </div>
+
+        <!-- TEXTOS -->
+        <div class="adm-pane" id="pane-textos">
+          <p class="adm-sec">Textos Generales</p>
+          <div class="adm-fg"><label class="adm-lbl">Frase filosófica (banda verde)</label><textarea class="adm-field adm-ta" id="a-philo"></textarea></div>
+          <div class="adm-fg"><label class="adm-lbl">Nota de horarios (bajo el calendario)</label><input class="adm-field" id="a-horario" placeholder="Clases todo el año · Reserva con anticipación"></div>
+          <div class="adm-fg"><label class="adm-lbl">Título CTA</label><input class="adm-field" id="a-cta-t"></div>
+          <div class="adm-fg"><label class="adm-lbl">Subtexto CTA</label><textarea class="adm-field adm-ta" id="a-cta-s"></textarea></div>
+          <div class="adm-fg"><label class="adm-lbl">Descripción del footer</label><textarea class="adm-field adm-ta" id="a-footer-d"></textarea></div>
+          <button class="adm-save" onclick="saveTextos()">Guardar Textos</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ─── CONSTANTS ─── */
+var PW = 'surya2025';
+var SK_TEXT = 'cys_v2_text';
+var SK_IMGS = 'cys_v2_imgs';
+var ADMIN_ON = false;
+var evIdx = 0, evTimer = null, EV_DUR = 6500;
+
+/* ─── DEFAULTS ─── */
+var DEF = {
+  hero:{ script:'+Surya', tagline:'Yoga, terapias espirituales y artes aéreas\nen un espacio familiar creado con amor.', btn1t:'Reservar clase', btn1u:'https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20en%20Casa%20Yoga%2BSurya', btn2t:'Ver servicios', btn2u:'#servicios' },
+  instructors:{ andrea:{ role:'Maestra de Parapsicología · Terapeuta Espiritual', bio:'Con más de 8 años de dedicación al bienestar holístico, Andrea es Graduada en Metafísica y Ciencias Espirituales con Diploma en Maestro de Parapsicología y Terapeuta Espiritual (2024). Invitada en Susurros Podcast (episodios #16, #38 y #67). Su vocación nació de una búsqueda personal que la llevó a descubrir el poder sanador del yoga, el sonido y la energía.' }, david:{ role:'Especialista en Disciplinas Aéreas · Instructor Certificado', bio:'David es el especialista en disciplinas aéreas de Casa Yoga+Surya. Con formación y experiencia en danza aérea, telas, lira, pole, trapecio y cuerda aérea, trabaja con niños y adultos de todos los niveles. Su enfoque combina fuerza, coordinación y expresión artística.' } },
+  eventos:[
+    { tipo:'Taller', fecha:'Sábado 25 de Abril · 4pm a 7pm', titulo:'Taller de Alimentación Consciente y Real', desc:'Nutre tu cuerpo, enraíza tu esencia. Desde el principio de Saucha — Limpieza, Claridad y Armonía. Incluye té energético cultivado en Casa Yoga Surya y bocadillo saludable.', precio:'₡18,000' },
+    { tipo:'Retiro Espiritual', fecha:'Próximamente · 2025', titulo:'Retiro de Luna Llena', desc:'Una noche de conexión profunda con la energía lunar. Meditación, cuencos tibetanos, terapias y ceremonia de luna llena en nuestro espacio sagrado.', precio:'Consultar precio' },
+    { tipo:'Taller', fecha:'Próximamente · 2025', titulo:'Taller de Introducción a la Sonoterapia', desc:'Aprende los fundamentos de la sanación sonora, experimenta con cuencos tibetanos y descubre cómo el sonido puede transformar tu bienestar.', precio:'Consultar precio' }
+  ],
+  galeria:[],
+  testimonios:[
+    { texto:'Un espacio increíble de paz y sanación. Las clases con Andrea me han transformado completamente. La energía del lugar es única.', nombre:'María González', ini:'M' },
+    { texto:'Los baños de sonido son una experiencia que no se puede describir con palabras. Salgo completamente renovada. Totalmente recomendado.', nombre:'Laura Méndez', ini:'L' },
+    { texto:'Mi hija ama las clases de telas aéreas. David es extraordinario con los niños. Un ambiente seguro, divertido y profesional.', nombre:'Carolina Rodríguez', ini:'C' }
+  ],
+  contacto:{ wa:'50688302691', tel:'+506 8830 2691', email:'info@casayogasurya.com', ubicacion:'Vuelta de Jorco de Aserrí, San José, Costa Rica', ig:'casayogasurya' },
+  textos:{ philo:'En Casa Yoga+Surya creemos que el bienestar es un camino integral — <strong>cuerpo, mente y espíritu</strong> en perfecta armonía. Un espacio donde la naturaleza, el sonido y la energía se unen para transformarte.', horario:'Clases todo el año · Te recomendamos reservar tu espacio con anticipación.', ctaT:'Comienza tu camino de bienestar', ctaS:'Cada clase, cada terapia, cada momento en Casa Yoga+Surya es un paso hacia tu mejor versión.', footerD:'Un espacio sagrado de sanación, movimiento y despertar espiritual en el corazón de Costa Rica.' }
+};
+var DEF_IMGS = { andrea:'', david:'', galeria:[], eventos:[] };
+var D, IMGS;
+
+/* ─── STORAGE ─── */
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+function clone(o){ try{ return JSON.parse(JSON.stringify(o)); }catch(e){ return o; } }
+function merge(def, saved){
+  if(!saved || typeof saved!=='object') return clone(def);
+  var r = clone(def);
+  for(var k in saved){ if(!saved.hasOwnProperty(k)) continue;
+    if(k in r && r[k]!==null && typeof r[k]==='object' && !Array.isArray(r[k])) r[k]=merge(r[k],saved[k]);
+    else r[k]=saved[k]; }
+  return r;
+}
+
+function loadAll(){
+  try{ var raw=lsGet(SK_TEXT); D=raw?merge(DEF,JSON.parse(raw)):clone(DEF); }catch(e){ D=clone(DEF); }
+  try{ var rawI=lsGet(SK_IMGS); IMGS=rawI?JSON.parse(rawI):clone(DEF_IMGS);
+    if(!IMGS.galeria) IMGS.galeria=[];
+    if(!IMGS.eventos) IMGS.eventos=[]; }catch(e){ IMGS=clone(DEF_IMGS); }
+  try{ D.instructors.andrea.photo=IMGS.andrea||''; D.instructors.david.photo=IMGS.david||'';
+    D.galeria=IMGS.galeria||[];
+    if(D.eventos&&IMGS.eventos) D.eventos=D.eventos.map(function(ev,i){ return Object.assign({},ev,{img:IMGS.eventos[i]||''}); }); }catch(e){}
+}
+
+function saveText(){
+  var t=clone(D);
+  if(t.instructors){ delete t.instructors.andrea.photo; delete t.instructors.david.photo; }
+  if(t.galeria) t.galeria=t.galeria.map(function(g){ return {cap:g.cap||''}; });
+  if(t.eventos) t.eventos=t.eventos.map(function(ev){ var e=clone(ev); delete e.img; return e; });
+  var ok=lsSet(SK_TEXT,JSON.stringify(t));
+  if(!ok) toast('⚠ Almacenamiento lleno','#c0392b');
+  return ok;
+}
+function saveImgs(){
+  var imgs={ andrea:IMGS.andrea||'', david:IMGS.david||'', galeria:(IMGS.galeria||[]).map(function(g){ return {url:g.url||'',cap:g.cap||''}; }), eventos:IMGS.eventos||[] };
+  var ok=lsSet(SK_IMGS,JSON.stringify(imgs));
+  if(!ok) toast('⚠ Fotos no guardadas — almacenamiento lleno','#c0392b');
+  return ok;
+}
+
+/* ─── IMAGE COMPRESSION ─── */
+function compress(file, maxPx, quality, cb){
+  var r=new FileReader();
+  r.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var w=img.width,h=img.height;
+      if(w>maxPx||h>maxPx){ if(w>h){h=Math.round(h*maxPx/w);w=maxPx;}else{w=Math.round(w*maxPx/h);h=maxPx;} }
+      var c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',quality));
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+/* ─── HELPERS ─── */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function setText(id,v){ var el=$(id); if(el) el.textContent=v||''; }
+function setHTML(id,v){ var el=$(id); if(el) el.innerHTML=v||''; }
+
+/* ─── APPLY DATA ─── */
+function applyHero(){
+  var h=D.hero;
+  setText('hero-script', h.script||'+Surya');
+  var tg=$('hero-tagline');
+  if(tg) tg.innerHTML=esc(h.tagline||'').replace(/\n/g,'<br>');
+  var b1=$('hero-btn1'), b2=$('hero-btn2');
+  if(b1){ b1.textContent=h.btn1t||'Reservar'; b1.href=h.btn1u||'#'; }
+  if(b2){ b2.textContent=h.btn2t||'Ver servicios'; b2.href=h.btn2u||'#servicios'; }
+}
+
+function showPhoto(who, src){
+  var img=$('img-'+who), ph=$('ph-'+who);
+  if(img){ img.src=src; img.style.display='block'; }
+  if(ph) ph.style.display='none';
+}
+
+function applyInstructors(){
+  var ai=D.instructors.andrea, di=D.instructors.david;
+  if(ai.photo) showPhoto('andrea',ai.photo);
+  setText('role-andrea', ai.role); setText('bio-andrea', ai.bio);
+  if(di.photo) showPhoto('david',di.photo);
+  setText('role-david', di.role); setText('bio-david', di.bio);
+}
+
+function parseEvDate(f){
+  f=String(f||'');
+  var m=f.match(/(\d{1,2})\s+de\s+([A-Za-zÁÉÍÓÚáéíóúñ]+)/);
+  if(m){ return { d:m[1], m:m[2].slice(0,3) }; }
+  var y=f.match(/(20\d{2})/);
+  if(y){ return { d:y[1], m:'' }; }
+  return { d:'☾', m:'Pronto' };
+}
+
+function applyEventos(){
+  var wrap=$('ev-slides'), dots=$('ev-dots');
+  if(!wrap) return;
+  wrap.innerHTML=''; if(dots) dots.innerHTML='';
+  var evs=D.eventos||[];
+  var wa=D.contacto.wa||'50688302691';
+  evs.forEach(function(ev,i){
+    var slide=document.createElement('div');
+    slide.className='ev-slide'+(i===0?' active':'');
+    var b=parseEvDate(ev.fecha);
+    var media=ev.img
+      ? '<img src="'+ev.img+'" alt="'+esc(ev.titulo)+'" loading="lazy" decoding="async">'
+      : '<div class="ev-media-ph"><span class="ev-glyph">☾</span></div>';
+    slide.innerHTML=
+      '<div class="ev-media">'+media+'<div class="ev-overlay"></div>'+
+        '<div class="ev-date-badge"><span class="evb-d">'+esc(b.d)+'</span>'+(b.m?'<span class="evb-m">'+esc(b.m)+'</span>':'')+'</div>'+
+      '</div>'+
+      '<div class="ev-content"><span class="ev-tag">'+esc(ev.tipo)+'</span>'+
+        '<div class="ev-fecha">'+esc(ev.fecha)+'</div>'+
+        '<h2 class="ev-title">'+esc(ev.titulo)+'</h2>'+
+        '<p class="ev-desc">'+esc(ev.desc)+'</p>'+
+        '<div class="ev-price">'+esc(ev.precio)+'</div>'+
+        '<div class="ev-btns"><a href="https://wa.me/'+esc(wa)+'?text='+encodeURIComponent('Hola! Me interesa: '+ev.titulo)+'" target="_blank" class="btn btn-gold">Reservar lugar</a></div>'+
+      '</div>';
+    wrap.appendChild(slide);
+    if(dots){
+      var dot=document.createElement('button');
+      dot.className='ev-dot'+(i===0?' on':'');
+      dot.setAttribute('aria-label','Evento '+(i+1));
+      (function(idx){ dot.onclick=function(){ goToSlide(idx); }; })(i);
+      dots.appendChild(dot);
+    }
+  });
+  evIdx=0; updateEvCount(); startEvAutoplay();
+}
+
+function updateEvCount(){
+  var slides=document.querySelectorAll('.ev-slide');
+  var c=$('ev-count');
+  if(c) c.textContent=(evIdx+1)+' / '+slides.length;
+}
+
+function goToSlide(i){
+  var slides=document.querySelectorAll('.ev-slide');
+  var dots=document.querySelectorAll('.ev-dot');
+  if(!slides.length) return;
+  slides[evIdx].classList.remove('active');
+  if(dots[evIdx]) dots[evIdx].classList.remove('on');
+  evIdx=(i+slides.length)%slides.length;
+  slides[evIdx].classList.add('active');
+  if(dots[evIdx]) dots[evIdx].classList.add('on');
+  updateEvCount(); resetEvBar();
+}
+
+function evNext(){ goToSlide(evIdx+1); }
+function evPrev(){ goToSlide(evIdx-1); }
+
+function startEvAutoplay(){
+  clearTimeout(evTimer);
+  resetEvBar();
+  evTimer=setTimeout(function(){ evNext(); startEvAutoplay(); }, EV_DUR);
+}
+
+function resetEvBar(){
+  var bar=$('ev-bar');
+  if(!bar) return;
+  bar.style.transition='none'; bar.style.width='0';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    bar.style.transition='width '+EV_DUR+'ms linear';
+    bar.style.width='100%';
+  }); });
+}
+
+function applyGallery(){
+  var grid=$('gallery-grid');
+  if(!grid) return;
+  var gal=D.galeria||[];
+  if(!gal.length) return;
+  var zoom='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+  grid.innerHTML=gal.map(function(p,i){
+    var d=i>0?' d'+Math.min(i,6):'';
+    return '<div class="gallery-item rv'+d+'" onclick="openLB(\''+encodeURIComponent(p.url||'')+'\')"><img src="'+p.url+'" alt="'+esc(p.cap||'Foto')+'" loading="lazy" decoding="async"><div class="gallery-ov">'+zoom+'</div></div>';
+  }).join('');
+  observeReveal(grid);
+}
+
+function applyTestis(){
+  var grid=$('testi-grid');
+  if(!grid) return;
+  var ts=D.testimonios||[];
+  if(!ts.length) return;
+  grid.innerHTML=ts.map(function(t,i){
+    var d=i>0?' d'+Math.min(i,6):'';
+    return '<div class="testi-card rv'+d+'"><div class="testi-q">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
+  }).join('');
+  observeReveal(grid);
+}
+
+function applyContacto(){
+  var c=D.contacto;
+  setText('c-tel', c.tel||'+506 8830 2691');
+  var tel=$('c-tel'); if(tel) tel.href='https://wa.me/'+(c.wa||'50688302691');
+  var em=$('c-email'); if(em){ em.textContent=c.email||''; em.href='mailto:'+(c.email||''); }
+  setText('c-ubic', c.ubicacion||'');
+  var ig=$('c-ig'); if(ig){ ig.textContent='@'+(c.ig||'casayogasurya'); ig.href='https://instagram.com/'+(c.ig||'casayogasurya'); }
+}
+
+function applyTextos(){
+  var t=D.textos;
+  var philo=$('philo-text');
+  if(philo) philo.innerHTML='<span class="philo-mark">"</span>'+t.philo;
+  setText('horario-nota', t.horario||'');
+  setText('cta-title', t.ctaT||'');
+  setText('cta-sub', t.ctaS||'');
+  setText('footer-desc', t.footerD||'');
+}
+
+/* Update every wa.me link globally to the configured number */
+function applyWhatsApp(){
+  var num=(D.contacto && D.contacto.wa) ? String(D.contacto.wa).replace(/[^0-9]/g,'') : '50688302691';
+  if(!num) return;
+  var links=document.querySelectorAll('a[href*="wa.me/"]');
+  for(var i=0;i<links.length;i++){
+    links[i].href=links[i].href.replace(/wa\.me\/\d+/, 'wa.me/'+num);
+  }
+}
+
+function applyAll(){
+  applyHero(); applyInstructors(); applyEventos();
+  applyGallery(); applyTestis(); applyContacto(); applyTextos();
+  applyWhatsApp();
+}
+
+/* ─── PHOTO HANDLERS ─── */
+function handlePhoto(who, input){
+  if(!input.files||!input.files[0]) return;
+  compress(input.files[0], 1200, 0.82, function(data){
+    IMGS[who]=data;
+    showPhoto(who,data);
+    saveImgs();
+    toast('✓ Foto actualizada');
+  });
+}
+window.handlePhoto=handlePhoto;
+
+function handlePhotoAdm(who, input){
+  if(!input.files||!input.files[0]) return;
+  compress(input.files[0], 1200, 0.82, function(data){
+    IMGS[who]=data;
+    showPhoto(who,data);
+    saveImgs();
+    toast('✓ Foto actualizada');
+  });
+}
+window.handlePhotoAdm=handlePhotoAdm;
+
+function handleGalleryUpload(input){ _handleGal(input); }
+window.handleGalleryUpload=handleGalleryUpload;
+function handleGalleryUploadAdm(input){ _handleGal(input); }
+window.handleGalleryUploadAdm=handleGalleryUploadAdm;
+
+function _handleGal(input){
+  if(!input.files||!input.files.length) return;
+  var files=Array.from(input.files);
+  var done=0;
+  files.forEach(function(f){
+    compress(f, 1400, 0.8, function(data){
+      IMGS.galeria.push({url:data,cap:''});
+      D.galeria=IMGS.galeria;
+      done++;
+      if(done===files.length){ applyGallery(); saveImgs(); renderAdmGal(); toast('✓ Fotos agregadas'); }
+    });
+  });
+}
+
+function addGalleryPhoto(){
+  var inp=$('gallery-upload'); if(inp) inp.click();
+}
+window.addGalleryPhoto=addGalleryPhoto;
+
+function delPhoto(i){
+  IMGS.galeria.splice(i,1);
+  D.galeria=IMGS.galeria;
+  applyGallery(); saveImgs(); renderAdmGal();
+  toast('✓ Foto eliminada');
+}
+window.delPhoto=delPhoto;
+
+/* ─── EVENTOS ADMIN ─── */
+function renderAdmEv(){
+  var el=$('adm-ev-list'); if(!el) return;
+  var evs=D.eventos||[];
+  el.innerHTML=evs.map(function(ev,i){
+    return '<div class="adm-card"><div><div class="adm-card-n">'+esc(ev.titulo)+'</div><div class="adm-card-s">'+esc(ev.fecha)+'</div></div><button class="adm-del" onclick="delEvento('+i+')">Eliminar</button></div>';
+  }).join('')||'<p style="color:rgba(255,255,255,.3);font-size:.8rem">No hay eventos</p>';
+}
+
+function addEvento(){
+  var t=prompt('Título del evento:');
+  if(!t) return;
+  var f=prompt('Fecha/horario:','Próximamente');
+  var d=prompt('Descripción:','');
+  var p=prompt('Precio:','Consultar');
+  var tipo=prompt('Tipo (Taller, Retiro, Evento):','Taller');
+  D.eventos.push({ tipo:tipo||'Evento', fecha:f||'', titulo:t, desc:d||'', precio:p||'Consultar', img:'' });
+  IMGS.eventos.push('');
+  saveText(); saveImgs(); renderAdmEv(); applyEventos();
+  toast('✓ Evento agregado');
+}
+window.addEvento=addEvento;
+
+function delEvento(i){
+  D.eventos.splice(i,1);
+  if(IMGS.eventos) IMGS.eventos.splice(i,1);
+  saveText(); saveImgs(); renderAdmEv(); applyEventos();
+  toast('✓ Evento eliminado');
+}
+window.delEvento=delEvento;
+
+/* ─── GALLERY ADMIN ─── */
+function renderAdmGal(){
+  var el=$('adm-gal-list'); if(!el) return;
+  var gal=IMGS.galeria||[];
+  el.innerHTML=gal.map(function(p,i){
+    return '<div class="adm-card"><div><div class="adm-card-n">Foto '+(i+1)+'</div></div><button class="adm-del" onclick="delPhoto('+i+')">Eliminar</button></div>';
+  }).join('')||'<p style="color:rgba(255,255,255,.3);font-size:.8rem">No hay fotos</p>';
+  var s=$('adm-storage');
+  if(s){ try{ var tot=0; for(var k in localStorage){ tot+=localStorage[k].length; } s.textContent=Math.round(tot/1024)+'KB en uso'; }catch(e){} }
+}
+
+/* ─── TESTIMONIOS ADMIN ─── */
+function renderAdmTesti(){
+  var el=$('adm-testi-list'); if(!el) return;
+  var ts=D.testimonios||[];
+  el.innerHTML=ts.map(function(t,i){
+    return '<div class="adm-card"><div><div class="adm-card-n">'+esc(t.nombre)+'</div><div class="adm-card-s">'+esc(t.texto.slice(0,60))+'...</div></div><button class="adm-del" onclick="delTesti('+i+')">Eliminar</button></div>';
+  }).join('')||'<p style="color:rgba(255,255,255,.3);font-size:.8rem">No hay testimonios</p>';
+}
+
+function addTestiPrompt(){
+  var txt=prompt('Texto del testimonio:');
+  if(!txt) return;
+  var nombre=prompt('Nombre:','');
+  D.testimonios.push({ texto:txt, nombre:nombre||'Anónimo', ini:(nombre||'A')[0].toUpperCase() });
+  saveText(); renderAdmTesti(); applyTestis();
+  toast('✓ Testimonio agregado');
+}
+window.addTestiPrompt=addTestiPrompt;
+
+function delTesti(i){ D.testimonios.splice(i,1); saveText(); renderAdmTesti(); applyTestis(); toast('✓ Eliminado'); }
+window.delTesti=delTesti;
+
+/* ─── ADMIN SAVES ─── */
+function loadAdmFields(){
+  var h=D.hero;
+  var setV=function(id,v){ var el=$(id); if(el) el.value=v||''; };
+  setV('a-script',h.script); setV('a-tagline',h.tagline);
+  setV('a-b1t',h.btn1t); setV('a-b1u',h.btn1u);
+  setV('a-b2t',h.btn2t); setV('a-b2u',h.btn2u);
+  var ai=D.instructors.andrea, di=D.instructors.david;
+  setV('a-andrea-role',ai.role); setV('a-andrea-bio',ai.bio);
+  setV('a-david-role',di.role); setV('a-david-bio',di.bio);
+  var c=D.contacto;
+  setV('a-wa',c.wa); setV('a-tel',c.tel); setV('a-email',c.email);
+  setV('a-ubicacion',c.ubicacion); setV('a-ig',c.ig);
+  var t=D.textos;
+  setV('a-philo',t.philo); setV('a-horario',t.horario); setV('a-cta-t',t.ctaT);
+  setV('a-cta-s',t.ctaS); setV('a-footer-d',t.footerD);
+  renderAdmEv(); renderAdmGal(); renderAdmTesti();
+}
+
+function gv(id){ var el=$(id); return el?el.value:''; }
+
+function saveHero(){
+  D.hero.script=gv('a-script')||'+Surya';
+  D.hero.tagline=gv('a-tagline'); D.hero.btn1t=gv('a-b1t'); D.hero.btn1u=gv('a-b1u');
+  D.hero.btn2t=gv('a-b2t'); D.hero.btn2u=gv('a-b2u');
+  saveText(); applyHero(); toast('✓ Hero guardado');
+}
+window.saveHero=saveHero;
+
+function saveInstructors(){
+  D.instructors.andrea.role=gv('a-andrea-role');
+  D.instructors.andrea.bio=gv('a-andrea-bio');
+  D.instructors.david.role=gv('a-david-role');
+  D.instructors.david.bio=gv('a-david-bio');
+  saveText(); applyInstructors(); toast('✓ Instructores guardados');
+}
+window.saveInstructors=saveInstructors;
+
+function saveContacto(){
+  var c=D.contacto;
+  c.wa=gv('a-wa'); c.tel=gv('a-tel'); c.email=gv('a-email');
+  c.ubicacion=gv('a-ubicacion'); c.ig=gv('a-ig');
+  saveText(); applyContacto(); applyWhatsApp(); applyEventos(); toast('✓ Contacto guardado');
+}
+window.saveContacto=saveContacto;
+
+function saveTextos(){
+  var t=D.textos;
+  t.philo=gv('a-philo'); t.horario=gv('a-horario'); t.ctaT=gv('a-cta-t');
+  t.ctaS=gv('a-cta-s'); t.footerD=gv('a-footer-d');
+  saveText(); applyTextos(); toast('✓ Textos guardados');
+}
+window.saveTextos=saveTextos;
+
+/* ─── ADMIN UI ─── */
+function openAdmin(){
+  var p=$('admin-panel'), l=$('adm-login'), d=$('adm-dash');
+  if(p) p.classList.add('on');
+  if(l) l.style.display='block';
+  if(d) d.classList.remove('on');
+  document.body.style.overflow='hidden';
+  ADMIN_ON=false;
+}
+window.openAdmin=openAdmin;
+
+function closeAdmin(){
+  var p=$('admin-panel'); if(p) p.classList.remove('on');
+  document.body.style.overflow=''; ADMIN_ON=false;
+  disablePodThumbEdits();
+  var galBtn=$('gallery-add-btn-wrap'); if(galBtn) galBtn.style.display='none';
+}
+window.closeAdmin=closeAdmin;
+
+function checkAdmin(){
+  var inp=$('adm-pw'); var pw=inp?inp.value:'';
+  if(pw===PW){
+    ADMIN_ON=true;
+    var l=$('adm-login'), d=$('adm-dash'), err=$('adm-err');
+    if(l) l.style.display='none'; if(d) d.classList.add('on');
+    if(err) err.style.display='none'; if(inp) inp.value='';
+    loadAdmFields();
+    // Enable photo overlays
+    ['andrea','david'].forEach(function(who){
+      var ph=$('photo-'+who); if(!ph) return;
+      ph.style.cursor='pointer';
+      ph.onclick=function(){ $('file-'+who)&&$('file-'+who).click(); };
+    });
+    var galBtn=$('gallery-add-btn-wrap'); if(galBtn) galBtn.style.display='block';
+    enablePodThumbEdits();
+  } else {
+    var err2=$('adm-err'); if(err2) err2.style.display='block';
+  }
+}
+window.checkAdmin=checkAdmin;
+
+function showAdmTab(name, btn){
+  document.querySelectorAll('.adm-pane').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.adm-tab').forEach(function(t){ t.classList.remove('on'); });
+  var p=$('pane-'+name); if(p) p.classList.add('on');
+  if(btn) btn.classList.add('on');
+  if(name==='podcast') syncAdminPodPreviews();
+  if(name==='galeria')  renderAdmGal();
+  if(name==='eventos')  renderAdmEv();
+  if(name==='testimonios') renderAdmTesti();
+}
+window.showAdmTab=showAdmTab;
+
+/* ─── SERVICES TAB ─── */
+function showSvc(idx, btn){
+  document.querySelectorAll('.svc-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.svc-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+  var p=$('svc-'+idx); if(p) p.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+window.showSvc=showSvc;
+
+/* ─── CONTACT FORM ─── */
+function sendWA(){
+  var name=($('form-name')||{}).value||'';
+  if(!name.trim()){ $('form-name').focus(); $('form-name').style.borderColor='#e06c6c'; setTimeout(function(){ $('form-name').style.borderColor=''; },2000); return; }
+  var phone=(($('form-phone')||{}).value||'').trim();
+  var svc=(($('form-service')||{}).value||'').trim();
+  var msg=(($('form-msg')||{}).value||'').trim();
+  var txt='Hola! Me contacto desde la web de Casa Yoga+Surya.\n\nNombre: '+name+'\nTeléfono: '+(phone||'No indicado')+'\nServicio de interés: '+(svc||'No especificado')+'\n\nMensaje: '+(msg||'Sin mensaje adicional');
+  window.open('https://wa.me/'+(D.contacto.wa||'50688302691')+'?text='+encodeURIComponent(txt),'_blank');
+}
+window.sendWA=sendWA;
+
+/* ─── MISC ─── */
+function toast(msg, bg){
+  var t=$('toast'); if(!t) return;
+  t.textContent=msg||'✓'; t.style.background=bg||'var(--green)';
+  t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },3000);
+}
+
+function openLB(src){
+  try{ src=decodeURIComponent(src); }catch(e){}
+  var img=$('lb-img'), lb=$('lightbox');
+  if(img) img.src=src;
+  if(lb){ lb.classList.add('on'); document.body.style.overflow='hidden'; }
+}
+window.openLB=openLB;
+
+function closeLB(){
+  var lb=$('lightbox'); if(lb) lb.classList.remove('on');
+  document.body.style.overflow='';
+}
+window.closeLB=closeLB;
+
+function closeDrawer(){
+  $('mob-ov').classList.remove('on');
+  $('mob-drawer').classList.remove('open');
+  document.body.style.overflow='';
+}
+window.closeDrawer=closeDrawer;
+
+window.evNext=evNext;
+window.evPrev=evPrev;
+window.goToSlide=goToSlide;
+
+/* ─── DEVICE CAPABILITY (low-end / reduced motion) ─── */
+var LITE=false;
+function detectLite(){
+  try{
+    var rm=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lowCPU=(navigator.hardwareConcurrency||8)<4;
+    if(rm||lowCPU){ LITE=true; document.body.classList.add('lite'); }
+  }catch(e){}
+}
+
+/* ─── NAV SCROLL + PROGRESS BAR ─── */
+var _navEl=null, _progEl=null, _scrollRAF=false;
+function onScrollFrame(){
+  _scrollRAF=false;
+  var y=window.scrollY||window.pageYOffset||0;
+  if(_navEl) _navEl.classList.toggle('solid', y>40);
+  if(_progEl){
+    var de=document.documentElement;
+    var max=(de.scrollHeight-de.clientHeight)||1;
+    _progEl.style.width=Math.min(100,(y/max*100))+'%';
+  }
+}
+window.addEventListener('scroll', function(){
+  if(!_scrollRAF){ _scrollRAF=true; requestAnimationFrame(onScrollFrame); }
+}, { passive:true });
+
+/* ─── SCROLL REVEAL ─── */
+var revObs=null;
+function observeReveal(root){
+  if(!revObs) return;
+  var els=(root||document).querySelectorAll('.rv,.rv-left,.rv-right,.rv-scale,.rv-draw');
+  for(var i=0;i<els.length;i++){ if(!els[i]._ro){ els[i]._ro=1; revObs.observe(els[i]); } }
+}
+function initReveal(){
+  document.body.classList.add('js-r');
+  if(!('IntersectionObserver' in window)){
+    document.querySelectorAll('.rv,.rv-left,.rv-right,.rv-scale,.rv-draw').forEach(function(el){ el.classList.add('on'); });
+    return;
+  }
+  revObs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('on'); revObs.unobserve(e.target); } });
+  },{ threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+  observeReveal(document);
+}
+
+/* ─── SECTION TITLE WORD STAGGER ─── */
+function splitTitle(el){
+  if(el.dataset.split) return; el.dataset.split='1';
+  var nodes=Array.prototype.slice.call(el.childNodes), frag=document.createDocumentFragment(), idx={n:0};
+  function pushWords(target, text){
+    text.split(/(\s+)/).forEach(function(part){
+      if(!part) return;
+      if(/^\s+$/.test(part)){ target.appendChild(document.createTextNode(part)); }
+      else { var s=document.createElement('span'); s.className='w'; s.textContent=part; s.style.transitionDelay=(idx.n*0.05)+'s'; idx.n++; target.appendChild(s); }
+    });
+  }
+  nodes.forEach(function(node){
+    if(node.nodeType===3){ pushWords(frag, node.textContent); }
+    else if(node.nodeType===1){ var c=node.cloneNode(false); pushWords(c, node.textContent); frag.appendChild(c); }
+    else { frag.appendChild(node.cloneNode(true)); }
+  });
+  el.innerHTML=''; el.appendChild(frag);
+}
+function initTitleReveal(){
+  var titles=document.querySelectorAll('.sec-title');
+  if(LITE || !('IntersectionObserver' in window)){
+    titles.forEach(function(t){ t.classList.add('on'); }); return;
+  }
+  titles.forEach(splitTitle);
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('on'); obs.unobserve(e.target); } });
+  },{ threshold:0.2 });
+  titles.forEach(function(t){ obs.observe(t); });
+}
+
+/* ─── STATS COUNT-UP ─── */
+function animateCount(el){
+  var target=parseFloat(el.getAttribute('data-count'))||0;
+  var suffix=el.getAttribute('data-suffix')||'';
+  var dur=1600, start=null;
+  function step(ts){
+    if(!start) start=ts;
+    var p=Math.min((ts-start)/dur,1), eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*eased)+suffix;
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function initCountUp(){
+  var bar=document.querySelector('.stats-bar'); if(!bar) return;
+  var nums=bar.querySelectorAll('[data-count]');
+  if(LITE || !('IntersectionObserver' in window)){
+    nums.forEach(function(n){ n.textContent=n.getAttribute('data-count')+(n.getAttribute('data-suffix')||''); });
+    return;
+  }
+  var done=false;
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting && !done){ done=true; nums.forEach(animateCount); obs.disconnect(); } });
+  },{ threshold:0.35 });
+  obs.observe(bar);
+}
+
+/* ─── HERO SUN TILT ─── */
+function initSunTilt(){
+  if(LITE) return;
+  var hero=$('inicio'), sun=document.querySelector('.hero-sun');
+  if(!hero||!sun) return;
+  var tx=0, ty=0, raf=false;
+  function apply(){ raf=false; sun.style.transform='rotateX('+tx+'deg) rotateY('+ty+'deg)'; }
+  hero.addEventListener('mousemove', function(e){
+    var r=hero.getBoundingClientRect();
+    var cx=(e.clientX-r.left)/r.width-0.5;
+    var cy=(e.clientY-r.top)/r.height-0.5;
+    ty=cx*3; tx=cy*-3;
+    if(!raf){ raf=true; requestAnimationFrame(apply); }
+  }, { passive:true });
+  hero.addEventListener('mouseleave', function(){ tx=0; ty=0; if(!raf){ raf=true; requestAnimationFrame(apply); } });
+}
+
+/* ─── STICKY MOBILE WHATSAPP BAR ─── */
+function initStickyBar(){
+  var hero=$('inicio'), bar=$('mob-wa-bar');
+  if(!hero||!bar||!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){ bar.classList.toggle('show', !e.isIntersecting); });
+  },{ threshold:0, rootMargin:'-60px 0px 0px 0px' }).observe(hero);
+}
+
+/* ─── HAMBURGER ─── */
+document.addEventListener('DOMContentLoaded', function(){
+  var ham=$('nav-ham');
+  if(ham) ham.addEventListener('click', function(){
+    $('mob-ov').classList.add('on');
+    $('mob-drawer').classList.add('open');
+    document.body.style.overflow='hidden';
+  });
+  var lb=$('lightbox');
+  if(lb) lb.addEventListener('click', function(e){ if(e.target===this) closeLB(); });
+});
+
+/* ─── KEYBOARD ─── */
+document.addEventListener('keydown', function(e){
+  if(e.altKey && e.key && e.key.toLowerCase()==='a'){ e.preventDefault(); openAdmin(); }
+  if(e.key==='Escape'){ closeAdmin(); closeLB(); }
+});
+
+/* ─── PODCAST THUMBNAILS ─── */
+var POD_THUMBS_KEY = 'cys_v2_pod_thumbs';
+var podThumbs = ['','',''];
+
+function loadPodThumbs(){
+  try{
+    var raw = lsGet(POD_THUMBS_KEY);
+    if(raw) podThumbs = JSON.parse(raw);
+    if(!Array.isArray(podThumbs)) podThumbs = ['','',''];
+    // Apply loaded thumbnails
+    for(var i=0;i<3;i++){
+      if(podThumbs[i]) applyPodThumb(i, podThumbs[i]);
+    }
+  }catch(e){}
+}
+
+function applyPodThumb(idx, src){
+  var img = $('pod-thumb-img-'+idx);
+  var ph  = $('pod-thumb-ph-'+idx);
+  if(img){ img.src=src; img.style.display='block'; }
+  if(ph)  ph.style.display='none';
+}
+
+function triggerPodThumb(idx){
+  var inp = $('pod-file-'+idx);
+  if(inp) inp.click();
+}
+window.triggerPodThumb = triggerPodThumb;
+
+function handlePodThumb(idx, input){
+  if(!input.files||!input.files[0]) return;
+  compress(input.files[0], 1200, 0.82, function(data){
+    podThumbs[idx] = data;
+    applyPodThumb(idx, data);
+    try{ lsSet(POD_THUMBS_KEY, JSON.stringify(podThumbs)); }catch(e){}
+    toast('✓ Miniatura actualizada');
+  });
+}
+window.handlePodThumb = handlePodThumb;
+
+function handlePodThumbAdm(idx, input){
+  if(!input.files||!input.files[0]) return;
+  compress(input.files[0], 1200, 0.82, function(data){
+    podThumbs[idx] = data;
+    applyPodThumb(idx, data);
+    // Also update admin preview
+    var prev = $('adm-pod-prev-'+idx);
+    var ph   = $('adm-pod-ph-'+idx);
+    if(prev){ prev.src=data; prev.style.display='block'; }
+    if(ph)   ph.style.display='none';
+    try{ lsSet(POD_THUMBS_KEY, JSON.stringify(podThumbs)); }catch(e){}
+    toast('✓ Miniatura actualizada');
+  });
+}
+window.handlePodThumbAdm = handlePodThumbAdm;
+
+function syncAdminPodPreviews(){
+  for(var i=0;i<3;i++){
+    if(!podThumbs[i]) continue;
+    var prev=$('adm-pod-prev-'+i), ph=$('adm-pod-ph-'+i);
+    if(prev){ prev.src=podThumbs[i]; prev.style.display='block'; }
+    if(ph)   ph.style.display='none';
+  }
+}
+
+function enablePodThumbEdits(){
+  for(var i=0;i<3;i++){
+    var ed = $('pod-edit-'+i);
+    if(ed) ed.style.display='flex';
+  }
+}
+function disablePodThumbEdits(){
+  for(var i=0;i<3;i++){
+    var ed = $('pod-edit-'+i);
+    if(ed) ed.style.display='none';
+  }
+}
+
+/* ─── BOOT ─── */
+function boot(){
+  detectLite();
+  _navEl=$('nav'); _progEl=$('scroll-prog');
+  try{ loadAll(); }catch(e){ D=clone(DEF); IMGS=clone(DEF_IMGS); }
+  applyAll();
+  loadPodThumbs();
+  initReveal();
+  initTitleReveal();
+  initCountUp();
+  initSunTilt();
+  initStickyBar();
+  onScrollFrame();
+  // Safety: ensure all revealed after 3s (covers any observer edge cases)
+  setTimeout(function(){
+    document.querySelectorAll('.rv,.rv-left,.rv-right,.rv-scale,.rv-draw,.sec-title').forEach(function(el){ el.classList.add('on'); });
+  }, 3000);
+}
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', boot); }
+else { boot(); }
+
+})();
+</script>
+</body>
+</html>
