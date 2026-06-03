@@ -109,6 +109,17 @@ body:not(.js-r) .divider .dgem, .lite .divider .dgem { opacity:.9; }
 .svc-categories, .sched-grid { scrollbar-width:none; -ms-overflow-style:none; }
 .svc-categories::-webkit-scrollbar, .sched-grid::-webkit-scrollbar { width:0; height:0; display:none; }
 
+/* Cursor-follow spotlight (vanilla translation of 21st.dev Spotlight Card) */
+.spotlight { position:relative; }
+.spotlight::before {
+  content:''; position:absolute; inset:0; z-index:1; border-radius:inherit;
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(201,168,76,.14), transparent 68%);
+  opacity:0; transition:opacity .5s var(--ease); pointer-events:none;
+}
+.spotlight:hover::before { opacity:1; }
+.lite .spotlight::before { display:none; }
+@media (hover:none) { .spotlight::before { display:none; } }
+
 /* ═══════════════════════════════════════
    LAYOUT
 ═══════════════════════════════════════ */
@@ -399,11 +410,15 @@ section { padding:7rem 2rem; }
   display:block;
   font-family:'Playfair Display',serif; font-style:italic; font-weight:500;
   font-size:clamp(2rem,5.5vw,3.6rem);
-  background:linear-gradient(100deg, var(--gold-deep), var(--gold-light) 55%, var(--gold-deep));
+  background:linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-light) 28%, #fff6da 46%, var(--gold-light) 64%, var(--gold-deep) 100%);
+  background-size:250% 100%; background-position:0% 50%;
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   line-height:1.1; margin-top:.1rem;
   opacity:0; animation:slideUp .9s var(--ease) .55s forwards;
 }
+/* Slow gold-foil shimmer (skipped on low-end; honors reduced-motion globally) */
+body:not(.lite) .hero-sub-name { animation:slideUp .9s var(--ease) .55s forwards, goldShimmer 7s ease-in-out 2.5s infinite; }
+@keyframes goldShimmer { 0%,100%{ background-position:0% 50% } 50%{ background-position:100% 50% } }
 
 .hero-divider {
   width:70px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent);
@@ -1863,7 +1878,7 @@ footer {
         <img class="svc-img" id="svc-img-0" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Yoga · Movimiento · Respiración</div>
       </div>
-      <div class="svc-content">
+      <div class="svc-content spotlight">
         <p class="svc-content-cat">Cuerpo & Movimiento</p>
         <h3 class="svc-content-title">Clases de <em>Yoga</em></h3>
         <div class="svc-instructor-row">
@@ -1897,7 +1912,7 @@ footer {
         <img class="svc-img" id="svc-img-1" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Sanación · Sonido · Vibración</div>
       </div>
-      <div class="svc-content">
+      <div class="svc-content spotlight">
         <p class="svc-content-cat">Sanación Sonora</p>
         <h3 class="svc-content-title">Sono<em>terapia</em></h3>
         <div class="svc-instructor-row">
@@ -1922,7 +1937,7 @@ footer {
         <img class="svc-img" id="svc-img-2" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Arte · Fuerza · Libertad</div>
       </div>
-      <div class="svc-content">
+      <div class="svc-content spotlight">
         <p class="svc-content-cat">Arte & Expresión en el Aire</p>
         <h3 class="svc-content-title">Disciplinas <em>Aéreas</em></h3>
         <div class="svc-instructor-row">
@@ -1949,7 +1964,7 @@ footer {
         <img class="svc-img" id="svc-img-3" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Energía · Purificación · Sanación</div>
       </div>
-      <div class="svc-content">
+      <div class="svc-content spotlight">
         <p class="svc-content-cat">Energía & Purificación</p>
         <h3 class="svc-content-title">Limpieza <em>Energética</em></h3>
         <div class="svc-instructor-row">
@@ -1974,7 +1989,7 @@ footer {
         <img class="svc-img" id="svc-img-4" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Mujer · Ciclos · Empoderamiento</div>
       </div>
-      <div class="svc-content">
+      <div class="svc-content spotlight">
         <p class="svc-content-cat">Salud & Empoderamiento Femenino</p>
         <h3 class="svc-content-title">Terapias <em>Femeninas</em></h3>
         <div class="svc-instructor-row">
@@ -2000,7 +2015,7 @@ footer {
         <img class="svc-img" id="svc-img-5" alt="" loading="lazy" decoding="async">
         <div class="svc-visual-label">Cristales · Libros · Accesorios</div>
       </div>
-      <div class="svc-content">
+      <div class="svc-content spotlight">
         <p class="svc-content-cat">Más que Clases</p>
         <h3 class="svc-content-title">Tienda & <em>Espacios</em></h3>
         <p class="svc-desc">Productos de bienestar, cristales, libros y accesorios para tu práctica espiritual. Nuestro espacio también está disponible para talleres y eventos especiales.</p>
@@ -2445,7 +2460,7 @@ footer {
       </div>
 
       <div class="rv rv-right">
-        <div class="form-box">
+        <div class="form-box spotlight">
           <h3 class="form-box-title">Envíanos un mensaje</h3>
           <p class="form-box-sub">Te responderemos por WhatsApp a la brevedad</p>
 
@@ -2979,7 +2994,7 @@ function applyTestis(){
   if(!ts.length) return;
   grid.classList.add('is-carousel');
   grid.innerHTML=ts.map(function(t,i){
-    return '<div class="testi-card'+(i===0?' on':'')+'"><div class="testi-q">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
+    return '<div class="testi-card spotlight'+(i===0?' on':'')+'"><div class="testi-q">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
   }).join('');
   var dots=$('testi-dots');
   if(dots){
@@ -3634,6 +3649,19 @@ function initSvcStagger(){
   obs.observe(sec);
 }
 
+/* ─── CURSOR-FOLLOW SPOTLIGHT (delegated, hover-capable devices only) ─── */
+function initSpotlight(){
+  if(LITE) return;
+  if(window.matchMedia && !window.matchMedia('(hover:hover)').matches) return;
+  document.addEventListener('mousemove', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('.spotlight') : null;
+    if(!el) return;
+    var r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, { passive:true });
+}
+
 function boot(){
   detectLite();
   _navEl=$('nav'); _progEl=$('scroll-prog');
@@ -3646,6 +3674,7 @@ function boot(){
   initSunTilt();
   initStickyBar();
   initSvcStagger();
+  initSpotlight();
   onScrollFrame();
   // Safety: ensure all revealed after 3s (covers any observer edge cases)
   setTimeout(function(){
