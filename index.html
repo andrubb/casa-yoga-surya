@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Casa Yoga+Surya — Centro de Bienestar · Costa Rica</title>
 <meta name="description" content="Centro integral de bienestar en Vuelta de Jorco, Aserrí. Yoga, sonoterapia, terapias espirituales, danza aérea y más. Un espacio familiar de sanación en Costa Rica.">
 <meta name="theme-color" content="#2d5a3d">
@@ -51,7 +51,7 @@
    RESET & BASE
 ═══════════════════════════════════════ */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; font-size:16px; scroll-padding-top:90px; -webkit-text-size-adjust:100%; }
+html { scroll-behavior:smooth; font-size:16px; scroll-padding-top:90px; -webkit-text-size-adjust:100%; overflow-x:hidden; }
 body {
   background:var(--white);
   color:var(--text);
@@ -276,16 +276,17 @@ section { padding:7rem 2rem; }
 }
 .mob-overlay.on { opacity:1; pointer-events:all; }
 .mob-drawer {
-  position:fixed; top:0; right:-340px; bottom:0; width:300px;
+  position:fixed; top:0; right:0; bottom:0; width:min(300px, 86vw);
   background:linear-gradient(165deg, var(--cream-warm) 0%, var(--cream-deep) 100%);
   z-index:500;
   padding:4rem 2rem 2rem;
-  transition:right .45s cubic-bezier(.16,1,.3,1);
+  transform:translateX(105%);  /* hidden via transform — no scrollWidth overflow */
+  transition:transform .45s cubic-bezier(.16,1,.3,1);
   display:flex; flex-direction:column; gap:.25rem;
   box-shadow:-20px 0 60px rgba(120,90,30,.18);
   border-left:1px solid var(--border);
 }
-.mob-drawer.open { right:0; }
+.mob-drawer.open { transform:translateX(0); }
 .mob-close {
   position:absolute; top:1.25rem; right:1.25rem;
   background:none; border:none; font-size:1.4rem;
@@ -567,7 +568,7 @@ body:not(.lite) .hero-sub-name { animation:slideUp .9s var(--ease) .55s forwards
 .inst-card:hover { transform:translateY(-6px); }
 
 .inst-photo {
-  width:230px; height:230px; border-radius:50%;
+  width:clamp(170px, 62vw, 230px); height:auto; aspect-ratio:1; border-radius:50%;
   margin:0 auto 1.7rem; overflow:hidden; position:relative; cursor:default;
   border:3px solid var(--gold);
   box-shadow:0 0 0 9px rgba(201,168,76,.10), 0 18px 44px rgba(201,168,76,.22);
@@ -1303,10 +1304,10 @@ footer {
   position:fixed; left:0; right:0; bottom:0; z-index:450;
   align-items:center; justify-content:center; gap:.6rem;
   background:#25d366; color:#fff;
-  padding:1rem; min-height:56px;
+  padding:1rem 1rem max(1rem, env(safe-area-inset-bottom)); min-height:56px;
   font-size:.74rem; letter-spacing:.1em; font-weight:600; text-transform:uppercase;
   box-shadow:0 -6px 24px rgba(0,0,0,.18);
-  transform:translateY(110%); transition:transform .45s var(--ease);
+  transform:translateY(150%); transition:transform .45s var(--ease);
 }
 .mob-wa-bar.show { transform:translateY(0); }
 .mob-wa-bar svg { flex-shrink:0; }
@@ -1454,6 +1455,9 @@ footer {
 }
 #toast.show { opacity:1; }
 
+/* iOS Safari auto-zooms inputs with font-size < 16px on focus — guard against it */
+.fl-input, .fl-sel, .fl-area, .adm-field, .adm-pw { font-size:max(16px, 1rem); }
+
 /* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
@@ -1501,6 +1505,8 @@ footer {
 }
 @media(max-width:480px) {
   section { padding:4.5rem 1.2rem; }
+  .container { padding:0 1.3rem; }
+  .nav-inner { padding:0 1.3rem; }
   .gallery-grid { grid-template-columns:1fr 1fr; }
   .hero-h1 { font-size:clamp(3rem,13vw,3.6rem); }
   .hero-sub-name { font-size:clamp(1.9rem,9vw,2.4rem); }
@@ -1511,6 +1517,15 @@ footer {
   .ev-date-badge .evb-d { font-size:1.3rem; }
   .form-box { padding:1.75rem 1.4rem; }
   .sobre-story p:first-of-type::first-letter { font-size:3rem; }
+}
+/* Very small phones (≤360px): tighten further, drop the wide nav sub-label */
+@media(max-width:360px) {
+  .container { padding:0 1rem; }
+  .nav-inner { padding:0 1rem; }
+  .nav-brand-sub { display:none; }
+  .nav-brand-main { font-size:1rem; }
+  .testi-card { padding:2.2rem 1.4rem 1.6rem; }
+  .svc-cat-btn { padding:.7rem 1.2rem; }
 }
 </style>
 </head>
