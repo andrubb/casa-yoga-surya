@@ -52,6 +52,14 @@
 ═══════════════════════════════════════ */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; font-size:16px; scroll-padding-top:90px; -webkit-text-size-adjust:100%; overflow-x:hidden; }
+/* overflow-x:hidden convierte el eje Y en auto, y eso hace de html/body un
+   CONTENEDOR DE SCROLL — lo que anula cualquier position:sticky que cuelgue
+   de ellos. Es el matador clasico del sticky, y aqui rompia entera la
+   seccion del saludo al sol.
+   `clip` recorta igual pero NO crea contenedor de scroll. Va en una regla
+   aparte y despues: los navegadores que no lo entienden la descartan y se
+   quedan con el hidden de arriba. */
+html { overflow-x:clip; }
 body {
   background:var(--white);
   color:var(--text);
@@ -60,6 +68,7 @@ body {
   font-size:1rem;
   line-height:1.8;
   overflow-x:hidden;
+  overflow-x:clip;   /* ver la nota de html: hidden mata el sticky */
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
@@ -353,6 +362,222 @@ section { padding:7rem 2rem; }
   animation:breathe 9s ease-in-out infinite;
 }
 
+/* ===================================================================
+   EL LIENZO DEL SOL
+   Va en z-index 0: por encima de .hero-bg y por debajo de todo el
+   contenido. Pinta el crema del fondo el mismo, asi que no hay que
+   mezclarlo con nada — se evita el problema clasico de un canvas
+   translucido sobre un degradado que ya existe.
+   =================================================================== */
+.surya{
+  position:absolute; inset:0; width:100%; height:100%;
+  display:block; z-index:0; pointer-events:none;
+  opacity:0; transition:opacity .9s ease;   /* hasta que pinte, nada raro */
+}
+.surya.encendido{opacity:1}
+/* Con el sol de verdad detras, los rayos de gradiente conico y los
+   petalos planos sobran: eran la manera de sugerir luz sin tenerla. */
+.hero .hero-rays{display:none}
+.hero .hero-sun{display:none}
+/* Las motas doradas SI se quedan: sobre una fuente de luz real se leen
+   como polvo suspendido, que es justo lo que hace falta. */
+
+
+/* ===================================================================
+   SURYA NAMASKAR
+   La seccion mide varias pantallas y dentro lleva un panel sticky. El
+   progreso sale de cuanto se ha recorrido de la seccion: scroll nativo,
+   sin libreria de pin, sin espaciadores fantasma.
+   =================================================================== */
+.sn{
+  position:relative;
+  background:linear-gradient(180deg, #fdf8ed 0%, #fbf3e2 45%, #f7ecd8 100%);
+  /* la altura ES el recorrido: 12 posturas necesitan sitio para respirar */
+  height:520vh;
+}
+.sn-sticky{
+  position:sticky; top:0;
+  height:100svh; min-height:560px;
+  display:flex; flex-direction:column;
+  /* el contenido arranca bajo el cielo y se reparte: centrarlo todo
+     dejaba un tercio de pantalla vacio debajo de la postura */
+  justify-content:center; align-items:center;
+  gap:clamp(6px,1.4vh,18px);
+  padding:calc(clamp(140px,26vh,240px) * .82) clamp(16px,5vw,64px) clamp(46px,7vh,70px);
+  overflow:hidden;
+}
+
+/* ---- el cielo y el arco ---- */
+.sn-cielo{
+  position:absolute; left:0; right:0; top:0;
+  height:clamp(140px,26vh,240px);
+  pointer-events:none;
+}
+.sn-arco{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+.sn-via{
+  fill:none; stroke:var(--gold); stroke-width:1.2;
+  stroke-dasharray:3 7; opacity:.42;
+}
+/* El sol de la seccion: un disco de luz, no un dibujo. Lo mueve el
+   scroll a lo largo del arco, con --p de 0 a 1. */
+.sn-sol{
+  position:absolute; top:0; left:0;
+  width:clamp(34px,4.6vw,54px); aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle at 42% 40%,
+    #fffdf4 0%, #ffe9a8 26%, var(--gold-light) 52%, rgba(201,168,76,0) 72%);
+  box-shadow:0 0 42px 14px rgba(232,201,106,.34);
+  transform:translate(-50%,-50%);
+  will-change:transform;
+}
+
+/* ---- cabecera ---- */
+.sn-cab{text-align:center; max-width:44ch; margin:0 auto; position:relative; z-index:2}
+.sn-eyebrow{
+  display:block; font-family:'Poppins',sans-serif;
+  font-size:.72rem; font-weight:600; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--gold-deep); margin-bottom:.7rem;
+}
+.sn-h2{
+  font-family:'Playfair Display',serif; font-weight:500;
+  font-size:clamp(2rem,5.2vw,3.4rem); line-height:1.06;
+  color:var(--text); margin:0 0 .7rem; text-wrap:balance;
+}
+.sn-h2 em{font-style:italic; color:var(--green)}
+.sn-intro{
+  font-size:clamp(.95rem,1.6vw,1.05rem); line-height:1.7;
+  color:var(--text-soft); margin:0; text-wrap:pretty;
+}
+
+/* ---- la escena: solo una postura a la vez ---- */
+.sn-escena{
+  position:relative; z-index:2;
+  width:100%; max-width:720px;
+  margin:clamp(14px,3.2vh,34px) auto 0;
+  /* alto fijo para que el cambio de postura no mueva la pagina */
+  height:clamp(250px,36vh,330px);
+}
+.sn-lista{list-style:none; margin:0; padding:0; height:100%}
+.sn-paso{
+  position:absolute; inset:0;
+  /* la pareja figura+texto se centra COMO UNIDAD bajo la cabecera: con
+     1fr en la columna del texto el bloque quedaba pegado a la izquierda
+     mientras el titular iba centrado, y los dos no se relacionaban */
+  display:grid; grid-template-columns:auto auto; align-items:center;
+  justify-content:center;
+  gap:clamp(18px,4vw,46px);
+  opacity:0; transform:translateY(16px);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+.sn-paso.on{opacity:1; transform:none}
+/* La primera, visible SIN depender del JS. Si el guion no llega a
+   correr, la seccion no puede quedarse con las doce en opacity 0 —
+   ademas de invisible, un medidor de contraste la puntua como texto sin
+   contraste, que es exactamente lo que pasaba. */
+.sn-paso:first-child{opacity:1; transform:none}
+.sn-num{
+  position:absolute; top:-6px; left:0;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:.95rem; color:var(--gold-deep); opacity:.75;
+}
+.sn-fig{
+  width:clamp(140px,19vw,205px); height:auto; display:block;
+  color:var(--green);
+}
+.sn-fig .sn-cuerpo{
+  fill:none; stroke:currentColor; stroke-width:4.2;
+  stroke-linecap:round; stroke-linejoin:round;
+  /* el trazo se dibuja al entrar la postura: la figura se ESCRIBE,
+     que es lo que hace una secuencia en vez de una diapositiva */
+  stroke-dasharray:var(--largo,340); stroke-dashoffset:var(--largo,340);
+  transition:stroke-dashoffset .85s cubic-bezier(.33,.9,.35,1) .12s;
+}
+.sn-paso.on .sn-fig .sn-cuerpo{stroke-dashoffset:0}
+@media (prefers-reduced-motion: reduce){
+  .sn-fig .sn-cuerpo{stroke-dasharray:none; stroke-dashoffset:0; transition:none}
+}
+.sn-fig .sn-cuerpo circle{fill:none}
+.sn-suelo{stroke:var(--gold); stroke-width:1.4; opacity:.5}
+.sn-txt{min-width:0}
+.sn-sans{
+  font-family:'Playfair Display',serif; font-weight:500; font-style:italic;
+  font-size:clamp(1.3rem,2.9vw,1.9rem); line-height:1.15;
+  color:var(--text); margin:0 0 .18rem; text-wrap:balance;
+}
+.sn-es{
+  font-family:'Poppins',sans-serif; font-size:.72rem; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--gold-deep);
+  margin:0 0 .7rem;
+}
+.sn-desc{
+  font-size:clamp(.92rem,1.5vw,1rem); line-height:1.65;
+  color:var(--text-soft); margin:0; max-width:38ch; text-wrap:pretty;
+}
+
+/* ---- la barra de recorrido ---- */
+.sn-barra{
+  position:absolute; left:clamp(16px,5vw,64px); right:clamp(16px,5vw,64px);
+  bottom:clamp(16px,3vh,30px); height:2px;
+  background:rgba(201,168,76,.22); border-radius:2px; overflow:hidden;
+}
+.sn-barra-in{
+  display:block; height:100%; width:100%;
+  background:linear-gradient(90deg, var(--gold-light), var(--gold-deep));
+  transform:scaleX(0); transform-origin:0 50%;
+  will-change:transform;
+}
+
+/* ---- movil: la figura arriba, el texto debajo ---- */
+@media (max-width:720px){
+  .sn{height:560vh}
+  .sn-paso{
+    grid-template-columns:1fr; justify-items:center; text-align:center;
+    gap:14px;
+  }
+  .sn-num{position:static; margin-bottom:2px}
+  .sn-desc{max-width:34ch; margin-inline:auto}
+  .sn-escena{height:clamp(280px,42vh,360px)}
+}
+
+/* ---- sin movimiento: la seccion se convierte en una rejilla ----
+   No hay recorrido que hacer, asi que no tiene sentido reservar cinco
+   pantallas de alto ni esconder once posturas. Se muestran las doce. */
+@media (prefers-reduced-motion: reduce){
+  .sn{height:auto}
+  .sn-sticky{position:static; height:auto; padding-block:clamp(60px,9vw,110px)}
+  .sn-cielo{display:none}
+  .sn-escena{height:auto; max-width:1080px}
+  .sn-lista{
+    display:grid; gap:clamp(30px,4vw,48px);
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    margin-top:40px;
+  }
+  /* En rejilla la postura se APILA. Manteniendo las dos columnas, el
+     texto caia en una columna de una palabra de ancho dentro de una
+     celda de 240px: "Se / empieza / de pie,". */
+  .sn-paso{
+    position:static; opacity:1; transform:none; transition:none;
+    grid-template-columns:1fr; justify-items:center; text-align:center;
+    gap:14px;
+  }
+  .sn-num{position:static; transform:none}
+  .sn-desc{max-width:30ch; margin-inline:auto}
+  .sn-barra{display:none}
+}
+/* misma degradacion en el modo ligero que ya usa el sitio */
+.lite .sn{height:auto}
+.lite .sn-sticky{position:static; height:auto}
+.lite .sn-cielo{display:none}
+.lite .sn-escena{height:auto}
+.lite .sn-lista{display:grid; gap:30px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.lite .sn-paso{
+  position:static; opacity:1; transform:none;
+  grid-template-columns:1fr; justify-items:center; text-align:center; gap:14px;
+}
+.lite .sn-num{position:static; transform:none}
+.lite .sn-desc{max-width:30ch; margin-inline:auto}
+.lite .sn-barra{display:none}
+
 /* Sun crowning the hero */
 .hero-sun-wrap {
   width:clamp(150px,21vw,224px); aspect-ratio:1;
@@ -411,7 +636,12 @@ section { padding:7rem 2rem; }
   display:block;
   font-family:'Playfair Display',serif; font-style:italic; font-weight:500;
   font-size:clamp(2rem,5.5vw,3.6rem);
-  background:linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-light) 28%, #fff6da 46%, var(--gold-light) 64%, var(--gold-deep) 100%);
+  /* El foil, bajado de tono. La version anterior llevaba #fff6da —casi
+     blanco— en el centro: sobre crema, y ahora sobre la luz del sol, la
+     mitad del nombre desaparecia. Un foil brilla sobre fondo oscuro; sobre
+     un fondo claro el brillo tiene que salir del contraste entre oro medio
+     y oro profundo, con TODAS las paradas por debajo del fondo. */
+  background:linear-gradient(100deg, #6d5210 0%, #a8862a 26%, #cfa943 46%, #a8862a 66%, #6d5210 100%);
   background-size:250% 100%; background-position:0% 50%;
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   line-height:1.1; margin-top:.1rem;
@@ -1527,6 +1757,89 @@ footer {
   .testi-card { padding:2.2rem 1.4rem 1.6rem; }
   .svc-cat-btn { padding:.7rem 1.2rem; }
 }
+
+/* ===================================================================
+   CONTRASTE DEL TEXTO PEQUEÑO
+   Cinco tonos estaban por debajo del minimo de 4.5:1 que pide WCAG AA
+   para texto pequeño. Se corrigen aqui, al final, porque comparten
+   especificidad con las reglas originales y la unica forma de ganarles
+   sin !important es la posicion.
+   Los titulares en oro NO se tocan: por encima de 24px el minimo es 3:1.
+   =================================================================== */
+:root{
+  /* oro solo para TEXTO. --gold se queda como esta: en filos, rayos y
+     rellenos el tono actual es el correcto, y oscurecerlo ahi apagaria
+     la pagina entera. */
+  --gold-text:#8a6b1c;   /* 4.72:1 sobre crema */
+  --text-light:#6f6b63;  /* 5.01:1 sobre crema — antes #888880, 3.37:1 */
+  --sobre-oro:#1f4029;   /* 5.04:1 sobre oro   — para texto EN oro */
+  --sobre-verde:#d8d4cc; /* 5.38:1 sobre el verde del pie */
+  --gold-claro:#e2cb85;  /* 4.97:1 sobre el verde del pie — el oro de texto
+                            NO sirve sobre fondo oscuro: #8a6b1c ahi da 1.59:1 */
+}
+
+/* --- oro sobre crema, en texto pequeño --- */
+/* OJO: aqui solo van clases que viven sobre CREMA o BLANCO.
+   .svc-cat-btn se quedo fuera a proposito: tiene un estado activo con
+   texto blanco sobre verde, y la regla se lo comia.
+   .footer-admin-link tambien: vive en el pie, sobre verde oscuro. */
+.sch-time,
+.sched-leg,
+.ev-fecha,
+.nav-brand-sub,
+.sn-es{ color:var(--gold-text); }
+
+/* Las pastillas Presencial/Virtual no van sobre blanco sino sobre un
+   tinte, asi que el oro de texto se quedaba en 4.05:1. Un punto mas
+   oscuro y pasan. */
+.sch-tag{ color:#7d6117; }
+
+/* La seccion del podcast es verde OSCURO: ahi el gris de apoyo, que es
+   oscuro, no sirve. */
+#podcast .sec-sub{ color:var(--sobre-verde); }
+
+/* enlaces de texto dentro de parrafos y listas */
+.sobre a, .sec-sub a, .svc-item-detail a,
+p a:not([class]), li a:not([class]){ color:var(--gold-text); }
+
+/* El pie es verde oscuro: ahi el oro tiene que ser CLARO. Con el oro de
+   texto (#8a6b1c) estos enlaces bajaban a 1.59:1 — peor que antes. */
+.footer-col a,
+.footer-admin-link,
+footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
+
+/* --- gris de apoyo --- */
+.sch-prof,
+.stat-lbl,
+.svc-item-detail,
+.sec-sub{ color:var(--text-light); }
+
+/* --- texto SOBRE oro: la llamada a la accion del negocio ---
+   Blanco sobre oro daba 2.29:1. Verde profundo sobre el mismo oro da
+   5.04:1 y ademas es el otro color de la marca, asi que el boton no
+   cambia de identidad: solo se vuelve legible. */
+.wa-btn-full,
+.mob-wa-bar,
+.mob-wa{ color:var(--sobre-oro); }
+.wa-btn-full svg,
+.mob-wa-bar svg{ stroke:var(--sobre-oro); fill:none; }
+
+/* --- texto claro sobre el verde del pie --- */
+.footer-copy,
+.fl-desc{ color:var(--sobre-verde); }
+
+/* Un enlace dentro de un parrafo no puede distinguirse SOLO por el
+   color: quien no distingue bien los colores no ve que es un enlace.
+   Se subraya, con el trazo separado para que no muerda las letras. */
+.sobre p a, .sec-sub a, .svc-item-detail a, p a:not([class]){
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  text-decoration-color:color-mix(in srgb, currentColor 45%, transparent);
+}
+.sobre p a:hover, p a:not([class]):hover{
+  text-decoration-color:currentColor;
+}
 </style>
 </head>
 <body>
@@ -1593,9 +1906,16 @@ footer {
   </div>
 </nav>
 
+<main id="contenido">
+
 <!-- HERO -->
 <section class="hero" id="inicio">
   <div class="hero-bg"></div>
+  <!-- EL SOL. Ocupa el hero entero y pinta tambien el fondo: la luz baña
+       la composicion en vez de quedarse encerrada en un disco. Si no hay
+       WebGL2 el lienzo se queda transparente y manda .hero-bg, que es
+       exactamente lo que se ve hoy. -->
+  <canvas class="surya" id="surya" aria-hidden="true"></canvas>
 
   <!-- Warm bokeh depth -->
   <div class="hero-bokeh" aria-hidden="true">
@@ -1721,16 +2041,16 @@ footer {
       <span class="hero-sub-name" id="hero-script">+Surya</span>
     </h1>
     <div class="hero-divider"></div>
-    <p class="hero-tagline" id="hero-tagline">Yoga, terapias espirituales y artes aéreas<br>en un espacio familiar creado con amor.</p>
+    <p class="hero-tagline" id="hero-tagline">Yoga, sonoterapia y artes aéreas en Aserrí.<br>Clases presenciales y virtuales, para empezar desde cero.</p>
     <div class="hero-btns">
       <a href="https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20una%20clase%20en%20Casa%20Yoga%2BSurya" target="_blank" class="btn btn-green" id="hero-btn1">Reservar clase</a>
       <a href="#servicios" class="btn btn-outline-gold" id="hero-btn2">Ver servicios</a>
     </div>
     <div class="hero-badges">
-      <span class="hero-badge"><span class="hero-badge-dot"></span>Yoga certificado</span>
-      <span class="hero-badge"><span class="hero-badge-dot"></span>Terapias espirituales</span>
-      <span class="hero-badge"><span class="hero-badge-dot"></span>Artes aéreas</span>
-      <span class="hero-badge"><span class="hero-badge-dot"></span>Todas las edades</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>5 modalidades de yoga</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>6 disciplinas aéreas</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>Presencial y virtual</span>
+      <span class="hero-badge"><span class="hero-badge-dot"></span>Sin experiencia previa</span>
     </div>
   </div><!-- /hero-content -->
 
@@ -1866,6 +2186,225 @@ footer {
 </div>
 
 <!-- SERVICIOS -->
+
+<!-- ===================================================================
+     SURYA NAMASKAR — el saludo al sol.
+     La secuencia que da nombre al centro, y que la pagina no mencionaba.
+     Se recorre con el scroll: el sol cruza el cielo y las doce posturas
+     avanzan con el. Sin JS se queda como una rejilla legible.
+     =================================================================== -->
+<section class="sn" id="saludo" aria-labelledby="sn-h2">
+  <div class="sn-sticky">
+    <!-- EL CIELO. El arco lo dibuja el scroll: el sol sale por la
+         izquierda, culmina y se pone. Doce posturas, un dia. -->
+    <div class="sn-cielo" aria-hidden="true">
+      <svg class="sn-arco" viewBox="0 0 1000 220" preserveAspectRatio="none">
+        <path class="sn-via" d="M40 200 Q500 -40 960 200"/>
+      </svg>
+      <span class="sn-sol"></span>
+    </div>
+
+    <header class="sn-cab">
+      <span class="sn-eyebrow">Surya Namaskar</span>
+      <h2 id="sn-h2" class="sn-h2">El saludo <em>al sol</em></h2>
+      <p class="sn-intro">Doce posturas encadenadas con la respiración. Es la secuencia con la que empieza casi toda práctica — y la que le da nombre a esta casa.</p>
+    </header>
+
+    <div class="sn-escena">
+      <ol class="sn-lista">
+      <li class="sn-paso" data-i="0">
+        <span class="sn-num">01</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="60" cy="24" r="7.5"/>
+      <path d="M60 31.5 V80"/>
+      <path d="M50 45 H70"/>
+      <path d="M50 45 L44 57 L57 63"/>
+      <path d="M70 45 L76 57 L63 63"/>
+      <path d="M60 80 L55 126"/><path d="M60 80 L66 126"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Pranamasana</h3>
+          <p class="sn-es">Postura de la oración</p>
+          <p class="sn-desc">Se empieza de pie, palmas al centro del pecho. Es el saludo: llegar y estar.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="1">
+        <span class="sn-num">02</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="64" cy="27" r="7.5"/>
+      <path d="M63 34.5 C59 50 57 65 56 80"/>
+      <path d="M61 45 C67 31 71 19 73 11"/>
+      <path d="M61 45 C71 34 79 24 84 16"/>
+      <path d="M56 80 L52 126"/><path d="M56 80 L62 126"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Hasta Uttanasana</h3>
+          <p class="sn-es">Brazos elevados</p>
+          <p class="sn-desc">Se inhala y el pecho se abre hacia arriba. Entra el aire y entra la luz.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="2">
+        <span class="sn-num">03</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="47" cy="104" r="7.5"/>
+      <path d="M67 48 C62 66 54 86 49 97"/>
+      <path d="M64 48 L60 126"/><path d="M71 48 L75 126"/>
+      <path d="M54 88 L49 123"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Padahastasana</h3>
+          <p class="sn-es">Mano a pie</p>
+          <p class="sn-desc">Se exhala y el cuerpo se pliega. La cabeza baja por debajo del corazón.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="3">
+        <span class="sn-num">04</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="79" cy="40" r="7.5"/>
+      <path d="M78 47.5 C76 58 72 70 67 82"/>
+      <path d="M67 82 C60 90 54 100 50 112 L48 126"/>
+      <path d="M67 82 C80 94 94 108 104 124"/>
+      <path d="M75 55 C64 78 52 106 47 123"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Ashwa Sanchalanasana</h3>
+          <p class="sn-es">Postura ecuestre</p>
+          <p class="sn-desc">Una pierna atrás, la mirada al frente. El primer paso hacia adelante.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="4">
+        <span class="sn-num">05</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="27" cy="60" r="7.5"/>
+      <path d="M34.5 63 C58 68 84 74 106 80"/>
+      <path d="M37 65 L35 124"/>
+      <path d="M104 79 L109 124"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Dandasana</h3>
+          <p class="sn-es">Postura del bastón</p>
+          <p class="sn-desc">El cuerpo, una sola línea. Sostener sin tensar.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="5">
+        <span class="sn-num">06</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="29" cy="88" r="7.5"/>
+      <path d="M36.5 92 C58 101 80 98 97 89"/>
+      <path d="M41 95 L39 124"/>
+      <path d="M93 93 L98 124"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Ashtanga Namaskara</h3>
+          <p class="sn-es">Saludo con ocho miembros</p>
+          <p class="sn-desc">Ocho puntos tocan el suelo. La entrega completa.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="6">
+        <span class="sn-num">07</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="31" cy="49" r="7.5"/>
+      <path d="M32 56.5 C39 77 55 96 79 108 C90 113 100 117 109 119"/>
+      <path d="M37 66 L35 124"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Bhujangasana</h3>
+          <p class="sn-es">Cobra</p>
+          <p class="sn-desc">El pecho se levanta otra vez. Se inhala y se vuelve a abrir.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="7">
+        <span class="sn-num">08</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="50" cy="74" r="7.5"/>
+      <path d="M66 38 C56 66 42 98 31 122"/>
+      <path d="M68 38 C80 66 94 98 103 122"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Adho Mukha Svanasana</h3>
+          <p class="sn-es">Perro boca abajo</p>
+          <p class="sn-desc">Las manos empujan, las caderas suben. El descanso activo.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="8">
+        <span class="sn-num">09</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="79" cy="40" r="7.5"/>
+      <path d="M78 47.5 C76 58 72 70 67 82"/>
+      <path d="M67 82 C60 90 54 100 50 112 L48 126"/>
+      <path d="M67 82 C80 94 94 108 104 124"/>
+      <path d="M75 55 C64 78 52 106 47 123"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Ashwa Sanchalanasana</h3>
+          <p class="sn-es">Postura ecuestre</p>
+          <p class="sn-desc">La pierna vuelve al frente. El camino se deshace igual que se hizo.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="9">
+        <span class="sn-num">10</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="47" cy="104" r="7.5"/>
+      <path d="M67 48 C62 66 54 86 49 97"/>
+      <path d="M64 48 L60 126"/><path d="M71 48 L75 126"/>
+      <path d="M54 88 L49 123"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Padahastasana</h3>
+          <p class="sn-es">Mano a pie</p>
+          <p class="sn-desc">Se exhala y el cuerpo se pliega de nuevo.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="10">
+        <span class="sn-num">11</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="64" cy="27" r="7.5"/>
+      <path d="M63 34.5 C59 50 57 65 56 80"/>
+      <path d="M61 45 C67 31 71 19 73 11"/>
+      <path d="M61 45 C71 34 79 24 84 16"/>
+      <path d="M56 80 L52 126"/><path d="M56 80 L62 126"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Hasta Uttanasana</h3>
+          <p class="sn-es">Brazos elevados</p>
+          <p class="sn-desc">Se inhala y se sube. El sol ya está en lo alto.</p>
+        </div>
+      </li>
+      <li class="sn-paso" data-i="11">
+        <span class="sn-num">12</span>
+        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
+          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
+          <g class="sn-cuerpo"><circle cx="60" cy="24" r="7.5"/>
+      <path d="M60 31.5 V80"/>
+      <path d="M50 45 H70"/>
+      <path d="M50 45 L44 57 L57 63"/>
+      <path d="M70 45 L76 57 L63 63"/>
+      <path d="M60 80 L55 126"/><path d="M60 80 L66 126"/></g>
+        </svg>
+        <div class="sn-txt">
+          <h3 class="sn-sans">Pranamasana</h3>
+          <p class="sn-es">Postura de la oración</p>
+          <p class="sn-desc">De vuelta al centro. Una ronda completa: una respiración larga.</p>
+        </div>
+      </li>
+      </ol>
+    </div>
+
+    <div class="sn-barra" aria-hidden="true"><span class="sn-barra-in"></span></div>
+  </div>
+</section>
+
 <section class="servicios-sec grain" id="servicios">
   <div class="container">
     <div class="sec-header rv">
@@ -2242,7 +2781,7 @@ footer {
         <img id="pod-thumb-img-0" src="" alt="Ep #67" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
         <div class="pod-ep-badge">Ep. #67</div>
         <div class="pod-play-ov">
-          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn" aria-label="Ver el podcast en YouTube">
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           </a>
         </div>
@@ -2277,7 +2816,7 @@ footer {
         <img id="pod-thumb-img-1" src="" alt="Ep #38" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
         <div class="pod-ep-badge">Ep. #38</div>
         <div class="pod-play-ov">
-          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn" aria-label="Ver el podcast en YouTube">
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           </a>
         </div>
@@ -2312,7 +2851,7 @@ footer {
         <img id="pod-thumb-img-2" src="" alt="Ep #16" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
         <div class="pod-ep-badge">Ep. #16</div>
         <div class="pod-play-ov">
-          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn">
+          <a href="https://www.youtube.com/@SusurrosPodcast" target="_blank" class="pod-play-btn" aria-label="Ver el podcast en YouTube">
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           </a>
         </div>
@@ -2470,7 +3009,7 @@ footer {
         <!-- Google Maps -->
         <div class="map-frame">
           <svg class="leaf-accent" style="width:60px;top:-14px;left:-14px;transform:rotate(-25deg);color:var(--green)" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M50 4C26 24 24 60 50 96 76 60 74 24 50 4Z"/></svg>
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3932.6!2d-84.04!3d9.78!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sVuelta%20de%20Jorco%2C%20Aserrí!5e0!3m2!1ses!2scr!4v1" width="100%" height="220" style="border:0;display:block" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <iframe title="Mapa de cómo llegar a Casa Yoga+Surya, Aserrí" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3932.6!2d-84.04!3d9.78!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sVuelta%20de%20Jorco%2C%20Aserrí!5e0!3m2!1ses!2scr!4v1" width="100%" height="220" style="border:0;display:block" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
       </div>
 
@@ -2482,15 +3021,15 @@ footer {
           <div class="form-row">
             <div class="fl-group">
               <input class="fl-input" id="form-name" type="text" placeholder=" ">
-              <label class="fl-label">Nombre *</label>
+              <label class="fl-label" for="form-name">Nombre *</label>
             </div>
             <div class="fl-group">
               <input class="fl-input" id="form-phone" type="tel" placeholder=" ">
-              <label class="fl-label">Teléfono</label>
+              <label class="fl-label" for="form-phone">Teléfono</label>
             </div>
           </div>
           <div class="fl-group fl-static">
-            <label class="fl-label">Servicio de interés</label>
+            <label class="fl-label" for="form-service">Servicio de interés</label>
             <select class="fl-sel" id="form-service">
               <option value="">Seleccionar...</option>
               <option>Yoga Anusara</option>
@@ -2512,7 +3051,7 @@ footer {
           </div>
           <div class="fl-group">
             <textarea class="fl-input fl-area" id="form-msg" placeholder=" "></textarea>
-            <label class="fl-label">Mensaje</label>
+            <label class="fl-label" for="form-msg">Mensaje</label>
           </div>
           <button class="wa-btn-full" onclick="sendWA()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -2524,6 +3063,8 @@ footer {
     </div>
   </div>
 </section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>
@@ -2616,7 +3157,7 @@ footer {
     <!-- Login -->
     <div class="adm-login" id="adm-login">
       <p class="adm-login-title">Ingresa tu contraseña para continuar</p>
-      <input class="adm-pw" id="adm-pw" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkAdmin()">
+      <input class="adm-pw" id="adm-pw" type="password" aria-label="Contraseña del panel" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkAdmin()">
       <button class="adm-login-btn" onclick="checkAdmin()">Entrar</button>
       <p class="adm-err" id="adm-err">Contraseña incorrecta</p>
     </div>
@@ -2638,7 +3179,7 @@ footer {
         <!-- HERO -->
         <div class="adm-pane on" id="pane-hero">
           <p class="adm-sec">Texto del Hero</p>
-          <div class="adm-fg"><label class="adm-lbl">Nombre principal (+Surya)</label><input class="adm-field" id="a-script" placeholder="+Surya"></div>
+          <div class="adm-fg"><label class="adm-lbl">Nombre principal (+Surya)</label><input class="adm-field" id="a-script" aria-label="Segunda línea del nombre" placeholder="+Surya"></div>
           <div class="adm-fg"><label class="adm-lbl">Tagline</label><textarea class="adm-field adm-ta" id="a-tagline"></textarea></div>
           <div class="adm-fg"><label class="adm-lbl">Botón 1 — Texto</label><input class="adm-field" id="a-b1t"></div>
           <div class="adm-fg"><label class="adm-lbl">Botón 1 — URL</label><input class="adm-field" id="a-b1u"></div>
@@ -2761,8 +3302,8 @@ footer {
         <div class="adm-pane" id="pane-contacto">
           <p class="adm-sec">Información de Contacto</p>
           <div class="adm-row">
-            <div class="adm-fg"><label class="adm-lbl">WhatsApp (número)</label><input class="adm-field" id="a-wa" placeholder="50688302691"></div>
-            <div class="adm-fg"><label class="adm-lbl">Teléfono visible</label><input class="adm-field" id="a-tel" placeholder="+506 8830 2691"></div>
+            <div class="adm-fg"><label class="adm-lbl">WhatsApp (número)</label><input class="adm-field" id="a-wa" aria-label="Número de WhatsApp, sin el signo más" placeholder="50688302691"></div>
+            <div class="adm-fg"><label class="adm-lbl">Teléfono visible</label><input class="adm-field" id="a-tel" aria-label="Teléfono que se muestra en la página" placeholder="+506 8830 2691"></div>
           </div>
           <div class="adm-fg"><label class="adm-lbl">Email</label><input class="adm-field" id="a-email"></div>
           <div class="adm-fg"><label class="adm-lbl">Ubicación</label><input class="adm-field" id="a-ubicacion"></div>
@@ -2774,7 +3315,7 @@ footer {
         <div class="adm-pane" id="pane-textos">
           <p class="adm-sec">Textos Generales</p>
           <div class="adm-fg"><label class="adm-lbl">Frase filosófica (banda verde)</label><textarea class="adm-field adm-ta" id="a-philo"></textarea></div>
-          <div class="adm-fg"><label class="adm-lbl">Nota de horarios (bajo el calendario)</label><input class="adm-field" id="a-horario" placeholder="Clases todo el año · Reserva con anticipación"></div>
+          <div class="adm-fg"><label class="adm-lbl">Nota de horarios (bajo el calendario)</label><input class="adm-field" id="a-horario" aria-label="Línea de horario del pie de página" placeholder="Clases todo el año · Reserva con anticipación"></div>
           <div class="adm-fg"><label class="adm-lbl">Título CTA</label><input class="adm-field" id="a-cta-t"></div>
           <div class="adm-fg"><label class="adm-lbl">Subtexto CTA</label><textarea class="adm-field adm-ta" id="a-cta-s"></textarea></div>
           <div class="adm-fg"><label class="adm-lbl">Descripción del footer</label><textarea class="adm-field adm-ta" id="a-footer-d"></textarea></div>
@@ -2799,7 +3340,7 @@ var evIdx = 0, evTimer = null, EV_DUR = 6500;
 
 /* ─── DEFAULTS ─── */
 var DEF = {
-  hero:{ script:'+Surya', tagline:'Yoga, terapias espirituales y artes aéreas\nen un espacio familiar creado con amor.', btn1t:'Reservar clase', btn1u:'https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20en%20Casa%20Yoga%2BSurya', btn2t:'Ver servicios', btn2u:'#servicios' },
+  hero:{ script:'+Surya', tagline:'Yoga, sonoterapia y artes aéreas en Aserrí.\nClases presenciales y virtuales, para empezar desde cero.', btn1t:'Reservar clase', btn1u:'https://wa.me/50688302691?text=Hola!%20Me%20gustar%C3%ADa%20reservar%20en%20Casa%20Yoga%2BSurya', btn2t:'Ver servicios', btn2u:'#servicios' },
   instructors:{ andrea:{ role:'Maestra de Parapsicología · Terapeuta Espiritual', bio:'Con más de 8 años de dedicación al bienestar holístico, Andrea es Graduada en Metafísica y Ciencias Espirituales con Diploma en Maestro de Parapsicología y Terapeuta Espiritual (2024). Invitada en Susurros Podcast (episodios #16, #38 y #67). Su vocación nació de una búsqueda personal que la llevó a descubrir el poder sanador del yoga, el sonido y la energía.' }, david:{ role:'Especialista en Disciplinas Aéreas · Instructor Certificado', bio:'David es el especialista en disciplinas aéreas de Casa Yoga+Surya. Con formación y experiencia en danza aérea, telas, lira, pole, trapecio y cuerda aérea, trabaja con niños y adultos de todos los niveles. Su enfoque combina fuerza, coordinación y expresión artística.' } },
   eventos:[
     { tipo:'Taller', fecha:'Sábado 25 de Abril · 4pm a 7pm', titulo:'Taller de Alimentación Consciente y Real', desc:'Nutre tu cuerpo, enraíza tu esencia. Desde el principio de Saucha — Limpieza, Claridad y Armonía. Incluye té energético cultivado en Casa Yoga Surya y bocadillo saludable.', precio:'₡18,000' },
@@ -3701,6 +4242,302 @@ function boot(){
 if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', boot); }
 else { boot(); }
 
+})();
+</script>
+
+<script>
+/* ===================================================================
+   SURYA — el sol, en WebGL2 crudo.
+
+   Por que sin libreria: lo unico que hace falta es un triangulo a
+   pantalla completa y un fragment shader. Traer three.js para esto serian
+   ~150 KB para no usar ni la escena, ni la camara, ni la malla.
+
+   El shader:
+   · fBm de 4 octavas con DEFORMACION DE DOMINIO — el ruido se muestrea
+     en coordenadas que a su vez vienen de otro ruido. Es lo que separa
+     una nube de manchas de una corona que parece plasma.
+   · los rayos son una funcion angular modulada por ESE MISMO ruido, no
+     un molinillo aparte: asi respiran con la corona en vez de girar
+     rigidos por encima.
+   · la hora del dia (uHora) tiñe la luz. De momento fija; la fase 2 la
+     ata al scroll.
+   =================================================================== */
+(function(){
+  var cv = document.getElementById('surya');
+  if(!cv) return;
+
+  var reduce = false;
+  try{ reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  var gl = null;
+  try{
+    gl = cv.getContext('webgl2', {alpha:true, antialias:false, depth:false,
+      stencil:false, powerPreference:'low-power', premultipliedAlpha:false});
+  }catch(e){}
+  /* Sin WebGL2 no se toca nada: se queda el fondo que ya existe. Un
+     degradado CSS decente es mejor que un lienzo negro. */
+  if(!gl) return;
+
+  var VERT = [
+    '#version 300 es',
+    'void main(){',
+    /* un solo triangulo que cubre la pantalla: mas barato que un quad y
+       sin la costura diagonal que a veces deja el quad */
+    '  vec2 p = vec2((gl_VertexID<<1)&2, gl_VertexID&2);',
+    '  gl_Position = vec4(p*2.0-1.0, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var FRAG = [
+    '#version 300 es',
+    'precision highp float;',
+    'out vec4 oCol;',
+    'uniform vec2  uRes;',
+    'uniform float uT;',
+    'uniform vec2  uSol;',    /* centro del sol, en espacio uv */
+    'uniform float uHora;',   /* 0 amanecer · 1 mediodia · 2 atardecer */
+    'uniform float uFuerza;', /* 0..1, para bajar el efecto en moviles */
+
+    'float hash(vec2 p){',
+    '  p = fract(p*vec2(123.34, 456.21));',
+    '  p += dot(p, p+45.32);',
+    '  return fract(p.x*p.y);',
+    '}',
+    /* ruido de valor con interpolacion suave */
+    'float ruido(vec2 p){',
+    '  vec2 i = floor(p), f = fract(p);',
+    '  vec2 u = f*f*(3.0-2.0*f);',
+    '  return mix(mix(hash(i), hash(i+vec2(1,0)), u.x),',
+    '             mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), u.x), u.y);',
+    '}',
+    'float fbm(vec2 p){',
+    '  float v = 0.0, a = 0.5;',
+    '  for(int i=0;i<4;i++){ v += a*ruido(p); p *= 2.02; a *= 0.5; }',
+    '  return v;',
+    '}',
+
+    'void main(){',
+    '  vec2 uv = (gl_FragCoord.xy - 0.5*uRes) / uRes.y;',
+    '  vec2 c  = uv - uSol;',
+    '  float d = length(c);',
+    '  float ang = atan(c.y, c.x);',
+
+    /* DEFORMACION DE DOMINIO: el ruido se muestrea en coordenadas que
+       vienen de otro ruido. Sin esto la corona son manchas; con esto es
+       plasma. */
+    '  vec2 q = vec2(fbm(c*2.6 + vec2(0.0, uT*0.020)),',
+    '                fbm(c*2.6 + vec2(5.2, 1.3) - uT*0.015));',
+    '  float turb = fbm(c*3.4 + q*1.7 + uT*0.030);',
+
+    /* RAYOS — funcion angular modulada por la MISMA turbulencia, para que
+       respiren con la corona en vez de girar rigidos por encima */
+    '  float rayos = 0.5 + 0.5*sin(ang*18.0 + turb*7.0 + uT*0.055);',
+    '  rayos = pow(max(rayos,0.0), 3.2);',
+    '  float caida = smoothstep(1.05, 0.05, d);',
+    '  rayos *= caida;',
+
+    /* NUCLEO y CORONA */
+    '  float nucleo = smoothstep(0.115, 0.0, d);',
+    '  float corona = smoothstep(0.62, 0.015, d) * (0.55 + 0.45*turb);',
+
+    /* PALETA — se mueve con la hora del dia.
+       amanecer: mas rosado y frio · mediodia: oro limpio · atardecer:
+       ambar profundo. Los tonos salen de la propia paleta del sitio. */
+    '  vec3 cremaAm = vec3(0.976, 0.957, 0.933);',
+    '  vec3 cremaMd = vec3(0.992, 0.973, 0.929);',
+    '  vec3 cremaAt = vec3(0.980, 0.945, 0.886);',
+    '  vec3 oroAm   = vec3(0.902, 0.760, 0.545);',
+    '  vec3 oroMd   = vec3(0.910, 0.788, 0.416);',
+    '  vec3 oroAt   = vec3(0.878, 0.639, 0.318);',
+    '  float h1 = clamp(uHora, 0.0, 1.0);',
+    '  float h2 = clamp(uHora-1.0, 0.0, 1.0);',
+    '  vec3 crema = mix(mix(cremaAm, cremaMd, h1), cremaAt, h2);',
+    '  vec3 oro   = mix(mix(oroAm,   oroMd,   h1), oroAt,   h2);',
+    '  vec3 blanco = vec3(1.0, 0.990, 0.955);',
+
+    '  vec3 col = crema;',
+    /* CAIDA VERTICAL. El sol reparte luz por todo el hero, tambien por
+       donde vive el texto. Arriba manda el sol; hacia abajo —titular,
+       subtitulo, botones— la luz se calma hasta el crema, y la tinta
+       oscura vuelve a leerse. Es el velo de Blades al reves: alli habia
+       que oscurecer para la tinta clara, aqui hay que calmar para la
+       tinta oscura. */
+    '  float calma = mix(0.30, 1.0, smoothstep(-0.34, 0.30, uv.y));',
+    '  col = mix(col, oro,    corona * 0.78 * uFuerza * calma);',
+    '  col = mix(col, oro,    rayos  * 0.34 * uFuerza * calma);',
+    '  col = mix(col, blanco, nucleo * 0.92);',
+
+    /* un halo muy ancho y muy tenue: es lo que da la sensacion de que la
+       luz llega hasta los bordes del hero, no de que hay un disco */
+    '  col = mix(col, oro, smoothstep(1.6, 0.2, d) * 0.13 * uFuerza * calma);',
+
+    /* grano finisimo: sin el, los degradados de una pantalla amplia se
+       bandean en escalones visibles */
+    '  float g = (hash(gl_FragCoord.xy + fract(uT)) - 0.5) * 0.016;',
+    '  col += g;',
+
+    '  oCol = vec4(col, 1.0);',
+    '}'
+  ].join('\n');
+
+  function compila(tipo, src){
+    var sh = gl.createShader(tipo);
+    gl.shaderSource(sh, src); gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){
+      console.warn('surya: shader no compila', gl.getShaderInfoLog(sh));
+      return null;
+    }
+    return sh;
+  }
+  var vs = compila(gl.VERTEX_SHADER, VERT), fs = compila(gl.FRAGMENT_SHADER, FRAG);
+  if(!vs || !fs) return;
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
+    console.warn('surya: el programa no enlaza', gl.getProgramInfoLog(prog)); return;
+  }
+  gl.useProgram(prog);
+  var uRes = gl.getUniformLocation(prog,'uRes'),
+      uT   = gl.getUniformLocation(prog,'uT'),
+      uSol = gl.getUniformLocation(prog,'uSol'),
+      uHora= gl.getUniformLocation(prog,'uHora'),
+      uFue = gl.getUniformLocation(prog,'uFuerza');
+
+  /* El tamaño se mide en el ResizeObserver, NUNCA en el bucle: leer
+     getBoundingClientRect() por fotograma fuerza el layout 60 veces por
+     segundo y es la forma mas facil de tirar los fps sin darse cuenta. */
+  var anchoCss = 0, altoCss = 0;
+  function mide(){
+    var r = cv.getBoundingClientRect();
+    anchoCss = Math.max(1, r.width|0);
+    altoCss  = Math.max(1, r.height|0);
+    /* densidad limitada a 2: por encima se pinta el triple de pixeles
+       para una diferencia que nadie ve en un degradado */
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width  = Math.round(anchoCss*dpr);
+    cv.height = Math.round(altoCss*dpr);
+    gl.viewport(0,0,cv.width,cv.height);
+    gl.uniform2f(uRes, cv.width, cv.height);
+  }
+
+  /* estado del sol: lo mueve la fase 2 (el arco del dia) */
+  window.__surya = {x:0.0, y:0.30, hora:1.0, fuerza:1.0};
+
+  var t0 = performance.now(), raf = null, vivo = false;
+  function pinta(){
+    var t = (performance.now()-t0)/1000;
+    gl.uniform1f(uT, t);
+    gl.uniform2f(uSol, window.__surya.x, window.__surya.y);
+    gl.uniform1f(uHora, window.__surya.hora);
+    gl.uniform1f(uFue, window.__surya.fuerza);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  function bucle(){ if(!vivo) return; pinta(); raf = requestAnimationFrame(bucle); }
+  function arranca(){ if(vivo || reduce) return; vivo = true; raf = requestAnimationFrame(bucle); }
+  function para(){ vivo = false; if(raf) cancelAnimationFrame(raf); raf = null; }
+
+  mide();
+  pinta();                       /* un fotograma ya, antes de animar nada */
+  cv.classList.add('encendido');
+
+  if('ResizeObserver' in window){ new ResizeObserver(function(){ mide(); pinta(); }).observe(cv); }
+  else { window.addEventListener('resize', function(){ mide(); pinta(); }, {passive:true}); }
+
+  /* Se pausa lo que nadie mira: ni bateria ni fps gastados de balde. */
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es[0].isIntersecting ? arranca() : para(); },
+      {rootMargin:'140px'}).observe(cv);
+  } else { arranca(); }
+  document.addEventListener('visibilitychange', function(){
+    document.hidden ? para() : arranca();
+  });
+
+  window.__suryaOn = true;
+})();
+</script>
+
+<script>
+/* ===================================================================
+   SURYA NAMASKAR — el recorrido.
+
+   Todo sale de UNA cuenta: cuanto se ha recorrido de la seccion. De ahi
+   salen la postura activa, la posicion del sol sobre el arco y la barra.
+
+   Sin libreria y sin pin: la seccion es alta y dentro hay un panel
+   sticky. Es scroll nativo — no hay espaciadores que se descuadren ni
+   pines que choquen entre si.
+
+   El scroll solo APUNTA el dato; el trabajo se hace en un rAF. Escribir
+   estilos dentro del propio evento de scroll es la forma clasica de
+   convertir un scroll suave en uno a tirones.
+   =================================================================== */
+(function(){
+  var sec = document.getElementById('saludo');
+  if(!sec) return;
+  var pasos = [].slice.call(sec.querySelectorAll('.sn-paso'));
+  var sol   = sec.querySelector('.sn-sol');
+  var via   = sec.querySelector('.sn-via');
+  var barra = sec.querySelector('.sn-barra-in');
+  var cielo = sec.querySelector('.sn-cielo');
+  if(!pasos.length) return;
+
+  var reduce = false;
+  try{ reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  if(reduce || document.body.classList.contains('lite')){
+    pasos.forEach(function(p){ p.classList.add('on'); });
+    return;
+  }
+
+  /* La primera postura visible desde el principio: si no, quien llega a
+     la seccion ve un hueco hasta que empieza a bajar. */
+  pasos[0].classList.add('on');
+
+  var activo = 0, pedido = false, largoVia = 0;
+  function midVia(){
+    try{ largoVia = via.getTotalLength(); }catch(e){ largoVia = 0; }
+  }
+  midVia();
+  if('ResizeObserver' in window){ new ResizeObserver(midVia).observe(sec); }
+
+  function aplica(){
+    pedido = false;
+    var r = sec.getBoundingClientRect();
+    var vh = window.innerHeight || 800;
+    /* recorrido util: desde que la seccion se pega arriba hasta que se
+       despega por abajo */
+    var total = Math.max(1, r.height - vh);
+    var p = Math.min(1, Math.max(0, -r.top / total));
+
+    /* la postura: doce tramos iguales */
+    var i = Math.min(pasos.length - 1, Math.floor(p * pasos.length));
+    if(i !== activo){
+      pasos[activo].classList.remove('on');
+      pasos[i].classList.add('on');
+      activo = i;
+    }
+
+    /* el sol, sobre el arco. Se pide el punto a la propia curva en vez
+       de recalcular la parabola: asi el sol y la linea nunca se separan
+       aunque cambie el viewBox. */
+    if(sol && largoVia){
+      var pt = via.getPointAtLength(largoVia * p);
+      var caja = via.ownerSVGElement.viewBox.baseVal;
+      var rc = cielo.getBoundingClientRect();
+      var x = (pt.x / caja.width)  * rc.width;
+      var y = (pt.y / caja.height) * rc.height;
+      sol.style.transform = 'translate(' + (x - rc.width * 0) + 'px,' + y + 'px) translate(-50%,-50%)';
+      sol.style.left = '0px';
+      sol.style.top  = '0px';
+      sol.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) translate(-50%,-50%)';
+    }
+    if(barra) barra.style.transform = 'scaleX(' + p + ')';
+  }
+  function pide(){ if(!pedido){ pedido = true; requestAnimationFrame(aplica); } }
+
+  window.addEventListener('scroll', pide, {passive:true});
+  window.addEventListener('resize', function(){ midVia(); pide(); }, {passive:true});
+  aplica();
 })();
 </script>
 </body>
