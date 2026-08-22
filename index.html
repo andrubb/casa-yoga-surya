@@ -202,7 +202,14 @@ section { padding:7rem 2rem; }
 .sec-label::before, .sec-label::after {
   content:''; display:block; width:28px; height:1px; background:var(--gold);
 }
-.sec-title { font-size:clamp(2rem,3.5vw,2.8rem); color:var(--text); margin-bottom:.6rem; }
+.sec-title {
+  /* 2.8rem era 2.8 veces el cuerpo: un titular que acompaña en vez de
+     mandar. A 4.4rem el salto se nota, y a ese tamaño el tracking tiene
+     que cerrarse o las letras se separan. */
+  font-size:clamp(2.15rem,4.6vw,4.4rem);
+  letter-spacing:-.022em; line-height:1.04;
+  color:var(--text); margin-bottom:.7rem;
+}
 .sec-title em { color:var(--green); font-style:italic; }
 .sec-sub { font-family:'Playfair Display',serif; font-style:italic; color:var(--text-soft); font-size:1.02rem; }
 
@@ -330,12 +337,23 @@ section { padding:7rem 2rem; }
   z-index:500;
   padding:4rem 2rem 2rem;
   transform:translateX(105%);  /* hidden via transform — no scrollWidth overflow */
-  transition:transform .45s cubic-bezier(.16,1,.3,1);
+  /* Y ADEMAS visibility:hidden. Escondido solo con transform, el cajon
+     seguia siendo TABULABLE y seguia estando en el arbol de
+     accesibilidad: en escritorio, el primer Tab entraba en el menu movil
+     y habia que pasar por sus nueve enlaces invisibles antes de llegar a
+     la barra de verdad. Lo encontre tabulando, no leyendo.
+     El retardo de 0s al cerrar deja que la animacion de salida termine
+     antes de desaparecer; al abrir es inmediato. */
+  visibility:hidden;
+  transition:transform .45s cubic-bezier(.16,1,.3,1), visibility 0s linear .45s;
   display:flex; flex-direction:column; gap:.25rem;
   box-shadow:-20px 0 60px rgba(120,90,30,.18);
   border-left:1px solid var(--border);
 }
-.mob-drawer.open { transform:translateX(0); }
+.mob-drawer.open {
+  transform:translateX(0); visibility:visible;
+  transition:transform .45s cubic-bezier(.16,1,.3,1), visibility 0s;
+}
 .mob-close {
   position:absolute; top:1.25rem; right:1.25rem;
   background:none; border:none; font-size:1.4rem;
@@ -1316,9 +1334,17 @@ body.admin-mode .admin-only { display:block !important; }
 .eventos-slides { position:absolute; inset:0; }
 .ev-slide {
   position:absolute; inset:0; display:grid; grid-template-columns:1.05fr 1fr;
-  opacity:0; transition:opacity 1.1s ease; pointer-events:none;
+  /* opacity:0 y pointer-events:none esconden del raton, pero NO del
+     teclado ni del lector de pantalla: los botones "Reservar lugar" de
+     las diapositivas ocultas seguian siendo tabulables. visibility se
+     encarga, con el retardo justo para que el fundido de salida acabe. */
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity 1.1s ease, visibility 0s linear 1.1s;
 }
-.ev-slide.active { opacity:1; pointer-events:all; }
+.ev-slide.active {
+  opacity:1; visibility:visible; pointer-events:all;
+  transition:opacity 1.1s ease, visibility 0s;
+}
 .ev-media { position:relative; overflow:hidden; }
 .ev-media img {
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
@@ -1502,7 +1528,12 @@ body.admin-mode .admin-only { display:block !important; }
   display:flex; align-items:center; justify-content:center;
   opacity:0; transition:opacity .3s;
 }
-.pod-card:hover .pod-play-ov { opacity:1; }
+/* tambien con el foco dentro: el boton de reproducir vivia en un velo
+   a opacity:0 que solo aparecia al pasar el raton, asi que con teclado
+   se podia enfocar algo invisible. Ahora aparecer y enfocarse son la
+   misma cosa. */
+.pod-card:hover .pod-play-ov,
+.pod-card:focus-within .pod-play-ov { opacity:1; }
 .pod-play-btn {
   width:52px; height:52px; border-radius:50%;
   background:rgba(201,168,76,.9);
@@ -1948,6 +1979,10 @@ footer {
 }
 .file-box:hover { border-color:var(--gold-deep); background:#f8efd6; }
 .file-box input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+/* el campo va invisible encima de una caja que SI se ve; el anillo de
+   foco tiene que salir en la caja, no en el campo transparente */
+.file-box:focus-within { outline:2px solid var(--gold-text); outline-offset:2px; }
+.file-box input[type=file]:focus-visible { outline:none; box-shadow:none; }
 .file-box-icon { font-size:1.75rem; margin-bottom:.4rem; opacity:.6; }
 .file-box-text { font-size:.72rem; color:var(--text-soft); letter-spacing:.08em; }
 .adm-storage { font-size:.62rem; color:var(--text-light); text-align:right; margin-top:1rem; }
@@ -2383,10 +2418,27 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
    ═══════════════════════════════════════════════════════════════════ */
 .gallery-ph{
   position:relative; overflow:hidden;
-  /* cada marco, un tono; el conjunto deja de ser una pared gris */
+  /* Cada marco, un tono. La primera version puso la mancha al 126% del
+     marco: a ese tamano no hay caida visible y el resultado es una
+     plancha pastel plana. Al 74% y descentrada si se lee como LUZ, y el
+     filo interior le devuelve el borde al marco — sin el, cinco manchas
+     pastel una al lado de otra parecen un error de carga. */
   background:
-    radial-gradient(126% 96% at 24% 16%, var(--ph-luz, var(--luz-oro)) 0%, transparent 70%),
+    radial-gradient(74% 62% at 26% 20%, var(--ph-luz, var(--luz-oro)) 0%, transparent 72%),
     linear-gradient(158deg, var(--cream-warm) 0%, var(--cream-deep) 100%);
+  box-shadow:inset 0 0 0 1px rgba(201,168,76,.20);
+}
+/* un anillo fino en el centro, del mismo idioma que la geometria de los
+   paneles de servicio: da un centro a la composicion */
+.gallery-ph::before{
+  content:''; position:absolute; left:50%; top:50%;
+  /* por ALTO, no por ancho: los dos marcos apaisados de abajo son
+     anchos y bajos, y un 46% de su ancho no cabe en su alto — el anillo
+     salia recortado en una banda horizontal */
+  height:min(58%, 132px); width:auto; aspect-ratio:1; translate:-50% -50%;
+  border-radius:50%; pointer-events:none;
+  border:1px solid rgba(201,168,76,.22);
+  box-shadow:0 0 0 7px rgba(201,168,76,.06);
 }
 .gallery-item:nth-child(5n+1) .gallery-ph{ --ph-luz:var(--luz-oro) }
 .gallery-item:nth-child(5n+2) .gallery-ph{ --ph-luz:var(--luz-salvia) }
@@ -2420,6 +2472,255 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
   .luz-viva .gallery-ph::after{ animation:none; opacity:0 }
 }
 .lite .gallery-ph::after{ animation:none; opacity:0 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA GEOMETRÍA DEL PANEL DE SERVICIOS
+   Media sección por servicio estaba vacía. Se dibuja lo que le toca a
+   cada disciplina, en oro sobre verde. Sin fotos y sin peticiones.
+   La <img> del admin va encima y la tapa sola cuando exista.
+   ═══════════════════════════════════════════════════════════════════ */
+.svc-visual-bg{ overflow:hidden }
+.svc-visual-bg::before,
+.svc-visual-bg::after{
+  content:''; position:absolute; left:50%; top:47%;
+  translate:-50% -50%;
+  pointer-events:none;
+  will-change:transform;
+}
+
+/* --- la capa de trazo --- */
+.svc-visual-bg::before{
+  width:min(150%, 660px); aspect-ratio:1;
+  background:repeating-conic-gradient(from 0deg,
+    rgba(242,216,146,.13) 0deg 2.4deg, transparent 2.4deg 9deg);
+  -webkit-mask-image:radial-gradient(circle closest-side,
+    #000 10%, rgba(0,0,0,.55) 40%, transparent 72%);
+  mask-image:radial-gradient(circle closest-side,
+    #000 10%, rgba(0,0,0,.55) 40%, transparent 72%);
+  animation:svc-gira 96s linear infinite;
+}
+/* --- la capa de anillos --- */
+.svc-visual-bg::after{
+  width:min(112%, 500px); aspect-ratio:1; border-radius:50%;
+  background:repeating-radial-gradient(circle closest-side,
+    transparent 0 5.4%, rgba(242,216,146,.16) 5.4% 5.8%);
+  -webkit-mask-image:radial-gradient(circle closest-side, #000 26%, transparent 76%);
+  mask-image:radial-gradient(circle closest-side, #000 26%, transparent 76%);
+  animation:svc-late 13s ease-in-out infinite;
+}
+
+/* rotate y scale sueltos: no pisan el translate del centrado, que es
+   justo el fallo clásico de animar transform sobre un elemento centrado */
+@keyframes svc-gira{ to{ rotate:360deg } }
+@keyframes svc-late{ 0%,100%{ scale:1 } 50%{ scale:1.08 } }
+@keyframes svc-onda{ 0%{ scale:.62; opacity:0 } 22%{ opacity:1 } 100%{ scale:1.5; opacity:0 } }
+@keyframes svc-cae { 0%,100%{ translate:-50% -50%; rotate:-1.1deg } 50%{ translate:-50% -48%; rotate:1.1deg } }
+
+/* ── 1 · SONOTERAPIA — la onda que sale ── */
+.svc-visual[data-geo="1"] .svc-visual-bg::before{
+  background:repeating-radial-gradient(circle closest-side,
+    transparent 0 3.4%, rgba(242,216,146,.15) 3.4% 3.8%);
+  border-radius:50%;
+  animation:svc-onda 7s cubic-bezier(.22,1,.36,1) infinite;
+}
+.svc-visual[data-geo="1"] .svc-visual-bg::after{
+  width:min(150%, 620px);
+  background:repeating-radial-gradient(circle closest-side,
+    transparent 0 8.5%, rgba(242,216,146,.10) 8.5% 8.9%);
+  animation:svc-onda 7s cubic-bezier(.22,1,.36,1) 2.4s infinite;
+}
+
+/* ── 2 · ARTES AÉREAS — las telas que cuelgan ── */
+.svc-visual[data-geo="2"] .svc-visual-bg::before{
+  width:118%; height:132%; aspect-ratio:auto; border-radius:0;
+  background:repeating-linear-gradient(93deg,
+    transparent 0 26px, rgba(242,216,146,.15) 26px 28px);
+  -webkit-mask-image:linear-gradient(180deg, #000 0%, rgba(0,0,0,.75) 52%, transparent 96%);
+  mask-image:linear-gradient(180deg, #000 0%, rgba(0,0,0,.75) 52%, transparent 96%);
+  animation:svc-cae 15s ease-in-out infinite;
+}
+.svc-visual[data-geo="2"] .svc-visual-bg::after{
+  width:118%; height:132%; aspect-ratio:auto; border-radius:0;
+  background:repeating-linear-gradient(87deg,
+    transparent 0 38px, rgba(242,216,146,.09) 38px 40px);
+  -webkit-mask-image:linear-gradient(180deg, #000 0%, transparent 88%);
+  mask-image:linear-gradient(180deg, #000 0%, transparent 88%);
+  animation:svc-cae 19s ease-in-out .8s infinite reverse;
+}
+
+/* ── 3 · TERAPIAS — la trama de puntos ── */
+.svc-visual[data-geo="3"] .svc-visual-bg::before{
+  width:126%; height:126%; aspect-ratio:auto;
+  background:
+    radial-gradient(rgba(242,216,146,.30) 1.3px, transparent 1.4px) 0 0/34px 34px,
+    radial-gradient(rgba(242,216,146,.16) 1.1px, transparent 1.2px) 17px 17px/34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 46%, #000 20%, transparent 82%);
+  mask-image:radial-gradient(ellipse 62% 62% at 50% 46%, #000 20%, transparent 82%);
+  animation:svc-late 17s ease-in-out infinite;
+}
+.svc-visual[data-geo="3"] .svc-visual-bg::after{
+  width:min(96%, 400px);
+  background:repeating-radial-gradient(circle closest-side,
+    transparent 0 11%, rgba(242,216,146,.13) 11% 11.5%);
+  animation:svc-gira 120s linear infinite;
+}
+
+/* ── 4 · FEMENINO — la creciente sobre su anillo ── */
+.svc-visual[data-geo="4"] .svc-visual-bg::before{
+  width:min(78%, 350px); aspect-ratio:1; border-radius:50%;
+  /* ARCO, no disco. Relleno pesaba demasiado al lado de las otras cinco
+     geometrias, que son linea fina: se leia como una mancha y no como
+     una luna. */
+  background:
+    radial-gradient(circle closest-side,
+      transparent 0 62%, rgba(242,216,146,.34) 63% 98%, transparent 99%);
+  -webkit-mask-image:radial-gradient(circle closest-side at 74% 34%, transparent 0 76%, #000 77%);
+  mask-image:radial-gradient(circle closest-side at 74% 34%, transparent 0 76%, #000 77%);
+  animation:svc-late 20s ease-in-out infinite;
+}
+.svc-visual[data-geo="4"] .svc-visual-bg::after{
+  width:min(126%, 540px);
+  background:repeating-radial-gradient(circle closest-side,
+    transparent 0 14%, rgba(242,216,146,.11) 14% 14.4%);
+  animation:svc-gira 150s linear infinite;
+}
+
+/* ── 5 · TIENDA — la trama diagonal ── */
+.svc-visual[data-geo="5"] .svc-visual-bg::before{
+  width:132%; height:132%; aspect-ratio:auto;
+  background:
+    repeating-linear-gradient(46deg,  transparent 0 22px, rgba(242,216,146,.11) 22px 23px),
+    repeating-linear-gradient(-46deg, transparent 0 22px, rgba(242,216,146,.08) 22px 23px);
+  -webkit-mask-image:radial-gradient(ellipse 60% 58% at 50% 46%, #000 14%, transparent 84%);
+  mask-image:radial-gradient(ellipse 60% 58% at 50% 46%, #000 14%, transparent 84%);
+  animation:svc-late 22s ease-in-out infinite;
+}
+.svc-visual[data-geo="5"] .svc-visual-bg::after{ display:none }
+
+/* el icono, algo mas presente: al 16% sobre la geometria se perdia */
+.svc-ic{ color:rgba(255,246,224,.30) }
+
+/* PAUSADA FUERA DE PANTALLA.
+   Medido: el saludo subio un 7% de tiempo por fotograma sin que yo
+   tocara nada en el saludo — los cinco valores crudos por encima de los
+   cinco anteriores, asi que no era ruido. La causa es esta geometria,
+   que seguia girando con la seccion fuera de pantalla; el navegador no
+   descarta esas animaciones por su cuenta.
+   Se cuelga del mismo observador que ya enciende la luz que deriva: la
+   clase .luz-viva la pone y la quita segun se mire la seccion. */
+.servicios-sec:not(.luz-viva) .svc-visual-bg::before,
+.servicios-sec:not(.luz-viva) .svc-visual-bg::after{ animation-play-state:paused }
+
+@media (prefers-reduced-motion: reduce){
+  .svc-visual-bg::before, .svc-visual-bg::after{ animation:none }
+}
+.lite .svc-visual-bg::before, .lite .svc-visual-bg::after{ animation:none }
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL 1%
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* --- la selección, de la casa ---
+   Toda la página es oro y verde bosque; el azul del navegador al
+   seleccionar texto rompía la ilusión en un gesto. */
+::selection{ background:rgba(232,201,106,.45); color:#161512; text-shadow:none }
+::-moz-selection{ background:rgba(232,201,106,.45); color:#161512; text-shadow:none }
+
+/* --- el foco, diseñado ---
+   Sólo los campos de formulario tenían foco propio. Quien navega con
+   teclado por el menú, las pestañas de servicios o los botones iba con
+   el anillo por defecto — o sin ninguno.
+   Van DOS anillos a propósito: esta página tiene secciones crema y
+   secciones oscuras, y ningún color único se ve en las dos. El oro
+   oscuro manda sobre crema (7:1) y el halo claro sobre el cielo del
+   hero y el saludo. Siempre hay uno que contrasta. */
+:focus-visible{
+  outline:2px solid var(--gold-text);
+  outline-offset:2px;
+  box-shadow:0 0 0 5px rgba(255,240,205,.85);
+  border-radius:3px;
+}
+/* los campos ya tenían su propio foco y es bueno: se respeta y sólo se
+   le añade el halo, para no meter dos lenguajes distintos */
+.fl-input:focus-visible, .fl-sel:focus-visible,
+.adm-pw:focus-visible, .adm-field:focus-visible{
+  outline:none; box-shadow:0 0 0 3px rgba(201,168,76,.30), 0 0 0 6px rgba(255,240,205,.5);
+}
+/* sobre fondos oscuros el halo claro basta y el oro oscuro sobra */
+.hero :focus-visible, #saludo :focus-visible,
+.podcast-sec :focus-visible, footer :focus-visible,
+.cta-sec :focus-visible, #nav:not(.solid) :focus-visible{
+  outline-color:rgba(255,240,205,.95);
+  box-shadow:0 0 0 5px rgba(10,20,16,.55);
+}
+
+/* --- los titulares, sin palabras huérfanas ---
+   «balance» reparte las líneas de un titular para que no quede una
+   palabra sola colgando en la última. Sólo en textos cortos: en un
+   párrafo largo el navegador lo ignora, que es lo correcto. */
+.hero-h1, .sec-title, .sn-h2, .cta-title, .philo-quote,
+.svc-content-title, .pod-title{ text-wrap:balance }
+.hero-tagline, .sec-sub, .sn-desc{ text-wrap:pretty }
+
+/* --- los controles nativos, en la paleta ---
+   El azul del sistema en un checkbox o en el cursor de un campo se
+   cuela y no hay CSS de color que lo arregle: es «accent-color». */
+:root{ accent-color:var(--green); caret-color:var(--green); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL EJE, ALTERNADO
+   Las seis cabeceras eran idénticas y centradas: la página entera bajaba
+   como una columna por el medio. Se mueven a la izquierda las que tienen
+   debajo una rejilla que ya empieza por la izquierda.
+   ═══════════════════════════════════════════════════════════════════ */
+.servicios-sec > .container > .sec-header,
+.horarios-sec  > .container > .sec-header,
+.galeria-sec   > .container > .sec-header,
+.contacto-sec  > .container > .sec-header{
+  text-align:left;
+  max-width:min(100%, 22ch);
+}
+/* la raya de la izquierda sobra cuando el rótulo ya está pegado al
+   margen: sin ella el rótulo se alinea de verdad con el titular */
+.servicios-sec .sec-label::before,
+.horarios-sec  .sec-label::before,
+.galeria-sec   .sec-label::before,
+.contacto-sec  .sec-label::before{ display:none }
+/* y la de la derecha se estira, que es lo que convierte el rótulo en una
+   línea de composición en vez de un adorno simétrico */
+.servicios-sec .sec-label::after,
+.horarios-sec  .sec-label::after,
+.galeria-sec   .sec-label::after,
+.contacto-sec  .sec-label::after{ width:clamp(40px,7vw,110px) }
+
+/* con el titular a 4.4rem, 22ch parte en dos o tres líneas buenas; el
+   subtítulo se queda en su medida de lectura y no estirado */
+.servicios-sec > .container > .sec-header .sec-sub,
+.horarios-sec  > .container > .sec-header .sec-sub,
+.galeria-sec   > .container > .sec-header .sec-sub,
+.contacto-sec  > .container > .sec-header .sec-sub{ max-width:34ch }
+
+/* en móvil todo vuelve al centro: con 390px de ancho un titular a la
+   izquierda y una rejilla de una columna debajo no crean tensión, solo
+   desequilibrio */
+@media (max-width:760px){
+  .servicios-sec > .container > .sec-header,
+  .horarios-sec  > .container > .sec-header,
+  .galeria-sec   > .container > .sec-header,
+  .contacto-sec  > .container > .sec-header{ text-align:center; max-width:none }
+  .servicios-sec .sec-label::before,
+  .horarios-sec  .sec-label::before,
+  .galeria-sec   .sec-label::before,
+  .contacto-sec  .sec-label::before{ display:block }
+  .servicios-sec .sec-label::after,
+  .horarios-sec  .sec-label::after,
+  .galeria-sec   .sec-label::after,
+  .contacto-sec  .sec-label::after{ width:28px }
+  .servicios-sec > .container > .sec-header .sec-sub,
+  .horarios-sec  > .container > .sec-header .sec-sub,
+  .galeria-sec   > .container > .sec-header .sec-sub,
+  .contacto-sec  > .container > .sec-header .sec-sub{ max-width:none }
+}
 </style>
 </head>
 <body>
@@ -3040,7 +3341,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <!-- Yoga -->
     <div class="svc-panel active" id="svc-0">
-      <div class="svc-visual">
+      <div class="svc-visual" data-geo="0">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon">
           <svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 13c4.5 6 4.5 15 0 22-4.5-7-4.5-16 0-22Z"/><path d="M32 35c-7-2.5-14 0-18.5 5.5 7.5 4.5 15 3 18.5-1.5"/><path d="M32 35c7-2.5 14 0 18.5 5.5-7.5 4.5-15 3-18.5-1.5"/><path d="M19 25c-2.5 6.5 0 13 4.5 17.5"/><path d="M45 25c2.5 6.5 0 13-4.5 17.5"/><path d="M11 41c4.5 8.5 12.5 13 21 13s16.5-4.5 21-13"/></svg>
@@ -3076,7 +3377,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <!-- Sonoterapia -->
     <div class="svc-panel" id="svc-1">
-      <div class="svc-visual">
+      <div class="svc-visual" data-geo="1">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 28v8M16 20v24M24 25v14M32 10v44M40 22v20M48 16v32M56 28v8"/></svg></div>
         <img class="svc-img" id="svc-img-1" alt="" loading="lazy" decoding="async">
@@ -3101,7 +3402,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <!-- Artes Aéreas -->
     <div class="svc-panel" id="svc-2">
-      <div class="svc-visual">
+      <div class="svc-visual" data-geo="2">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7c-4 18-4 35 2 50"/><path d="M41 7c4 18 4 35-2 50"/><circle cx="32" cy="29" r="5"/><path d="M32 34c-4 4-6.5 9-6.5 14M32 34c4 4 6.5 9 6.5 14"/></svg></div>
         <img class="svc-img" id="svc-img-2" alt="" loading="lazy" decoding="async">
@@ -3128,7 +3429,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <!-- Terapias -->
     <div class="svc-panel" id="svc-3">
-      <div class="svc-visual">
+      <div class="svc-visual" data-geo="3">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M32 6 18 24l14 34 14-34L32 6Z"/><path d="M18 24h28M32 6v52M25 24l7 34M39 24l-7 34"/></svg></div>
         <img class="svc-img" id="svc-img-3" alt="" loading="lazy" decoding="async">
@@ -3153,7 +3454,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <!-- Femenino -->
     <div class="svc-panel" id="svc-4">
-      <div class="svc-visual">
+      <div class="svc-visual" data-geo="4">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M42 8a24 24 0 1 0 15 41A20 20 0 0 1 42 8Z"/><circle cx="50" cy="22" r="1.6" fill="currentColor" stroke="none"/><circle cx="55" cy="33" r="1.1" fill="currentColor" stroke="none"/></svg></div>
         <img class="svc-img" id="svc-img-4" alt="" loading="lazy" decoding="async">
@@ -3179,7 +3480,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <!-- Tienda -->
     <div class="svc-panel" id="svc-5">
-      <div class="svc-visual">
+      <div class="svc-visual" data-geo="5">
         <div class="svc-visual-bg"></div>
         <div class="svc-visual-icon"><svg class="svc-ic" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M16 14h32l8 12-24 26L8 26l8-12Z"/><path d="M8 26h48M24 14l-8 12 16 26M40 14l8 12-16 26"/></svg></div>
         <img class="svc-img" id="svc-img-5" alt="" loading="lazy" decoding="async">
