@@ -199,15 +199,17 @@ section { padding:7rem 2rem; }
 .js-r .d6 { transition-delay:.48s; }
 
 /* Word-stagger for section titles */
-.js-r .sec-title .w {
+.js-r .sec-title .w, .js-r .sn-h2 .w, .js-r .cta-title .w {
   display:inline-block; opacity:0; transform:translateY(28px);
   transition:opacity .8s var(--ease), transform .8s var(--ease);
 }
-.js-r .sec-title.on .w { opacity:1; transform:none; }
-.lite .sec-title .w, body:not(.js-r) .sec-title .w { opacity:1!important; transform:none!important; }
+.js-r .sec-title.on .w, .js-r .sn-h2.on .w, .js-r .cta-title.on .w { opacity:1; transform:none; }
+.lite .sec-title .w, body:not(.js-r) .sec-title .w,
+.lite .sn-h2 .w, body:not(.js-r) .sn-h2 .w,
+.lite .cta-title .w, body:not(.js-r) .cta-title .w { opacity:1!important; transform:none!important; }
 
 @media(prefers-reduced-motion:reduce) {
-  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w,.svc-item { opacity:1!important; transform:none!important; transition:none!important; }
+  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w,.sn-h2 .w,.cta-title .w,.svc-item { opacity:1!important; transform:none!important; transition:none!important; }
   * { animation-duration:.001ms!important; animation-iteration-count:1!important; }
 }
 
@@ -1439,7 +1441,14 @@ body.admin-mode .admin-only { display:block !important; }
 .ev-arrow:hover { background:var(--green); border-color:var(--green); color:#fff; }
 .ev-count { font-size:.62rem; letter-spacing:.15em; color:var(--text-light); }
 .ev-prog { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(201,168,76,.14); }
-.ev-prog-bar { height:100%; background:var(--gold); width:0; transition:width linear; }
+/* scaleX y no width: animar el ancho maqueta y repinta en cada
+   fotograma durante los 6,5 s que dura cada diapositiva, en bucle. Es el
+   mismo arreglo que la barra de scroll de la pagina. */
+.ev-prog-bar {
+  height:100%; background:var(--gold); width:100%;
+  transform:scaleX(0); transform-origin:0 50%;
+  will-change:transform;
+}
 .ev-promo-badge {
   display:inline-block; font-size:.55rem; letter-spacing:.18em; text-transform:uppercase;
   font-weight:600; color:var(--gold-deep); background:var(--gold-mist);
@@ -2386,7 +2395,11 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
    Ni deriva ni destello. El color se queda: el color no es movimiento,
    y quien pide menos animacion no esta pidiendo una pagina gris. */
 @media (prefers-reduced-motion: reduce){
-  .luz-viva::after{ animation:none; opacity:.62 }
+  /* tambien la TRANSICION: apagar la animacion y dejar el fundido de
+     1,4s era medio arreglo, y salia corriendo en la prueba */
+  .luz-viva::after{ animation:none; opacity:.62; transition:none }
+  .sobre::after, .servicios-sec::after, .galeria-sec::after,
+  .contacto-sec::after, .horarios-sec::after, .testi-sec::after{ transition:none }
   .class-card::after, .testi-card::after{ display:none }
 }
 .lite .sobre::after, .lite .servicios-sec::after, .lite .galeria-sec::after,
@@ -4484,6 +4497,12 @@ function evPrev(){ goToSlide(evIdx-1); }
 
 function startEvAutoplay(){
   clearTimeout(evTimer);
+  /* Igual que el carrusel de testimonios, que ya lo hacia. Un carrusel
+     que avanza solo con la preferencia de menos movimiento puesta es un
+     fallo de WCAG 2.2.2 — y ademas dos carruseles de la misma pagina no
+     pueden comportarse distinto. Las flechas siguen ahi: no se quita la
+     funcion, se quita el automatismo. */
+  if(LITE){ var b=$('ev-bar'); if(b){ b.style.transition='none'; b.style.transform='scaleX(0)'; } return; }
   resetEvBar();
   evTimer=setTimeout(function(){ evNext(); startEvAutoplay(); }, EV_DUR);
 }
@@ -4491,10 +4510,10 @@ function startEvAutoplay(){
 function resetEvBar(){
   var bar=$('ev-bar');
   if(!bar) return;
-  bar.style.transition='none'; bar.style.width='0';
+  bar.style.transition='none'; bar.style.transform='scaleX(0)';
   requestAnimationFrame(function(){ requestAnimationFrame(function(){
-    bar.style.transition='width '+EV_DUR+'ms linear';
-    bar.style.width='100%';
+    bar.style.transition='transform '+EV_DUR+'ms linear';
+    bar.style.transform='scaleX(1)';
   }); });
 }
 
@@ -5028,7 +5047,13 @@ function splitTitle(el){
   el.innerHTML=''; el.appendChild(frag);
 }
 function initTitleReveal(){
-  var titles=document.querySelectorAll('.sec-title');
+  /* .sn-h2 y .cta-title son los otros dos titulares grandes de la
+     pagina y entraban fundiendose EN BLOQUE, que es justo lo que no hay
+     que hacer con un titular. El titular del hero se queda fuera a
+     proposito: su +Surya lleva un degradado recortado al texto
+     (background-clip:text) y partirlo en palabras le daria a cada
+     palabra su propio degradado, rompiendo el foil. */
+  var titles=document.querySelectorAll('.sec-title,.sn-h2,.cta-title');
   if(LITE || !('IntersectionObserver' in window)){
     titles.forEach(function(t){ t.classList.add('on'); }); return;
   }
