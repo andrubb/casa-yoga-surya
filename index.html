@@ -45,6 +45,21 @@
   --shadow-lg:   0 28px 70px rgba(150,120,40,0.16);
   --shadow-warm: 0 18px 50px rgba(201,168,76,0.16);
   --ease:        cubic-bezier(.16,1,.3,1);
+
+  /* LUZ. No son fondos: son manchas de color que se SUMAN al crema.
+     Los tres tonos son los de la casa —oro #c9a84c, verde #2d5a3d,
+     rosa #b07c8a— a baja opacidad, asi que la pagina gana cuerpo sin
+     estrenar una paleta que no es suya. */
+  /* CLAROS y SATURADOS, no los tonos de marca rebajados. El oro de
+     marca es oscuro: al 30% sobre crema no da luz dorada, da un tostado
+     sucio. Estos suman croma sin restar luminosidad — mas color Y mas
+     contraste, que no suele poder pedirse a la vez. */
+  --luz-oro:     rgba(255,206,92,.34);
+  --luz-oro-ss:  rgba(255,214,120,.20);
+  --luz-verde:   rgba(112,196,146,.26);
+  --luz-salvia:  rgba(126,206,158,.28);
+  --luz-rosa:    rgba(240,152,176,.26);
+  --luz-rosa-ss: rgba(240,168,188,.15);
 }
 
 /* ═══════════════════════════════════════
@@ -96,7 +111,8 @@ button { cursor:pointer; font-family:'Poppins',sans-serif; }
 
 /* Golden wavy section divider */
 .divider { display:flex; align-items:center; justify-content:center; padding:2.4rem 2rem; line-height:0; background:var(--cream-warm); }
-.divider.on-white { background:var(--white); }
+/* ya no hay ninguna seccion blanca a la que igualarse */
+.divider.on-white { background:var(--cream-warm); }
 .divider svg { width:min(560px,80%); height:34px; overflow:visible; }
 .divider .dpath { fill:none; stroke:var(--gold); stroke-width:1.5; stroke-linecap:round; opacity:.55;
   stroke-dasharray:1200; stroke-dashoffset:1200; }
@@ -109,9 +125,16 @@ body:not(.js-r) .divider .dgem, .lite .divider .dgem { opacity:.9; }
 
 /* Scroll progress bar */
 #scroll-prog {
-  position:fixed; top:0; left:0; height:3px; width:0;
+  position:fixed; top:0; left:0; height:3px; width:100%;
   background:linear-gradient(90deg,var(--gold-light),var(--gold));
-  z-index:600; transition:width .1s linear; pointer-events:none;
+  z-index:600; pointer-events:none;
+  /* scaleX en vez de width: animar el ancho maqueta y repinta la barra
+     en cada fotograma de scroll; una escala la resuelve el compositor
+     sin tocar la maquetacion. La transicion sobra —el scroll ya
+     actualiza en cada fotograma— y ademas se reiniciaba sesenta veces
+     por segundo. */
+  transform:scaleX(0); transform-origin:0 50%;
+  will-change:transform;
 }
 
 /* Hide scrollbars on horizontal-scroll strips (tabs / schedule) */
@@ -391,13 +414,47 @@ section { padding:7rem 2rem; }
    =================================================================== */
 .sn{
   position:relative;
-  background:linear-gradient(180deg, #fdf8ed 0%, #fbf3e2 45%, #f7ecd8 100%);
+  /* EL CIELO. Los tres tonos los interpola el JS segun el recorrido:
+     amanecer -> mediodia -> atardecer. Aqui van los valores de partida,
+     que son tambien los que se ven si el JS no llega a correr.
+     Sale de la paleta de la casa: el verde de la marca arriba, el oro en
+     el horizonte. Nada inventado. */
+  --cielo-alto:#16281f;
+  --cielo-medio:#2d4a37;
+  --cielo-bajo:#7a6a3c;
+  /* El degradado NO va aqui: este elemento mide 520vh y repintarlo en
+     cada cambio de color cuesta cinco pantallas para que se vea una.
+     Vive en .sn-sticky, que mide exactamente un viewport. Aqui solo
+     queda un color plano, que es lo que se ve por los bordes mientras
+     el panel entra y sale. */
+  background:var(--cielo-medio);
+  color:#f4efe4;
   /* la altura ES el recorrido: 12 posturas necesitan sitio para respirar */
   height:520vh;
+  isolation:isolate;
+}
+/* una veladura de estrellas finisimas en la mitad alta: sin esto el
+   degradado se lee como una plancha de color y no como aire */
+.sn-sticky::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 12%, rgba(255,250,235,.55), transparent 60%),
+    radial-gradient(1.2px 1.2px at 74% 8%,  rgba(255,250,235,.45), transparent 60%),
+    radial-gradient(1.6px 1.6px at 42% 20%, rgba(255,250,235,.38), transparent 60%),
+    radial-gradient(1.2px 1.2px at 88% 24%, rgba(255,250,235,.32), transparent 60%),
+    radial-gradient(1.3px 1.3px at 8%  30%, rgba(255,250,235,.28), transparent 60%);
+  background-repeat:no-repeat;
+  mask-image:linear-gradient(180deg,#000 0%,#000 34%,transparent 62%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 34%,transparent 62%);
 }
 .sn-sticky{
   position:sticky; top:0;
   height:100svh; min-height:560px;
+  /* el cielo vive aqui: exactamente un viewport de alto y quieto */
+  background:linear-gradient(180deg,
+    var(--cielo-alto) 0%,
+    var(--cielo-medio) 52%,
+    var(--cielo-bajo) 100%);
   display:flex; flex-direction:column;
   /* el contenido arranca bajo el cielo y se reparte: centrarlo todo
      dejaba un tercio de pantalla vacio debajo de la postura */
@@ -410,13 +467,13 @@ section { padding:7rem 2rem; }
 /* ---- el cielo y el arco ---- */
 .sn-cielo{
   position:absolute; left:0; right:0; top:0;
-  height:clamp(140px,26vh,240px);
-  pointer-events:none;
+  height:clamp(150px,28vh,260px);
+  pointer-events:none; z-index:1;
 }
 .sn-arco{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
 .sn-via{
-  fill:none; stroke:var(--gold); stroke-width:1.2;
-  stroke-dasharray:3 7; opacity:.42;
+  fill:none; stroke:#f0cf7a; stroke-width:1.2;
+  stroke-dasharray:3 7; opacity:.30;
 }
 /* El sol de la seccion: un disco de luz, no un dibujo. Lo mueve el
    scroll a lo largo del arco, con --p de 0 a 1. */
@@ -425,27 +482,40 @@ section { padding:7rem 2rem; }
   width:clamp(34px,4.6vw,54px); aspect-ratio:1; border-radius:50%;
   background:radial-gradient(circle at 42% 40%,
     #fffdf4 0%, #ffe9a8 26%, var(--gold-light) 52%, rgba(201,168,76,0) 72%);
-  box-shadow:0 0 42px 14px rgba(232,201,106,.34);
+  /* sobre un cielo oscuro el sol puede brillar de verdad: el halo pasa
+     de insinuado a fuente de luz */
+  box-shadow:0 0 60px 22px rgba(240,207,122,.42),
+             0 0 140px 60px rgba(240,207,122,.18);
   transform:translate(-50%,-50%);
   will-change:transform;
+  /* la escala del respirar se interpola; el desplazamiento por el arco
+     lo escribe el scroll en cada fotograma y no debe suavizarse, asi que
+     la transicion es corta a proposito */
+  transition:transform .9s cubic-bezier(.4,0,.2,1);
 }
+@media (prefers-reduced-motion: reduce){ .sn-sol{transition:none} }
 
 /* ---- cabecera ---- */
 .sn-cab{text-align:center; max-width:44ch; margin:0 auto; position:relative; z-index:2}
 .sn-eyebrow{
   display:block; font-family:'Poppins',sans-serif;
-  font-size:.72rem; font-weight:600; letter-spacing:.24em; text-transform:uppercase;
-  color:var(--gold-deep); margin-bottom:.7rem;
+  font-size:.74rem; font-weight:600; letter-spacing:.26em; text-transform:uppercase;
+  /* Hueso, no oro — el mismo motivo que en .sn-es: este cielo va de
+     indigo a terracota y un dorado no aguanta los dos extremos. */
+  color:rgba(255,250,240,.9); margin-bottom:.7rem;
+  text-shadow:0 1px 4px rgba(8,14,10,.72);
 }
 .sn-h2{
   font-family:'Playfair Display',serif; font-weight:500;
-  font-size:clamp(2rem,5.2vw,3.4rem); line-height:1.06;
-  color:var(--text); margin:0 0 .7rem; text-wrap:balance;
+  font-size:clamp(2.1rem,5.6vw,3.6rem); line-height:1.04;
+  color:#fdfaf2; margin:0 0 .7rem; text-wrap:balance;
+  text-shadow:0 1px 2px rgba(8,14,10,.5), 0 2px 18px rgba(8,14,10,.35);
 }
-.sn-h2 em{font-style:italic; color:var(--green)}
+.sn-h2 em{font-style:italic; color:#f0cf7a}
 .sn-intro{
-  font-size:clamp(.95rem,1.6vw,1.05rem); line-height:1.7;
-  color:var(--text-soft); margin:0; text-wrap:pretty;
+  font-size:clamp(.95rem,1.6vw,1.06rem); line-height:1.7;
+  color:rgba(244,239,228,.82); margin:0; text-wrap:pretty;
+  text-shadow:0 1px 2px rgba(8,14,10,.45);
 }
 
 /* ---- la escena: solo una postura a la vez ---- */
@@ -470,19 +540,23 @@ section { padding:7rem 2rem; }
   pointer-events:none;
 }
 .sn-paso.on{opacity:1; transform:none}
-/* La primera, visible SIN depender del JS. Si el guion no llega a
-   correr, la seccion no puede quedarse con las doce en opacity 0 —
-   ademas de invisible, un medidor de contraste la puntua como texto sin
-   contraste, que es exactamente lo que pasaba. */
-.sn-paso:first-child{opacity:1; transform:none}
+/* La primera, visible SIN depender del JS: si el guion no corre, la
+   seccion no puede quedarse con las doce en opacity 0.
+   PERO solo mientras el JS no haya arrancado. Sin el :not(), la primera
+   postura se quedaba encendida ENCIMA de la activa y en movil se veian
+   dos nombres impresos uno sobre otro. */
+html:not(.sn-js) .sn-paso:first-child{opacity:1; transform:none}
 .sn-num{
-  position:absolute; top:-6px; left:0;
+  position:absolute; top:-4px; left:50%; transform:translateX(-50%);
   font-family:'Playfair Display',serif; font-style:italic;
-  font-size:.95rem; color:var(--gold-deep); opacity:.75;
+  font-size:1rem; color:#ffeec2; opacity:.85;
+  text-shadow:0 1px 4px rgba(8,14,10,.75);
 }
 .sn-fig{
-  width:clamp(140px,19vw,205px); height:auto; display:block;
-  color:var(--green);
+  width:100%; height:auto; display:block;
+  /* la figura, en luz: sobre el cielo oscuro el verde de marca se apaga */
+  color:#f6f1e4;
+  filter:drop-shadow(0 2px 10px rgba(8,14,10,.45));
 }
 .sn-fig .sn-cuerpo{
   fill:none; stroke:currentColor; stroke-width:4.2;
@@ -497,32 +571,110 @@ section { padding:7rem 2rem; }
   .sn-fig .sn-cuerpo{stroke-dasharray:none; stroke-dashoffset:0; transition:none}
 }
 .sn-fig .sn-cuerpo circle{fill:none}
-.sn-suelo{stroke:var(--gold); stroke-width:1.4; opacity:.5}
-.sn-txt{min-width:0}
+.sn-suelo{stroke:#f0cf7a; stroke-width:1.4; opacity:.42}
+/* LA LENTE. Sobre el cielo oscuro, y con el sol detras, el vidrio por
+   fin tiene las dos cosas que necesita para leerse: un fondo oscuro y
+   algo que refractar. Antes flotaba sobre crema y no era mas que una
+   caja translucida.
+   El reflejo se mueve con transform, nunca con background-position:
+   sobre un elemento con backdrop-filter, repintar obliga a volver a
+   filtrar TODO el fondo en cada fotograma. */
+.sn-txt{
+  min-width:0; position:relative; isolation:isolate;
+  padding:clamp(18px,2.6vw,26px) clamp(20px,3vw,30px);
+  border-radius:4px; overflow:hidden;
+  /* suelo propio: el cielo va de indigo a terracota y el interior de la
+     ficha tiene que quedarse estable, o el texto se funde al final del
+     recorrido */
+  background:
+    linear-gradient(140deg, rgba(255,252,244,.13), rgba(255,252,244,.05) 62%),
+    linear-gradient(0deg, rgba(12,18,16,.34), rgba(12,18,16,.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
+             inset 0 -1px 0 rgba(0,0,0,.26),
+             0 22px 50px -22px rgba(6,12,9,.7);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .sn-txt{
+    -webkit-backdrop-filter:blur(16px) saturate(150%);
+            backdrop-filter:blur(16px) saturate(150%);
+    background:
+      linear-gradient(140deg, rgba(255,252,244,.10), rgba(255,252,244,.03) 62%),
+      linear-gradient(0deg, rgba(12,18,16,.30), rgba(12,18,16,.30));
+    /* capa propia en la GPU: sin esto un backdrop-filter tira los fps */
+    will-change:transform; transform:translateZ(0);
+  }
+}
+/* el canto: no un filo uniforme, sino una rueda que brilla por donde
+   entra la luz y se abre en oro y celeste por los lados */
+.sn-txt::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  pointer-events:none;z-index:3;padding:1.4px;
+  background:conic-gradient(from 205deg,
+    rgba(255,255,255,.55) 0deg,
+    rgba(240,207,122,.40) 66deg,
+    rgba(255,255,255,.05) 150deg,
+    rgba(174,210,198,.32) 248deg,
+    rgba(255,255,255,.5) 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+}
+/* el reflejo que la recorre despacio */
+.sn-txt::before{
+  content:'';position:absolute;top:-16%;bottom:-16%;left:0;width:44%;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(114deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.16) 40%,
+    rgba(255,255,255,.22) 52%,
+    rgba(255,255,255,.05) 72%,
+    rgba(255,255,255,0) 100%);
+  transform:translate3d(-120%,0,0);
+  animation:sn-brillo 9s linear infinite;
+  will-change:transform;
+}
+@keyframes sn-brillo{
+  from{transform:translate3d(-120%,0,0)}
+  to  {transform:translate3d(320%,0,0)}
+}
+@media (prefers-reduced-motion: reduce){
+  .sn-txt::before{animation:none; transform:translate3d(40%,0,0)}
+}
 .sn-sans{
+  position:relative; z-index:2;
   font-family:'Playfair Display',serif; font-weight:500; font-style:italic;
-  font-size:clamp(1.3rem,2.9vw,1.9rem); line-height:1.15;
-  color:var(--text); margin:0 0 .18rem; text-wrap:balance;
+  font-size:clamp(1.35rem,3vw,2rem); line-height:1.14;
+  color:#fdfaf2; margin:0 0 .2rem; text-wrap:balance;
+  text-shadow:0 1px 2px rgba(8,14,10,.5);
 }
 .sn-es{
-  font-family:'Poppins',sans-serif; font-size:.72rem; font-weight:600;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--gold-deep);
-  margin:0 0 .7rem;
+  position:relative; z-index:2;
+  font-family:'Poppins',sans-serif; font-size:.74rem; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase;
+  /* Hueso, no oro. El cielo va de indigo a terracota y un dorado no
+     puede leerse en los dos extremos: en el azul brilla y en la brasa se
+     funde. Se distingue del titulo por peso y tamano, no por color. */
+  color:rgba(255,250,240,.86);
+  margin:0 0 .75rem;
+  text-shadow:0 1px 3px rgba(8,14,10,.7);
 }
 .sn-desc{
-  font-size:clamp(.92rem,1.5vw,1rem); line-height:1.65;
-  color:var(--text-soft); margin:0; max-width:38ch; text-wrap:pretty;
+  position:relative; z-index:2;
+  font-size:clamp(.94rem,1.5vw,1.02rem); line-height:1.66;
+  color:rgba(246,241,230,.88); margin:0; max-width:38ch; text-wrap:pretty;
+  text-shadow:0 1px 2px rgba(8,14,10,.45);
 }
 
 /* ---- la barra de recorrido ---- */
 .sn-barra{
   position:absolute; left:clamp(16px,5vw,64px); right:clamp(16px,5vw,64px);
-  bottom:clamp(16px,3vh,30px); height:2px;
-  background:rgba(201,168,76,.22); border-radius:2px; overflow:hidden;
+  bottom:clamp(16px,3vh,30px); height:2px; z-index:3;
+  background:rgba(246,241,230,.18); border-radius:2px; overflow:hidden;
 }
 .sn-barra-in{
   display:block; height:100%; width:100%;
-  background:linear-gradient(90deg, var(--gold-light), var(--gold-deep));
+  background:linear-gradient(90deg, #f0cf7a, #fff3d0);
   transform:scaleX(0); transform-origin:0 50%;
   will-change:transform;
 }
@@ -543,8 +695,13 @@ section { padding:7rem 2rem; }
    No hay recorrido que hacer, asi que no tiene sentido reservar cinco
    pantallas de alto ni esconder once posturas. Se muestran las doce. */
 @media (prefers-reduced-motion: reduce){
-  .sn{height:auto}
-  .sn-sticky{position:static; height:auto; padding-block:clamp(60px,9vw,110px)}
+  /* sin recorrido el panel deja de ser sticky y ya no cubre la seccion:
+     el cielo vuelve al contenedor, que aqui mide lo que mide el
+     contenido y no cinco pantallas */
+  .sn{height:auto; background:linear-gradient(180deg,
+    var(--cielo-alto) 0%, var(--cielo-medio) 52%, var(--cielo-bajo) 100%)}
+  .sn-sticky{position:static; height:auto; background:none; padding-block:clamp(60px,9vw,110px)}
+  .sn-sticky::before{display:none}
   .sn-cielo{display:none}
   .sn-escena{height:auto; max-width:1080px}
   .sn-lista{
@@ -565,8 +722,10 @@ section { padding:7rem 2rem; }
   .sn-barra{display:none}
 }
 /* misma degradacion en el modo ligero que ya usa el sitio */
-.lite .sn{height:auto}
-.lite .sn-sticky{position:static; height:auto}
+.lite .sn{height:auto; background:linear-gradient(180deg,
+  var(--cielo-alto) 0%, var(--cielo-medio) 52%, var(--cielo-bajo) 100%)}
+.lite .sn-sticky{position:static; height:auto; background:none}
+.lite .sn-sticky::before{display:none}
 .lite .sn-cielo{display:none}
 .lite .sn-escena{height:auto}
 .lite .sn-lista{display:grid; gap:30px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
@@ -773,7 +932,16 @@ body:not(.lite) .hero-sub-name { animation:slideUp .9s var(--ease) .55s forwards
 /* ═══════════════════════════════════════
    SOBRE — HISTORIA FAMILIAR
 ═══════════════════════════════════════ */
-.sobre { background:var(--cream-warm); }
+/* SOBRE — primera hora. La luz entra por la izquierda, como venia
+   entrando en el hero, y el verde sube desde la esquina de abajo. */
+.sobre {
+  background:
+    /* filos al crema del divisor: hay uno arriba y otro abajo */
+    linear-gradient(180deg, var(--cream-warm) 0, transparent 96px, transparent calc(100% - 96px), var(--cream-warm) 100%),
+    radial-gradient(66% 58% at -4% 22%,  var(--luz-oro)    0%, transparent 70%),
+    radial-gradient(58% 54% at 104% 84%, var(--luz-salvia) 0%, transparent 68%),
+    var(--cream-warm);
+}
 .sobre-story {
   max-width:680px; margin:0 auto 5rem;
 }
@@ -832,7 +1000,8 @@ body.admin-mode .inst-photo { cursor:pointer; }
 /* Admin-only: edit overlay hidden entirely for public visitors */
 .photo-edit-ov {
   position:absolute; inset:0; border-radius:50%;
-  background:rgba(26,26,26,.55);
+  /* .55 dejaba el rotulo blanco en 4.19:1 sobre el marcador de foto */
+  background:rgba(26,26,26,.72);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:.5rem; opacity:0; pointer-events:none; transition:opacity .3s;
 }
@@ -868,7 +1037,17 @@ body.admin-mode .admin-only { display:block !important; }
 /* ═══════════════════════════════════════
    SERVICIOS
 ═══════════════════════════════════════ */
-.servicios-sec { background:var(--cream-warm); }
+/* SERVICIOS — el contrapunto frio. Va justo despues del saludo al sol,
+   que termina en atardecer calido: si esta tambien fuera calida, los
+   dos bloques se fundirian en uno solo. */
+.servicios-sec {
+  background:
+    /* solo el filo de abajo: arriba entra desde el cielo del saludo */
+    linear-gradient(180deg, transparent calc(100% - 96px), var(--cream-warm) 100%),
+    radial-gradient(62% 52% at 102% 14%, var(--luz-salvia)  0%, transparent 68%),
+    radial-gradient(78% 58% at -6% 88%,  var(--luz-oro-ss)  0%, transparent 72%),
+    var(--cream-warm);
+}
 
 /* Category tabs — pills */
 .svc-categories {
@@ -1000,7 +1179,18 @@ body.admin-mode .admin-only { display:block !important; }
 /* ═══════════════════════════════════════
    HORARIOS
 ═══════════════════════════════════════ */
-.horarios-sec { background:var(--white); }
+/* HORARIOS — era BLANCO PURO, el punto mas plano de toda la pagina.
+   Ahora crema con una banda de oro detras de la rejilla. Sigue siendo
+   la mas clara de las seis a proposito: debajo hay una tabla densa que
+   tiene que leerse sin esfuerzo. */
+.horarios-sec {
+  position:relative;
+  background:
+    linear-gradient(180deg, var(--cream-warm) 0, transparent 96px, transparent calc(100% - 96px), var(--cream-warm) 100%),
+    radial-gradient(120% 42% at 50% -6%,  var(--luz-oro-ss) 0%, transparent 74%),
+    radial-gradient(58% 46% at 96% 102%,  var(--luz-salvia) 0%, transparent 68%),
+    var(--cream-warm);
+}
 
 /* Legend */
 .sched-legend {
@@ -1152,7 +1342,16 @@ body.admin-mode .admin-only { display:block !important; }
 /* ═══════════════════════════════════════
    GALERÍA
 ═══════════════════════════════════════ */
-.galeria-sec { background:var(--cream-warm); }
+/* GALERIA — el rosa de la casa, que llevaba declarado desde el primer
+   dia sin usarse en ningun sitio. */
+.galeria-sec {
+  background:
+    /* solo arriba: abajo entra en el verde oscuro del podcast */
+    linear-gradient(180deg, var(--cream-warm) 0, transparent 96px),
+    radial-gradient(70% 56% at 6% 10%,   var(--luz-rosa)   0%, transparent 68%),
+    radial-gradient(64% 50% at 100% 92%, var(--luz-oro-ss) 0%, transparent 70%),
+    var(--cream-warm);
+}
 .gallery-grid {
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -1303,7 +1502,16 @@ body.admin-mode .admin-only { display:block !important; }
 /* ═══════════════════════════════════════
    TESTIMONIOS
 ═══════════════════════════════════════ */
-.testi-sec { background:var(--white); }
+/* TESTIMONIOS — la otra blanca. Y viene inmediatamente despues del
+   podcast, que es verde oscuro: el salto a #ffffff era un fogonazo.
+   Ahora recoge ese verde y lo deja caer. */
+.testi-sec {
+  position:relative;
+  background:
+    radial-gradient(104% 48% at 50% -8%, var(--luz-verde)   0%, transparent 72%),
+    radial-gradient(58% 46% at 4% 100%,  var(--luz-rosa-ss) 0%, transparent 68%),
+    var(--cream-warm);
+}
 /* Fade carousel */
 .testi-carousel { position:relative; }
 .testi-grid {
@@ -1386,7 +1594,15 @@ body.admin-mode .admin-only { display:block !important; }
 /* ═══════════════════════════════════════
    CONTACTO
 ═══════════════════════════════════════ */
-.contacto-sec { background:var(--cream-warm); }
+/* CONTACTO — el cierre, y la mas calida de las seis: debajo esta el pie
+   verde oscuro y conviene llegar con temperatura en vez de caer de
+   golpe desde el crema. */
+.contacto-sec {
+  background:
+    radial-gradient(76% 58% at 98% -6%, var(--luz-oro)   0%, transparent 70%),
+    radial-gradient(72% 56% at -8% 96%, var(--luz-verde) 0%, transparent 72%),
+    linear-gradient(180deg, var(--cream-warm) 0%, var(--cream-deep) 100%);
+}
 .contacto-grid { display:grid; grid-template-columns:1fr 1.1fr; gap:5rem; align-items:start; }
 .contacto-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3vw,2.4rem); color:var(--text); margin-bottom:.4rem; }
 .contacto-sub {
@@ -1770,8 +1986,14 @@ footer {
   /* oro solo para TEXTO. --gold se queda como esta: en filos, rayos y
      rellenos el tono actual es el correcto, y oscurecerlo ahi apagaria
      la pagina entera. */
-  --gold-text:#8a6b1c;   /* 4.72:1 sobre crema */
-  --text-light:#6f6b63;  /* 5.01:1 sobre crema — antes #888880, 3.37:1 */
+  /* Recalculados contra el fondo MAS OSCURO que pueden producir las
+     manchas de luz apiladas, no contra el crema plano de antes. La luz
+     deriva, asi que el texto puede acabar sobre la parte mas cargada:
+     el peor caso es el unico criterio seguro.
+       --gold-text  #8a6b1c ->  3.62:1 sobre rgb(217,222,195). Ahora 4.79
+       --text-light #6f6b63 ->  3.49:1 sobre rgb(211,212,175). Ahora 4.86 */
+  --gold-text:#6b5313;   /* 4.87:1 en el peor fondo · 7.00:1 sobre crema */
+  --text-light:#595550;  /* 4.86:1 en el peor fondo · 7.13:1 sobre crema */
   --sobre-oro:#1f4029;   /* 5.04:1 sobre oro   — para texto EN oro */
   --sobre-verde:#d8d4cc; /* 5.38:1 sobre el verde del pie */
   --gold-claro:#e2cb85;  /* 4.97:1 sobre el verde del pie — el oro de texto
@@ -1783,23 +2005,37 @@ footer {
    .svc-cat-btn se quedo fuera a proposito: tiene un estado activo con
    texto blanco sobre verde, y la regla se lo comia.
    .footer-admin-link tambien: vive en el pie, sobre verde oscuro. */
+/* .sn-es SALIO de este grupo. Entro cuando vivia sobre crema; hoy vive
+   sobre el cielo del saludo, que va de indigo a terracota, y este oro
+   —que es oscuro a proposito para leerse sobre claro— quedaba en 1.6:1
+   contra el. Su regla base ya lo pone en hueso; lo unico que hacia
+   falta era dejar de pisarsela desde aqui. */
 .sch-time,
 .sched-leg,
 .ev-fecha,
-.nav-brand-sub,
-.sn-es{ color:var(--gold-text); }
+.nav-brand-sub{ color:var(--gold-text); }
 
-/* Las pastillas Presencial/Virtual no van sobre blanco sino sobre un
-   tinte, asi que el oro de texto se quedaba en 4.05:1. Un punto mas
-   oscuro y pasan. */
-.sch-tag{ color:#7d6117; }
+/* el oro tambien se usaba como texto pequeno en precios y categorias,
+   donde nunca llego a 3:1 — eso ya fallaba antes de tocar los fondos */
+.svc-price,
+.svc-content-cat,
+.c-lbl{ color:var(--gold-text); }
+
+/* Las pastillas Presencial/Virtual llevaban su propio tono porque el oro
+   de texto de entonces se quedaba corto sobre su tinte. El oro nuevo ya
+   es mas oscuro que aquel apano, asi que vuelven al token: un valor
+   suelto menos que mantener. */
+.sch-tag{ color:var(--gold-text); }
 
 /* La seccion del podcast es verde OSCURO: ahi el gris de apoyo, que es
    oscuro, no sirve. */
 #podcast .sec-sub{ color:var(--sobre-verde); }
 
 /* enlaces de texto dentro de parrafos y listas */
-.sobre a, .sec-sub a, .svc-item-detail a,
+/* :not(.btn) — un boton NO es un enlace de texto. Sin esto, "Escribir a
+   Andrea" (<a class="btn btn-green">) recibia el oro de texto por
+   especificidad y quedaba en 1.2:1 sobre el verde del boton. */
+.sobre a:not(.btn), .sec-sub a:not(.btn), .svc-item-detail a:not(.btn),
 p a:not([class]), li a:not([class]){ color:var(--gold-text); }
 
 /* El pie es verde oscuro: ahi el oro tiene que ser CLARO. Con el oro de
@@ -1840,6 +2076,290 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 .sobre p a:hover, p a:not([class]):hover{
   text-decoration-color:currentColor;
 }
+
+/* ===================================================================
+   LA RESPIRACION
+   El aro se abre al inhalar y se cierra al exhalar, con la duracion de
+   la postura. Solo transform y opacity: lo resuelve el compositor.
+   =================================================================== */
+/* .sn-paso YA es position:absolute con inset:0 — poner relative aqui,
+   al final de la hoja, ganaba por orden y devolvia las doce posturas al
+   flujo: se apilaban y empujaban la activa fuera de la vista.
+   Un elemento absolute ya es contexto de posicionamiento para su anillo. */
+/* el envoltorio: la figura manda el tamano, el anillo se centra encima */
+.sn-cuerpo-wrap{
+  position:relative; display:block; flex:none;
+  width:clamp(148px,20vw,215px);
+}
+.sn-anillo{
+  position:absolute; left:50%; top:50%;
+  width:112%; aspect-ratio:1;
+  transform:translate(-50%,-50%) scale(.72);
+  border-radius:50%;
+  border:1px solid rgba(240,207,122,.34);
+  box-shadow:0 0 34px 6px rgba(240,207,122,.12) inset,
+             0 0 26px 2px rgba(240,207,122,.10);
+  opacity:0; pointer-events:none; z-index:0;
+  transition:transform 2.6s cubic-bezier(.4,0,.2,1),
+             opacity .7s ease,
+             border-color 2.6s ease;
+  will-change:transform;
+}
+.sn-paso.on .sn-anillo{opacity:1}
+/* al inhalar el aro se abre; al exhalar se recoge; en la retencion se
+   queda sostenido y se enciende un poco mas */
+.sn-paso.on[data-aire="inhala"] .sn-anillo{transform:translate(-50%,-50%) scale(1.14); border-color:rgba(255,240,200,.62)}
+.sn-paso.on[data-aire="exhala"] .sn-anillo{transform:translate(-50%,-50%) scale(.70); border-color:rgba(240,207,122,.26)}
+.sn-paso.on[data-aire="reten"]  .sn-anillo{transform:translate(-50%,-50%) scale(1.02); border-color:rgba(255,240,200,.80)}
+.sn-paso.on[data-aire="neutro"] .sn-anillo{transform:translate(-50%,-50%) scale(.92)}
+
+/* la etiqueta: dice lo que hay que hacer con el aire */
+.sn-aire{
+  position:relative; z-index:2;
+  display:inline-flex; align-items:center; gap:8px;
+  margin:0 0 .5rem;
+  font-family:'Poppins',sans-serif; font-size:.64rem; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(255,244,214,.9);
+}
+.sn-aire-pt{
+  width:7px; height:7px; border-radius:50%; flex:none;
+  background:#f0cf7a; box-shadow:0 0 10px 2px rgba(240,207,122,.6);
+  transition:transform 2.6s cubic-bezier(.4,0,.2,1);
+}
+.sn-paso.on[data-aire="inhala"] .sn-aire-pt{transform:scale(1.7)}
+.sn-paso.on[data-aire="exhala"] .sn-aire-pt{transform:scale(.75)}
+
+/* ---- transiciones CON DIRECCION ----
+   La que sale se va por donde veniste, la que entra llega del otro
+   lado. Al subir, al reves. El movimiento sigue tu mano. */
+/* el bloque solo se funde; el desplazamiento va en las piezas */
+.sn-paso{transition:opacity .42s ease}
+.sn-cuerpo-wrap,
+.sn-txt{
+  transition:transform .66s cubic-bezier(.22,1,.36,1);
+  transform:translate3d(var(--sale,38px),0,0);
+}
+/* la figura entra un pelo antes que la ficha: dos planos a distinta
+   velocidad, que es lo que da profundidad a una transicion */
+.sn-txt{transition-delay:.06s; --sale:52px}
+.sn-paso.on .sn-cuerpo-wrap,
+.sn-paso.on .sn-txt{transform:translate3d(0,0,0)}
+.sn.arriba .sn-cuerpo-wrap{--sale:-38px}
+.sn.arriba .sn-txt{--sale:-52px}
+
+/* el trazo arranca DESPUES de que la ficha aterrice: asi se lee como
+   una secuencia y no como tres cosas a la vez */
+.sn-fig .sn-cuerpo{transition-delay:.26s}
+
+/* la figura por encima del aro */
+.sn-fig{position:relative; z-index:1}
+
+@media (prefers-reduced-motion: reduce){
+  .sn-anillo{display:none}
+  .sn-paso{transform:none; transition:none}
+  .sn-cuerpo-wrap,.sn-txt{transform:none; transition:none}
+  .sn-aire-pt{transition:none}
+}
+.lite .sn-anillo{display:none}
+
+/* En pantalla estrecha las piezas entran en VERTICAL: la ficha ocupa
+   casi todo el ancho y cualquier desplazamiento lateral la sacaba del
+   viewport. Ademas, en un movil el gesto natural va en ese eje. */
+@media (max-width:720px){
+  .sn-cuerpo-wrap{transform:translate3d(0,var(--sube,26px),0)}
+  .sn-txt{transform:translate3d(0,var(--sube,38px),0); --sale:0}
+  .sn-paso.on .sn-cuerpo-wrap,
+  .sn-paso.on .sn-txt{transform:translate3d(0,0,0)}
+  .sn.arriba .sn-cuerpo-wrap{--sube:-26px}
+  .sn.arriba .sn-txt{--sube:-38px}
+}
+@media (max-width:720px) and (prefers-reduced-motion: reduce){
+  .sn-cuerpo-wrap,.sn-txt{transform:none}
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA LUZ SE MUEVE  ·  Y EL VIDRIO YA TIENE ALGO QUE REFRACTAR
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ---- la deriva ----
+   Una mancha mas por seccion, animada SOLO con transform. Es la leccion
+   de medir el cielo: mover un degradado repintandolo cuesta caro, y
+   mover una CAPA con transform no cuesta nada porque lo resuelve el
+   compositor. Aqui no se repinta ni un pixel.
+   Y solo corre donde se esta mirando: la clase la pone un observador. */
+.sobre, .servicios-sec, .galeria-sec, .contacto-sec,
+.horarios-sec, .testi-sec {
+  position:relative;
+  /* contiene la mancha que deriva. `clip` recorta igual que `hidden`
+     pero NO crea contenedor de scroll — la trampa que ya me tumbo el
+     sticky del saludo una vez. Va en segunda linea: quien no la
+     entienda se queda con hidden. */
+  overflow:hidden; overflow:clip;
+}
+
+.sobre::after, .servicios-sec::after, .galeria-sec::after,
+.contacto-sec::after, .horarios-sec::after, .testi-sec::after{
+  content:''; position:absolute; z-index:0; pointer-events:none;
+  height:52%; width:auto; aspect-ratio:1; border-radius:50%;
+  left:14%; top:24%;
+  background:radial-gradient(circle closest-side,
+    var(--luz-deriva, var(--luz-oro-ss)) 0%, transparent 100%);
+  opacity:0; transition:opacity 1.4s ease;
+  will-change:transform;
+}
+/* la clase la pone el observador cuando la seccion entra en pantalla */
+/* .62 y no 1: esta es la TERCERA capa de luz y ademas la que se mueve,
+   asi que es la que hace impredecible el fondo bajo el texto. Las dos
+   fijas se quedan a plena fuerza — son las que dan el color. */
+.luz-viva::after{ opacity:.62; animation:luz-deriva 38s ease-in-out infinite; }
+
+.sobre::after        { --luz-deriva:var(--luz-oro);    left:-14%; top:22%; animation-duration:38s }
+.servicios-sec::after{ --luz-deriva:var(--luz-salvia); left:62%;  top:26%; animation-duration:44s }
+.horarios-sec::after { --luz-deriva:var(--luz-oro-ss); left:24%;  top:20%; animation-duration:41s }
+.galeria-sec::after  { --luz-deriva:var(--luz-rosa);   left:-10%; top:24%; animation-duration:36s }
+.testi-sec::after    { --luz-deriva:var(--luz-verde);  left:52%;  top:28%; animation-duration:47s }
+.contacto-sec::after { --luz-deriva:var(--luz-oro);    left:58%;  top:22%; animation-duration:40s }
+
+@keyframes luz-deriva{
+  0%   { transform:translate3d(0,0,0)      scale(1)    }
+  50%  { transform:translate3d(7%,-5%,0)   scale(1.16) }
+  100% { transform:translate3d(0,0,0)      scale(1)    }
+}
+
+/* el contenido, por encima de la luz. En las secciones con grano ya lo
+   resuelve la regla .grain > *; estas dos no llevan grano. */
+.horarios-sec > .container,
+.testi-sec > .container{ position:relative; z-index:1; }
+
+/* ---- VIDRIO LIQUIDO ----
+   Ahora que hay color detras, el vidrio se ve. Son 11 tarjetas: las 7
+   del horario y las 4 de testimonios. Las 76 de servicios se quedan
+   fuera a proposito — filtrar 76 cajas cuesta lo que parece.
+   Y como lo que hay detras es ESTATICO, el filtro se calcula una vez y
+   se cachea; no es el caso del cielo, que se repintaba entero. */
+@supports ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  .class-card, .testi-card{
+    background:rgba(253,248,237,.52);
+    -webkit-backdrop-filter:blur(13px) saturate(1.55);
+    backdrop-filter:blur(13px) saturate(1.55);
+    border:1px solid rgba(255,255,255,.62);
+    box-shadow:0 6px 26px rgba(120,95,30,.10),
+               inset 0 1px 0 rgba(255,255,255,.75);
+    position:relative; overflow:hidden;
+  }
+  /* el filo de oro de las tarjetas de clase no se pierde */
+  .class-card{ border-top:3px solid var(--gold); }
+
+  /* el destello que recorre el vidrio al pasar por encima */
+  .class-card::after, .testi-card::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    border-radius:inherit;
+    background:linear-gradient(114deg,
+      transparent 32%, rgba(255,255,255,.55) 47%, transparent 62%);
+    transform:translate3d(-130%,0,0);
+    transition:transform 1s var(--ease);
+  }
+  .class-card:hover::after, .testi-card:hover::after,
+  .class-card:focus-within::after, .testi-card:focus-within::after{
+    transform:translate3d(130%,0,0);
+  }
+}
+
+/* ---- sin movimiento ----
+   Ni deriva ni destello. El color se queda: el color no es movimiento,
+   y quien pide menos animacion no esta pidiendo una pagina gris. */
+@media (prefers-reduced-motion: reduce){
+  .luz-viva::after{ animation:none; opacity:.62 }
+  .class-card::after, .testi-card::after{ display:none }
+}
+.lite .sobre::after, .lite .servicios-sec::after, .lite .galeria-sec::after,
+.lite .contacto-sec::after, .lite .horarios-sec::after, .lite .testi-sec::after{
+  animation:none;
+}
+@supports ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  /* en equipos flojos el vidrio se queda en color solido: el
+     backdrop-filter es lo primero que hay que soltar */
+  .lite .class-card, .lite .testi-card{
+    -webkit-backdrop-filter:none; backdrop-filter:none;
+    background:var(--cream-warm);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL ORO, COMO TEXTO
+   Solo cambia el COLOR DEL TEXTO en los sitios donde el oro no se lee.
+   El token --gold sigue igual: en filos y rellenos es el correcto.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* -- oro sobre claro: el oro oscuro de texto -- */
+.sec-label,
+.testi-stars,
+.inst-spec,
+.ev-tag,
+.ev-price,
+.ev-date-badge .evb-d{ color:var(--gold-text); }
+/* los dos filos del rotulo se quedan en oro de marca: son LINEA, no
+   texto, y ahi el tono claro es justo el que hace falta */
+.sec-label::before, .sec-label::after{ background:var(--gold); }
+
+/* -- texto sobre oro: verde profundo --
+   El blanco sobre #c9a84c da 2.29:1 por mucho que se agrande. */
+.cta-title, .cta-sub{ color:var(--sobre-oro); }
+.cta-sec .btn-outline-white{
+  border-color:rgba(31,64,41,.5); color:var(--sobre-oro);
+}
+.cta-sec .btn-outline-white:hover{ background:rgba(31,64,41,.1); }
+.btn-gold{ color:var(--sobre-oro); }
+/* el hover ACLARA en vez de oscurecer: con --gold-deep el verde caia a
+   4.05:1, y con el oro claro sube a 7.13:1. Ademas encaja con una
+   pagina cuyo tema es la luz. */
+.btn-gold:hover{ background:var(--gold-light); color:var(--sobre-oro); }
+.btn-outline-gold:hover{ color:var(--sobre-oro); }
+.pod-ep-badge{ color:var(--sobre-oro); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA GALERIA VACIA, PERO NO ROTA
+   ═══════════════════════════════════════════════════════════════════ */
+.gallery-ph{
+  position:relative; overflow:hidden;
+  /* cada marco, un tono; el conjunto deja de ser una pared gris */
+  background:
+    radial-gradient(126% 96% at 24% 16%, var(--ph-luz, var(--luz-oro)) 0%, transparent 70%),
+    linear-gradient(158deg, var(--cream-warm) 0%, var(--cream-deep) 100%);
+}
+.gallery-item:nth-child(5n+1) .gallery-ph{ --ph-luz:var(--luz-oro) }
+.gallery-item:nth-child(5n+2) .gallery-ph{ --ph-luz:var(--luz-salvia) }
+.gallery-item:nth-child(5n+3) .gallery-ph{ --ph-luz:var(--luz-rosa) }
+.gallery-item:nth-child(5n+4) .gallery-ph{ --ph-luz:var(--luz-verde) }
+.gallery-item:nth-child(5n)   .gallery-ph{ --ph-luz:var(--luz-oro-ss) }
+
+/* el brillo que cruza. Dice "esto se esta preparando", no "esto fallo" */
+.gallery-ph::after{
+  content:''; position:absolute; inset:-34%; pointer-events:none;
+  background:linear-gradient(112deg,
+    transparent 43%, rgba(255,255,255,.52) 50%, transparent 57%);
+  transform:translate3d(-64%,0,0);
+  will-change:transform;
+}
+/* solo se anima con la seccion en pantalla: la clase la pone el mismo
+   observador que enciende la luz que deriva */
+.luz-viva .gallery-ph::after{ animation:ph-brillo 6.5s ease-in-out infinite }
+.gallery-item:nth-child(2) .gallery-ph::after{ animation-delay:.7s }
+.gallery-item:nth-child(3) .gallery-ph::after{ animation-delay:1.5s }
+.gallery-item:nth-child(4) .gallery-ph::after{ animation-delay:2.2s }
+.gallery-item:nth-child(5) .gallery-ph::after{ animation-delay:3.1s }
+@keyframes ph-brillo{
+  0%, 74% { transform:translate3d(-64%,0,0) }
+  100%    { transform:translate3d(64%,0,0) }
+}
+/* el icono, algo mas presente: al 22% sobre un fondo palido no se veia */
+.gallery-ph svg{ opacity:.3; color:var(--green-mid) }
+
+@media (prefers-reduced-motion: reduce){
+  .luz-viva .gallery-ph::after{ animation:none; opacity:0 }
+}
+.lite .gallery-ph::after{ animation:none; opacity:0 }
 </style>
 </head>
 <body>
@@ -2118,7 +2638,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <div class="inst-card rv rv-left">
         <div class="inst-photo" id="photo-andrea">
           <div class="inst-photo-ph" id="ph-andrea">
-            <div class="inst-photo-ph-icon">A</div>
+            <div class="inst-photo-ph-icon" aria-hidden="true">A</div>
             <p>Foto de Andrea Marín</p>
           </div>
           <img id="img-andrea" src="" alt="Andrea Marín" style="display:none">
@@ -2148,7 +2668,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <div class="inst-card rv rv-right">
         <div class="inst-photo" id="photo-david">
           <div class="inst-photo-ph" id="ph-david">
-            <div class="inst-photo-ph-icon">D</div>
+            <div class="inst-photo-ph-icon" aria-hidden="true">D</div>
             <p>Foto de David Jiménez</p>
           </div>
           <img id="img-david" src="" alt="David Jiménez" style="display:none">
@@ -2212,8 +2732,10 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 
     <div class="sn-escena">
       <ol class="sn-lista">
-      <li class="sn-paso" data-i="0">
+      <li class="sn-paso" data-i="0" data-aire="neutro">
         <span class="sn-num">01</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="60" cy="24" r="7.5"/>
@@ -2223,14 +2745,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M70 45 L76 57 L63 63"/>
       <path d="M60 80 L55 126"/><path d="M60 80 L66 126"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Pranamasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Pranamasana</h3>
           <p class="sn-es">Postura de la oración</p>
           <p class="sn-desc">Se empieza de pie, palmas al centro del pecho. Es el saludo: llegar y estar.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="1">
+      <li class="sn-paso" data-i="1" data-aire="inhala">
         <span class="sn-num">02</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="64" cy="27" r="7.5"/>
@@ -2239,14 +2764,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M61 45 C71 34 79 24 84 16"/>
       <path d="M56 80 L52 126"/><path d="M56 80 L62 126"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Hasta Uttanasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Hasta Uttanasana</h3>
           <p class="sn-es">Brazos elevados</p>
           <p class="sn-desc">Se inhala y el pecho se abre hacia arriba. Entra el aire y entra la luz.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="2">
+      <li class="sn-paso" data-i="2" data-aire="exhala">
         <span class="sn-num">03</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="47" cy="104" r="7.5"/>
@@ -2254,14 +2782,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M64 48 L60 126"/><path d="M71 48 L75 126"/>
       <path d="M54 88 L49 123"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Padahastasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Padahastasana</h3>
           <p class="sn-es">Mano a pie</p>
           <p class="sn-desc">Se exhala y el cuerpo se pliega. La cabeza baja por debajo del corazón.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="3">
+      <li class="sn-paso" data-i="3" data-aire="inhala">
         <span class="sn-num">04</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="79" cy="40" r="7.5"/>
@@ -2270,14 +2801,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M67 82 C80 94 94 108 104 124"/>
       <path d="M75 55 C64 78 52 106 47 123"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Ashwa Sanchalanasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Ashwa Sanchalanasana</h3>
           <p class="sn-es">Postura ecuestre</p>
           <p class="sn-desc">Una pierna atrás, la mirada al frente. El primer paso hacia adelante.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="4">
+      <li class="sn-paso" data-i="4" data-aire="reten">
         <span class="sn-num">05</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="27" cy="60" r="7.5"/>
@@ -2285,14 +2819,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M37 65 L35 124"/>
       <path d="M104 79 L109 124"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Dandasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Dandasana</h3>
           <p class="sn-es">Postura del bastón</p>
           <p class="sn-desc">El cuerpo, una sola línea. Sostener sin tensar.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="5">
+      <li class="sn-paso" data-i="5" data-aire="exhala">
         <span class="sn-num">06</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="29" cy="88" r="7.5"/>
@@ -2300,42 +2837,51 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M41 95 L39 124"/>
       <path d="M93 93 L98 124"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Ashtanga Namaskara</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Ashtanga Namaskara</h3>
           <p class="sn-es">Saludo con ocho miembros</p>
           <p class="sn-desc">Ocho puntos tocan el suelo. La entrega completa.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="6">
+      <li class="sn-paso" data-i="6" data-aire="inhala">
         <span class="sn-num">07</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="31" cy="49" r="7.5"/>
       <path d="M32 56.5 C39 77 55 96 79 108 C90 113 100 117 109 119"/>
       <path d="M37 66 L35 124"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Bhujangasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Bhujangasana</h3>
           <p class="sn-es">Cobra</p>
           <p class="sn-desc">El pecho se levanta otra vez. Se inhala y se vuelve a abrir.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="7">
+      <li class="sn-paso" data-i="7" data-aire="exhala">
         <span class="sn-num">08</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="50" cy="74" r="7.5"/>
       <path d="M66 38 C56 66 42 98 31 122"/>
       <path d="M68 38 C80 66 94 98 103 122"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Adho Mukha Svanasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Adho Mukha Svanasana</h3>
           <p class="sn-es">Perro boca abajo</p>
           <p class="sn-desc">Las manos empujan, las caderas suben. El descanso activo.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="8">
+      <li class="sn-paso" data-i="8" data-aire="inhala">
         <span class="sn-num">09</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="79" cy="40" r="7.5"/>
@@ -2344,14 +2890,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M67 82 C80 94 94 108 104 124"/>
       <path d="M75 55 C64 78 52 106 47 123"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Ashwa Sanchalanasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Ashwa Sanchalanasana</h3>
           <p class="sn-es">Postura ecuestre</p>
           <p class="sn-desc">La pierna vuelve al frente. El camino se deshace igual que se hizo.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="9">
+      <li class="sn-paso" data-i="9" data-aire="exhala">
         <span class="sn-num">10</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="47" cy="104" r="7.5"/>
@@ -2359,14 +2908,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M64 48 L60 126"/><path d="M71 48 L75 126"/>
       <path d="M54 88 L49 123"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Padahastasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Padahastasana</h3>
           <p class="sn-es">Mano a pie</p>
           <p class="sn-desc">Se exhala y el cuerpo se pliega de nuevo.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="10">
+      <li class="sn-paso" data-i="10" data-aire="inhala">
         <span class="sn-num">11</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="64" cy="27" r="7.5"/>
@@ -2375,14 +2927,17 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M61 45 C71 34 79 24 84 16"/>
       <path d="M56 80 L52 126"/><path d="M56 80 L62 126"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Hasta Uttanasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Hasta Uttanasana</h3>
           <p class="sn-es">Brazos elevados</p>
           <p class="sn-desc">Se inhala y se sube. El sol ya está en lo alto.</p>
         </div>
       </li>
-      <li class="sn-paso" data-i="11">
+      <li class="sn-paso" data-i="11" data-aire="exhala">
         <span class="sn-num">12</span>
+        <span class="sn-cuerpo-wrap">
+        <span class="sn-anillo" aria-hidden="true"></span>
         <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
           <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
           <g class="sn-cuerpo"><circle cx="60" cy="24" r="7.5"/>
@@ -2392,8 +2947,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <path d="M70 45 L76 57 L63 63"/>
       <path d="M60 80 L55 126"/><path d="M60 80 L66 126"/></g>
         </svg>
+        </span>
         <div class="sn-txt">
-          <h3 class="sn-sans">Pranamasana</h3>
+          <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Pranamasana</h3>
           <p class="sn-es">Postura de la oración</p>
           <p class="sn-desc">De vuelta al centro. Una ronda completa: una respiración larga.</p>
         </div>
@@ -2890,7 +3446,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
     <div class="testi-carousel rv">
       <div class="testi-grid" id="testi-grid">
         <div class="testi-card">
-          <div class="testi-q">"</div>
+          <div class="testi-q" aria-hidden="true">"</div>
           <p class="testi-text">Un espacio increíble de paz y sanación. Las clases con Andrea me han transformado completamente. La energía del lugar es única.</p>
           <div class="testi-author">
             <div class="testi-av">M</div>
@@ -2901,7 +3457,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
           </div>
         </div>
         <div class="testi-card">
-          <div class="testi-q">"</div>
+          <div class="testi-q" aria-hidden="true">"</div>
           <p class="testi-text">Los baños de sonido son una experiencia que no se puede describir con palabras. Salgo completamente renovada. Totalmente recomendado.</p>
           <div class="testi-author">
             <div class="testi-av">L</div>
@@ -2912,7 +3468,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
           </div>
         </div>
         <div class="testi-card">
-          <div class="testi-q">"</div>
+          <div class="testi-q" aria-hidden="true">"</div>
           <p class="testi-text">Mi hija ama las clases de telas aéreas. David es extraordinario con los niños. Un ambiente seguro, divertido y profesional.</p>
           <div class="testi-author">
             <div class="testi-av">C</div>
@@ -3550,7 +4106,7 @@ function applyTestis(){
   if(!ts.length) return;
   grid.classList.add('is-carousel');
   grid.innerHTML=ts.map(function(t,i){
-    return '<div class="testi-card spotlight'+(i===0?' on':'')+'"><div class="testi-q">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
+    return '<div class="testi-card spotlight'+(i===0?' on':'')+'"><div class="testi-q" aria-hidden="true">"</div><p class="testi-text">'+esc(t.texto)+'</p><div class="testi-author"><div class="testi-av">'+esc(t.ini)+'</div><div><div class="testi-name">'+esc(t.nombre)+'</div><div class="testi-stars">★★★★★</div></div></div></div>';
   }).join('');
   var dots=$('testi-dots');
   if(dots){
@@ -3980,19 +4536,46 @@ function detectLite(){
 
 /* ─── NAV SCROLL + PROGRESS BAR ─── */
 var _navEl=null, _progEl=null, _scrollRAF=false;
+/* El alto de la pagina no cambia mientras se hace scroll, asi que se
+   mide cuando cambia de verdad y no sesenta veces por segundo. Leer
+   scrollHeight obliga al navegador a recalcular la maquetacion COMPLETA
+   antes de contestar, y esta pagina mide veinte mil pixeles. Era el
+   coste que aparecia en TODAS las secciones, incluidas las que nadie
+   habia tocado. */
+var _maxScroll=1, _navSolido=null;
+function midePagina(){
+  var de=document.documentElement;
+  _maxScroll=(de.scrollHeight-de.clientHeight)||1;
+}
 function onScrollFrame(){
   _scrollRAF=false;
   var y=window.scrollY||window.pageYOffset||0;
-  if(_navEl) _navEl.classList.toggle('solid', y>40);
-  if(_progEl){
-    var de=document.documentElement;
-    var max=(de.scrollHeight-de.clientHeight)||1;
-    _progEl.style.width=Math.min(100,(y/max*100))+'%';
+  /* solo se escribe la clase cuando cambia de estado: repetir el toggle
+     en cada fotograma invalida estilos para nada */
+  if(_navEl){
+    var solido = y>40;
+    if(solido!==_navSolido){ _navSolido=solido; _navEl.classList.toggle('solid', solido); }
   }
+  if(_progEl) _progEl.style.transform='scaleX('+Math.min(1,y/_maxScroll)+')';
 }
 window.addEventListener('scroll', function(){
   if(!_scrollRAF){ _scrollRAF=true; requestAnimationFrame(onScrollFrame); }
 }, { passive:true });
+
+/* ─── LA LUZ QUE DERIVA ───
+   Seis animaciones corriendo a la vez, cinco de ellas fuera de pantalla,
+   es gasto puro. Solo se anima la seccion que se esta mirando. */
+function initLuz(){
+  var secs=document.querySelectorAll('.sobre,.servicios-sec,.horarios-sec,.galeria-sec,.testi-sec,.contacto-sec');
+  if(!('IntersectionObserver' in window)){
+    for(var i=0;i<secs.length;i++) secs[i].classList.add('luz-viva');
+    return;
+  }
+  var ob=new IntersectionObserver(function(es){
+    es.forEach(function(e){ e.target.classList.toggle('luz-viva', e.isIntersecting); });
+  },{rootMargin:'80px'});
+  for(var j=0;j<secs.length;j++) ob.observe(secs[j]);
+}
 
 /* ─── SCROLL REVEAL ─── */
 var revObs=null;
@@ -4221,10 +4804,18 @@ function initSpotlight(){
 function boot(){
   detectLite();
   _navEl=$('nav'); _progEl=$('scroll-prog');
+  midePagina();
+  window.addEventListener('resize', midePagina, {passive:true});
+  /* el alto cambia sin que haya resize: imagenes que cargan, el carrusel
+     de eventos, el panel de admin. Un observador lo cubre todo. */
+  if('ResizeObserver' in window){
+    try{ new ResizeObserver(midePagina).observe(document.body); }catch(e){}
+  }
   try{ loadAll(); }catch(e){ D=clone(DEF); IMGS=clone(DEF_IMGS); }
   applyAll();
   loadPodThumbs();
   initReveal();
+  initLuz();
   initTitleReveal();
   initCountUp();
   initSunTilt();
@@ -4489,50 +5080,119 @@ else { boot(); }
     return;
   }
 
+  /* Se marca el documento: mientras el JS no haya arrancado, el CSS deja
+     la primera postura encendida para que la seccion se lea igual. En
+     cuanto arranca, esa regla tiene que dejar de aplicar — si no, la
+     primera se queda ENCIMA de la activa y se ven dos nombres impresos
+     uno sobre otro (que es lo que pasaba). */
+  document.documentElement.classList.add('sn-js');
+
   /* La primera postura visible desde el principio: si no, quien llega a
      la seccion ve un hueco hasta que empieza a bajar. */
   pasos[0].classList.add('on');
+  var ETIQ = {inhala:'Inhala', exhala:'Exhala', reten:'Reten\u00e9', neutro:'Respira'};
+  pasos.forEach(function(p){
+    var t=p.querySelector('.sn-aire-tx');
+    if(t) t.textContent = ETIQ[p.dataset.aire] || 'Respira';
+  });
 
   var activo = 0, pedido = false, largoVia = 0;
+  /* Todo lo que no cambia durante el scroll se mide aqui y se guarda:
+     la posicion y el alto de la seccion, el alto de la ventana y el
+     tamano del cielo. Antes se pedian DOS getBoundingClientRect() en
+     cada fotograma, y cada uno obliga a recalcular la maquetacion. */
+  var secTop = 0, secAlto = 0, cieloW = 0, cieloH = 0, vhCache = 800, respira = 1;
   function midVia(){
     try{ largoVia = via.getTotalLength(); }catch(e){ largoVia = 0; }
+    var r = sec.getBoundingClientRect();
+    secTop  = r.top + (window.scrollY || window.pageYOffset || 0);
+    secAlto = r.height;
+    vhCache = window.innerHeight || 800;
+    if(cielo){
+      var rc = cielo.getBoundingClientRect();
+      cieloW = rc.width; cieloH = rc.height;
+    }
   }
   midVia();
   if('ResizeObserver' in window){ new ResizeObserver(midVia).observe(sec); }
+  /* en el movil la barra del navegador cambia innerHeight sin cambiar el
+     alto de la seccion, asi que el observador no basta */
+  window.addEventListener('resize', midVia, {passive:true});
+  /* el sol se ancla una vez; despues solo se le cambia el transform */
+  if(sol){ sol.style.left = '0px'; sol.style.top = '0px'; }
 
   function aplica(){
     pedido = false;
-    var r = sec.getBoundingClientRect();
-    var vh = window.innerHeight || 800;
-    /* recorrido util: desde que la seccion se pega arriba hasta que se
-       despega por abajo */
-    var total = Math.max(1, r.height - vh);
-    var p = Math.min(1, Math.max(0, -r.top / total));
+    /* el recorrido sale de aritmetica sobre valores ya medidos: cero
+       lecturas de maquetacion por fotograma */
+    var y0 = window.scrollY || window.pageYOffset || 0;
+    var total = Math.max(1, secAlto - vhCache);
+    var p = Math.min(1, Math.max(0, (y0 - secTop) / total));
 
     /* la postura: doce tramos iguales */
     var i = Math.min(pasos.length - 1, Math.floor(p * pasos.length));
     if(i !== activo){
+      /* la direccion manda de que lado entra y sale cada postura */
+      sec.classList.toggle('arriba', i < activo);
       pasos[activo].classList.remove('on');
       pasos[i].classList.add('on');
       activo = i;
+      /* el sol respira con el cuerpo: crece al inhalar, se recoge al
+         exhalar. Los dos hacen lo mismo, que es la idea del saludo. */
+      if(sol){
+        var aire = pasos[i].dataset.aire;
+        respira = aire==='inhala' ? 1.22 : aire==='exhala' ? 0.86 : aire==='reten' ? 1.10 : 1;
+      }
     }
 
     /* el sol, sobre el arco. Se pide el punto a la propia curva en vez
        de recalcular la parabola: asi el sol y la linea nunca se separan
        aunque cambie el viewBox. */
-    if(sol && largoVia){
+    if(sol && largoVia && cieloW){
       var pt = via.getPointAtLength(largoVia * p);
       var caja = via.ownerSVGElement.viewBox.baseVal;
-      var rc = cielo.getBoundingClientRect();
-      var x = (pt.x / caja.width)  * rc.width;
-      var y = (pt.y / caja.height) * rc.height;
-      sol.style.transform = 'translate(' + (x - rc.width * 0) + 'px,' + y + 'px) translate(-50%,-50%)';
-      sol.style.left = '0px';
-      sol.style.top  = '0px';
-      sol.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) translate(-50%,-50%)';
+      var x = (pt.x / caja.width)  * cieloW;
+      var yv = (pt.y / caja.height) * cieloH;
+      /* UNA sola escritura de transform. Antes se escribia una, se
+         pisaba dos lineas mas abajo, y encima se reescribian left y top
+         a '0px' en cada fotograma. */
+      sol.style.transform = 'translate3d(' + x + 'px,' + yv + 'px,0) translate(-50%,-50%) scale(' + respira + ')';
     }
     if(barra) barra.style.transform = 'scaleX(' + p + ')';
+
+    /* EL DIA. Tres cielos y una interpolacion: amanecer -> mediodia ->
+       atardecer. Se escribe en variables CSS, asi que el navegador solo
+       repinta el fondo de la seccion; y va dentro del rAF que ya mueve
+       el sol, sin anadir un solo listener mas. */
+    pintaCielo(p);
   }
+  /* Los tres cielos del dia. Salen de la paleta de la casa —el verde de
+     la marca, el oro, el oxblood— no de una paleta inventada. */
+  var CIELOS = [
+    {alto:[21,31,46],  medio:[43,63,69],  bajo:[125,106,74]},   /* amanecer */
+    {alto:[22,40,31],  medio:[45,74,55],  bajo:[138,122,66]},   /* mediodia */
+    {alto:[34,20,38],  medio:[74,39,51],  bajo:[154,90,51]}     /* atardecer */
+  ];
+  function mezcla(a,b,t){
+    return 'rgb(' + Math.round(a[0]+(b[0]-a[0])*t) + ','
+                  + Math.round(a[1]+(b[1]-a[1])*t) + ','
+                  + Math.round(a[2]+(b[2]-a[2])*t) + ')';
+  }
+  var cieloPrev = -1;
+  function pintaCielo(p){
+    /* Se redondea a 1/50. A 1/100 se repintaba el doble por una
+       diferencia de tono que el ojo no distingue. */
+    var q = Math.round(p*50)/50;
+    if(q === cieloPrev) return;
+    cieloPrev = q;
+    var i = q < 0.5 ? 0 : 1;
+    var t = q < 0.5 ? q/0.5 : (q-0.5)/0.5;
+    var A = CIELOS[i], B = CIELOS[i+1];
+    sec.style.setProperty('--cielo-alto',  mezcla(A.alto,  B.alto,  t));
+    sec.style.setProperty('--cielo-medio', mezcla(A.medio, B.medio, t));
+    sec.style.setProperty('--cielo-bajo',  mezcla(A.bajo,  B.bajo,  t));
+  }
+
   function pide(){ if(!pedido){ pedido = true; requestAnimationFrame(aplica); } }
 
   window.addEventListener('scroll', pide, {passive:true});
