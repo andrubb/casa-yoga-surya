@@ -204,12 +204,23 @@ section { padding:7rem 2rem; }
   transition:opacity .8s var(--ease), transform .8s var(--ease);
 }
 .js-r .sec-title.on .w, .js-r .sn-h2.on .w, .js-r .cta-title.on .w { opacity:1; transform:none; }
+/* la frase y la entradilla: recorrido mas corto y desenfoque, porque
+   son parrafos y no titulares — un titular puede permitirse 28px de
+   salto, un parrafo con eso se lee como si temblara */
+.js-r .philo-quote .w, .js-r .sn-intro .w{
+  display:inline-block; opacity:0; transform:translateY(13px); filter:blur(5px);
+  transition:opacity .72s var(--ease), transform .72s var(--ease), filter .72s var(--ease);
+}
+.js-r .philo-quote.on .w, .js-r .sn-intro.on .w{ opacity:1; transform:none; filter:blur(0) }
 .lite .sec-title .w, body:not(.js-r) .sec-title .w,
 .lite .sn-h2 .w, body:not(.js-r) .sn-h2 .w,
-.lite .cta-title .w, body:not(.js-r) .cta-title .w { opacity:1!important; transform:none!important; }
+.lite .cta-title .w, body:not(.js-r) .cta-title .w,
+.lite .philo-quote .w, body:not(.js-r) .philo-quote .w,
+.lite .sn-intro .w, body:not(.js-r) .sn-intro .w { opacity:1!important; transform:none!important; filter:none!important; }
 
 @media(prefers-reduced-motion:reduce) {
-  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w,.sn-h2 .w,.cta-title .w,.svc-item { opacity:1!important; transform:none!important; transition:none!important; }
+  .rv,.rv-left,.rv-right,.rv-scale,.sec-title .w,.sn-h2 .w,.cta-title .w,
+  .philo-quote .w,.sn-intro .w,.svc-item { opacity:1!important; transform:none!important; filter:none!important; transition:none!important; }
   * { animation-duration:.001ms!important; animation-iteration-count:1!important; }
 }
 
@@ -1269,12 +1280,31 @@ body.admin-mode .admin-only { display:block !important; }
 .svc-items { display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.8rem; }
 .svc-item {
   display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;
-  padding:.95rem 1.1rem; border-radius:4px;
-  background:var(--cream-warm); border:1px solid var(--border-g);
-  border-left:3px solid var(--gold);
-  transition:transform .35s var(--ease), box-shadow .35s, background .35s;
+  padding:.9rem .6rem .9rem 1.15rem; border-radius:3px;
+  background:transparent; border:none;
+  /* Una LISTA, no setenta y seis tarjetas con franja dorada. El borde
+     lateral de 3px repetido es el tell mas reconocible de una interfaz
+     generada; y setenta y seis seguidos son una valla, no un acento.
+     Queda la linea fina que separa filas, que es lo que hace una lista. */
+  border-bottom:1px solid var(--border-g);
+  position:relative;
+  /* transform, no padding: acabo de corregir esto mismo en el pie y me
+     lo he vuelto a hacer aqui. Animar el relleno maqueta la fila entera. */
+  transition:background .32s var(--ease), transform .32s var(--ease);
 }
-.svc-item:hover { transform:translateX(4px); background:var(--white); box-shadow:0 8px 22px rgba(201,168,76,.14); }
+/* el oro aparece al pasar por encima, como una marca de lectura */
+.svc-item::before{
+  content:''; position:absolute; left:0; top:50%; translate:0 -50%;
+  /* scaleY y no height: la altura maqueta, la escala la resuelve el
+     compositor. El origen va en el centro para que crezca hacia los dos
+     lados, que es lo que hace una marca de lectura. */
+  width:2px; height:62%; background:var(--gold); border-radius:2px;
+  transform:scaleY(0); transform-origin:50% 50%;
+  transition:transform .34s var(--ease);
+}
+.svc-item:hover::before, .svc-item:focus-within::before{ transform:scaleY(1) }
+.svc-items > .svc-item:last-child{ border-bottom:none }
+.svc-item:hover { background:rgba(255,255,255,.55); transform:translateX(5px); }
 /* 80ms-staggered fade-up on scroll entrance */
 .js-r .svc-item { opacity:0; transform:translateY(20px);
   transition:opacity .6s var(--ease), transform .45s var(--ease), box-shadow .35s, background .35s; }
@@ -1339,13 +1369,23 @@ body.admin-mode .admin-only { display:block !important; }
 }
 .class-card {
   background:var(--cream-warm); border:1px solid var(--border-g);
-  border-top:3px solid var(--gold); border-radius:5px;
+  border-radius:5px;
   padding:1rem .95rem; transition:transform .4s var(--ease), box-shadow .4s;
 }
+/* El tipo de clase iba en un borde superior de 3px, que se pelea con la
+   esquina redondeada. Pasa a un punto junto a la hora: dice lo mismo,
+   no rompe la forma, y al ir PEGADO AL TEXTO lo entiende tambien quien
+   no distingue bien los colores — un borde suelto arriba, no. */
+.class-card .sch-time::before{
+  content:''; display:inline-block; vertical-align:middle;
+  width:7px; height:7px; border-radius:50%; margin-right:.5rem;
+  background:var(--tipo, var(--gold));
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--tipo, var(--gold)) 22%, transparent);
+}
 .class-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-warm); }
-.class-card.c-yoga    { border-top-color:var(--green); }
-.class-card.c-aerea   { border-top-color:var(--gold); }
-.class-card.c-terapia { border-top-color:var(--rose); }
+.class-card.c-yoga    { --tipo:var(--green); }
+.class-card.c-aerea   { --tipo:var(--gold-deep); }
+.class-card.c-terapia { --tipo:var(--rose); }
 .sch-time { font-family:'Playfair Display',serif; font-size:.95rem; color:var(--gold-deep); margin-bottom:.2rem; }
 .sch-class { font-size:.84rem; font-weight:500; color:var(--text); line-height:1.35; margin-bottom:.15rem; }
 .sch-prof { font-size:.72rem; color:var(--text-light); margin-bottom:.5rem; }
@@ -1427,7 +1467,8 @@ body.admin-mode .admin-only { display:block !important; }
   padding:4.5rem clamp(2rem,5vw,4rem);
   display:flex; flex-direction:column; justify-content:center;
   background:var(--white);
-  border-left:3px solid var(--gold);
+  /* el filo de oro pasa a hairline: 3px repetido es franja, 1px es filo */
+  border-left:1px solid var(--border);
 }
 .ev-tag {
   display:inline-flex; align-items:center; gap:.6rem;
@@ -1871,8 +1912,12 @@ footer {
 .fc-head { font-size:.58rem; letter-spacing:.25em; font-weight:600; text-transform:uppercase; color:var(--gold-light); margin-bottom:1.25rem; }
 .fc ul { list-style:none; }
 .fc ul li { margin-bottom:.65rem; }
-.fc ul a { font-size:.82rem; color:rgba(255,255,255,.5); transition:color .3s, padding-left .3s; position:relative; }
-.fc ul a:hover { color:var(--gold-light); padding-left:.4rem; }
+/* transform y no padding-left: animar el relleno maqueta en cada
+   fotograma. Es el mismo arreglo que la barra de scroll y la del
+   carrusel de eventos; esta se me habia escapado. */
+.fc ul a { font-size:.82rem; color:rgba(255,255,255,.5); display:inline-block;
+  transition:color .3s, transform .3s var(--ease); position:relative; }
+.fc ul a:hover { color:var(--gold-light); transform:translateX(5px); }
 .footer-bottom {
   max-width:1160px; margin:0 auto;
   padding-top:1.5rem; border-top:1px solid rgba(255,255,255,.08);
@@ -2011,7 +2056,7 @@ footer {
 .adm-del:hover { border-color:#c0392b; background:rgba(192,57,43,.08); }
 .adm-card {
   background:var(--white); border:1px solid var(--border-g);
-  padding:1rem; margin-bottom:.7rem; border-radius:5px; border-left:3px solid var(--gold);
+  padding:1rem; margin-bottom:.7rem; border-radius:5px;
   display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;
 }
 .adm-card-n { font-family:'Playfair Display',serif; font-size:.95rem; color:var(--text); margin-bottom:.15rem; }
@@ -2963,10 +3008,11 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
   opacity:0; transform:translateY(18px); filter:blur(6px);
   transition:opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease);
 }
-.js-r .acto-num  { transition-delay:.02s }
-.js-r .acto-rol  { transition-delay:.30s }
-.js-r .acto-bio  { transition-delay:.40s }
-.js-r .acto-cta  { transition-delay:.52s }
+/* sin el numeral por delante, la entrada empezaba en .30s y se sentia
+   lenta: se recoloca la coreografia entera */
+.js-r .acto-rol  { transition-delay:.14s }
+.js-r .acto-bio  { transition-delay:.26s }
+.js-r .acto-cta  { transition-delay:.40s }
 .js-r .acto.on .acto-rol,
 .js-r .acto.on .acto-bio, .js-r .acto.on .acto-cta{
   opacity:1; transform:none; filter:blur(0);
@@ -3409,7 +3455,6 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
         <span class="acto-placa">Yoga · Terapias · Espiritual</span>
       </div>
         <div class="acto-texto">
-          <p class="acto-num" aria-hidden="true">01</p>
           <h3 class="acto-nombre" data-letras>Andrea Marín</h3>
           <p class="acto-rol" id="role-andrea">Maestra de Parapsicología · Terapeuta Espiritual</p>
           <p class="acto-bio" id="bio-andrea">Con más de 8 años de dedicación al bienestar holístico, Andrea es Graduada en Metafísica y Ciencias Espirituales con Diploma en Maestro de Parapsicología y Terapeuta Espiritual (2024). Invitada en Susurros Podcast (episodios #16, #38 y #67) hablando sobre Registros Akáshicos, terapias energéticas y reencarnación. Su vocación nació de una búsqueda personal que la llevó a descubrir el poder sanador del yoga, el sonido y la energía.</p>
@@ -3443,7 +3488,6 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
         <span class="acto-placa">Disciplinas Aéreas</span>
       </div>
         <div class="acto-texto">
-          <p class="acto-num" aria-hidden="true">02</p>
           <h3 class="acto-nombre" data-letras>David Jiménez</h3>
           <p class="acto-rol" id="role-david">Especialista en Disciplinas Aéreas · Instructor Certificado</p>
           <p class="acto-bio" id="bio-david">David es el especialista en disciplinas aéreas de Casa Yoga+Surya. Con formación y experiencia en danza aérea, telas, lira, pole, trapecio y cuerda aérea, trabaja con niños y adultos de todos los niveles. Su enfoque combina fuerza, coordinación y expresión artística, creando un espacio seguro y motivador para que cada alumno explore sus límites.</p>
@@ -3499,7 +3543,7 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
     <header class="sn-cab">
       <span class="sn-eyebrow">Surya Namaskar</span>
       <h2 id="sn-h2" class="sn-h2">El saludo <em>al sol</em></h2>
-      <p class="sn-intro">Doce posturas encadenadas con la respiración. Es la secuencia con la que empieza casi toda práctica — y la que le da nombre a esta casa.</p>
+      <p class="sn-intro">Doce posturas encadenadas con la respiración. Es la secuencia con la que empieza casi toda práctica, y la que le da nombre a esta casa.</p>
     </header>
 
     <div class="sn-escena">
@@ -5429,12 +5473,18 @@ function initReveal(){
 /* ─── SECTION TITLE WORD STAGGER ─── */
 function splitTitle(el){
   if(el.dataset.split) return; el.dataset.split='1';
+  /* EL PASO SE ADAPTA AL LARGO. A 50ms fijos, una frase de 34 palabras
+     tarda 1.7s en poder leerse entera: eso no es cuidado, es hacer
+     esperar. El escalonado completo se limita a 0.9s, asi que cuanto
+     mas larga la frase, mas juntas entran sus palabras. */
+  var _n = (el.textContent||'').trim().split(/\s+/).length || 1;
+  var _paso = Math.min(0.05, 0.9 / _n);
   var nodes=Array.prototype.slice.call(el.childNodes), frag=document.createDocumentFragment(), idx={n:0};
   function pushWords(target, text){
     text.split(/(\s+)/).forEach(function(part){
       if(!part) return;
       if(/^\s+$/.test(part)){ target.appendChild(document.createTextNode(part)); }
-      else { var s=document.createElement('span'); s.className='w'; s.textContent=part; s.style.transitionDelay=(idx.n*0.05)+'s'; idx.n++; target.appendChild(s); }
+      else { var s=document.createElement('span'); s.className='w'; s.textContent=part; s.style.transitionDelay=(idx.n*_paso).toFixed(3)+'s'; idx.n++; target.appendChild(s); }
     });
   }
   nodes.forEach(function(node){
@@ -5451,7 +5501,11 @@ function initTitleReveal(){
      proposito: su +Surya lleva un degradado recortado al texto
      (background-clip:text) y partirlo en palabras le daria a cada
      palabra su propio degradado, rompiendo el foil. */
-  var titles=document.querySelectorAll('.sec-title,.sn-h2,.cta-title');
+  /* la frase de la casa y la entradilla del saludo entran tambien
+     palabra a palabra. Los parrafos LARGOS se quedan fuera a proposito:
+     escalonar doscientas palabras no es mas cuidado, es un texto que
+     tarda cuatro segundos en poder leerse. */
+  var titles=document.querySelectorAll('.sec-title,.sn-h2,.cta-title,.philo-quote,.sn-intro');
   if(LITE || !('IntersectionObserver' in window)){
     titles.forEach(function(t){ t.classList.add('on'); }); return;
   }
