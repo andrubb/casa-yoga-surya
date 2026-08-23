@@ -506,7 +506,9 @@ section { padding:7rem 2rem; }
   background:var(--cielo-medio);
   color:#f4efe4;
   /* la altura ES el recorrido: 12 posturas necesitan sitio para respirar */
-  height:520vh;
+  /* 320 y no 520: doce posturas a 43vh cada una era mas recorrido
+     del que la secuencia necesita para contarse. */
+  height:320vh;
   isolation:isolate;
 }
 /* una veladura de estrellas finisimas en la mitad alta: sin esto el
@@ -631,22 +633,37 @@ html:not(.sn-js) .sn-paso:first-child{opacity:1; transform:none}
 .sn-fig{
   width:100%; height:auto; display:block;
   /* la figura, en luz: sobre el cielo oscuro el verde de marca se apaga */
-  color:#f6f1e4;
-  filter:drop-shadow(0 2px 10px rgba(8,14,10,.45));
+  color:#fdf7e8;
+  /* HILO DE LUZ, no linea. Dos halos: uno cerrado que da el filo y otro
+     abierto que la separa del cielo. Un trazo plano sobre un cielo
+     oscuro se lee como un dibujo; con halo se lee como algo encendido,
+     que es de lo que va esta seccion. */
+  filter:drop-shadow(0 0 3px rgba(255,238,190,.55))
+         drop-shadow(0 0 16px rgba(240,200,120,.34))
+         drop-shadow(0 3px 12px rgba(8,14,10,.5));
 }
 .sn-fig .sn-cuerpo{
-  fill:none; stroke:currentColor; stroke-width:4.2;
+  /* MASA, no linea. Un trazo de 12 con remate redondo ES una forma
+     solida: los miembros se funden en una silueta. En linea fina, las
+     posturas comprimidas —la pinza, los ocho apoyos— cruzaban sus
+     miembros y quedaban en un garabato. */
+  fill:none; stroke:currentColor; stroke-width:12;
   stroke-linecap:round; stroke-linejoin:round;
-  /* el trazo se dibuja al entrar la postura: la figura se ESCRIBE,
-     que es lo que hace una secuencia en vez de una diapositiva */
-  stroke-dasharray:var(--largo,340); stroke-dashoffset:var(--largo,340);
-  transition:stroke-dashoffset .85s cubic-bezier(.33,.9,.35,1) .12s;
 }
-.sn-paso.on .sn-fig .sn-cuerpo{stroke-dashoffset:0}
+/* La cabeza va RELLENA: en silueta, un circulo hueco se lee como un aro
+   flotando al lado del cuerpo, no como una cabeza. */
+.sn-fig .sn-cuerpo circle{fill:currentColor; stroke:none}
+/* la entrada: sube del suelo y se enciende. El "se escribe con guiones"
+   servia para una linea; sobre una masa dibuja una salchicha creciendo. */
+.sn-fig .sn-cuerpo{
+  opacity:0; transform:translateY(9px) scale(.985); transform-origin:50% 90%;
+  transition:opacity .62s cubic-bezier(.22,1,.36,1),
+             transform .78s cubic-bezier(.22,1,.36,1);
+}
+.sn-paso.on .sn-fig .sn-cuerpo{opacity:1; transform:none}
 @media (prefers-reduced-motion: reduce){
-  .sn-fig .sn-cuerpo{stroke-dasharray:none; stroke-dashoffset:0; transition:none}
+  .sn-fig .sn-cuerpo{opacity:1; transform:none; transition:none}
 }
-.sn-fig .sn-cuerpo circle{fill:none}
 .sn-suelo{stroke:#f0cf7a; stroke-width:1.4; opacity:.42}
 /* LA LENTE. Sobre el cielo oscuro, y con el sol detras, el vidrio por
    fin tiene las dos cosas que necesita para leerse: un fondo oscuro y
@@ -738,8 +755,11 @@ html:not(.sn-js) .sn-paso:first-child{opacity:1; transform:none}
 .sn-desc{
   position:relative; z-index:2;
   font-size:clamp(.94rem,1.5vw,1.02rem); line-height:1.66;
-  color:rgba(246,241,230,.88); margin:0; max-width:38ch; text-wrap:pretty;
-  text-shadow:0 1px 2px rgba(8,14,10,.45);
+  /* medido por pixeles en movil sobre la red de micelio: a .88 se
+     quedaba en 4.41:1. La sombra tambien sube — el fondo aqui no es
+     plano, es un cielo que cambia con el scroll y una red que crece. */
+  color:rgba(250,246,238,.96); margin:0; max-width:38ch; text-wrap:pretty;
+  text-shadow:0 1px 3px rgba(8,14,10,.62);
 }
 
 /* ---- la barra de recorrido ---- */
@@ -757,7 +777,7 @@ html:not(.sn-js) .sn-paso:first-child{opacity:1; transform:none}
 
 /* ---- movil: la figura arriba, el texto debajo ---- */
 @media (max-width:720px){
-  .sn{height:560vh}
+  .sn{height:360vh}
   .sn-paso{
     grid-template-columns:1fr; justify-items:center; text-align:center;
     gap:14px;
@@ -2217,7 +2237,11 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 /* el envoltorio: la figura manda el tamano, el anillo se centra encima */
 .sn-cuerpo-wrap{
   position:relative; display:block; flex:none;
-  width:clamp(148px,20vw,215px);
+  /* el lienzo de la figura paso de 120 a 200 de ancho, para que las
+     posturas anchas —la plancha, el perro— no salieran diminutas por
+     caber en un cuadrado. Con la caja al ancho de antes el cuerpo se
+     veia pequeño: se ensancha en la misma proporcion. */
+  width:clamp(215px,30vw,330px);
 }
 .sn-anillo{
   position:absolute; left:50%; top:50%;
@@ -3002,6 +3026,60 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
 .lite .acto-retrato{ transform:none }
 .lite .acto-foco{ display:none }
 .lite .acto-certs .cert{ opacity:1; transform:none }
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL MICELIO  ·  la red que crece con el recorrido
+   ═══════════════════════════════════════════════════════════════════ */
+.sn-micelio{
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+  opacity:.62;
+}
+.sn-hifas{
+  fill:none; stroke:rgba(242,214,148,.42); stroke-width:1.15;
+  stroke-linecap:round; stroke-linejoin:round;
+  /* el crecimiento lo escribe el rAF en stroke-dashoffset: un solo
+     elemento, una sola propiedad, sin recalculo de estilo en cascada */
+  will-change:stroke-dashoffset;
+}
+.sn-nodos circle{
+  fill:rgba(255,238,190,.85);
+  /* cada nodo aparece cuando la red llega hasta él */
+  opacity:0; transition:opacity .5s ease;
+}
+.sn-nodos circle.viva{ opacity:1 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL AURA  ·  la secuencia de los chakras a lo largo del saludo
+   ═══════════════════════════════════════════════════════════════════ */
+.sn-aura{
+  position:absolute; left:50%; top:50%;
+  width:150%; aspect-ratio:1;
+  transform:translate(-50%,-50%) scale(.72);
+  border-radius:50%; pointer-events:none; z-index:0;
+  background:radial-gradient(circle closest-side,
+    var(--aura, rgba(240,207,122,.30)) 0%,
+    color-mix(in oklab, var(--aura, rgba(240,207,122,.30)) 45%, transparent) 42%,
+    transparent 72%);
+  opacity:0;
+  transition:opacity .9s ease, transform 2.6s cubic-bezier(.4,0,.2,1),
+             background 1.2s ease;
+  will-change:transform, opacity;
+  filter:blur(2px);
+}
+.sn-paso.on .sn-aura{ opacity:1 }
+/* respira con el aire de la postura, igual que el anillo */
+.sn-paso.on[data-aire="inhala"] .sn-aura{ transform:translate(-50%,-50%) scale(1.12) }
+.sn-paso.on[data-aire="exhala"] .sn-aura{ transform:translate(-50%,-50%) scale(.74) }
+.sn-paso.on[data-aire="reten"]  .sn-aura{ transform:translate(-50%,-50%) scale(.98) }
+.sn-paso.on[data-aire="neutro"] .sn-aura{ transform:translate(-50%,-50%) scale(.88) }
+
+@media (prefers-reduced-motion: reduce){
+  .sn-aura{ transition:none; transform:translate(-50%,-50%) scale(.9) !important }
+  .sn-nodos circle{ transition:none }
+}
+.lite .sn-micelio{ display:none }
+.lite .sn-aura{ display:none }
 </style>
 <!-- Negocio local, para que Google entienda qué es esto y dónde está.
      Todo sale de la propia página: nombre, dirección, teléfono, correo,
@@ -3401,6 +3479,14 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
      =================================================================== -->
 <section class="sn" id="saludo" aria-labelledby="sn-h2">
   <div class="sn-sticky">
+      <!-- LA RED. Se teje desde JS con semilla fija y crece con el
+           recorrido: al empezar el saludo no hay nada, al terminarlo la
+           red ocupa el cielo. -->
+      <svg class="sn-micelio" id="sn-micelio" viewBox="0 0 1000 600"
+           preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path class="sn-hifas" id="sn-hifas" d=""/>
+        <g class="sn-nodos" id="sn-nodos"></g>
+      </svg>
     <!-- EL CIELO. El arco lo dibuja el scroll: el sol sale por la
          izquierda, culmina y se pone. Doce posturas, un dia. -->
     <div class="sn-cielo" aria-hidden="true">
@@ -3421,16 +3507,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="0" data-aire="neutro">
         <span class="sn-num">01</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="60" cy="24" r="7.5"/>
-      <path d="M60 31.5 V80"/>
-      <path d="M50 45 H70"/>
-      <path d="M50 45 L44 57 L57 63"/>
-      <path d="M70 45 L76 57 L63 63"/>
-      <path d="M60 80 L55 126"/><path d="M60 80 L66 126"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M97 44 C97 58 97 71 97 84"/><path d="M97 51 C96 59 95 66 95 71"/><path d="M95 71 C103 69 111 64 116 57"/><path d="M97 84 C97 96 97 108 97 126"/><path d="M97 126 C101 126 105 126 108 126"/><circle cx="97" cy="31" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Pranamasana</h3>
@@ -3441,15 +3520,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="1" data-aire="inhala">
         <span class="sn-num">02</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="64" cy="27" r="7.5"/>
-      <path d="M63 34.5 C59 50 57 65 56 80"/>
-      <path d="M61 45 C67 31 71 19 73 11"/>
-      <path d="M61 45 C71 34 79 24 84 16"/>
-      <path d="M56 80 L52 126"/><path d="M56 80 L62 126"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M99 46 C101 59 101 72 100 84"/><path d="M99 50 C93 42 86 31 80 21"/><path d="M80 21 C79 19 78 17 78 16"/><path d="M100 84 C100 96 100 108 100 126"/><path d="M100 126 C104 126 108 126 111 126"/><circle cx="102" cy="31" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Hasta Uttanasana</h3>
@@ -3460,14 +3533,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="2" data-aire="exhala">
         <span class="sn-num">03</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="47" cy="104" r="7.5"/>
-      <path d="M67 48 C62 66 54 86 49 97"/>
-      <path d="M64 48 L60 126"/><path d="M71 48 L75 126"/>
-      <path d="M54 88 L49 123"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M90 76 C90 92 90 108 90 126"/><path d="M90 126 C94 126 98 126 101 126"/><path d="M90 76 C99 80 106 88 108 97"/><path d="M108 99 C114 108 119 117 120 126"/><circle cx="110" cy="110" r="8.5"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Padahastasana</h3>
@@ -3478,15 +3546,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="3" data-aire="inhala">
         <span class="sn-num">04</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="79" cy="40" r="7.5"/>
-      <path d="M78 47.5 C76 58 72 70 67 82"/>
-      <path d="M67 82 C60 90 54 100 50 112 L48 126"/>
-      <path d="M67 82 C80 94 94 108 104 124"/>
-      <path d="M75 55 C64 78 52 106 47 123"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M46 126 C58 124 69 121 77 116"/><path d="M77 116 C86 110 94 101 100 92"/><path d="M100 92 C102 80 103 70 104 60"/><path d="M100 92 C112 92 123 95 127 101"/><path d="M127 101 C131 109 132 118 132 126"/><path d="M104 64 C108 82 112 105 114 126"/><circle cx="107" cy="49" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Ashwa Sanchalanasana</h3>
@@ -3497,14 +3559,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="4" data-aire="reten">
         <span class="sn-num">05</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="27" cy="60" r="7.5"/>
-      <path d="M34.5 63 C58 68 84 74 106 80"/>
-      <path d="M37 65 L35 124"/>
-      <path d="M104 79 L109 124"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M48 124 C70 118 90 110 105 102"/><path d="M105 102 C119 95 132 91 140 88"/><path d="M140 90 C141 102 142 114 142 126"/><circle cx="151" cy="82" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Dandasana</h3>
@@ -3515,14 +3572,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="5" data-aire="exhala">
         <span class="sn-num">06</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="29" cy="88" r="7.5"/>
-      <path d="M36.5 92 C58 101 80 98 97 89"/>
-      <path d="M41 95 L39 124"/>
-      <path d="M93 93 L98 124"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M64 126 C73 115 85 99 96 87"/><path d="M96 87 C106 96 117 108 125 117"/><path d="M122 114 C124 102 128 101 130 108"/><path d="M130 108 C131 116 131 122 131 126"/><circle cx="143" cy="118" r="8.5"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Ashtanga Namaskara</h3>
@@ -3533,13 +3585,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="6" data-aire="inhala">
         <span class="sn-num">07</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="31" cy="49" r="7.5"/>
-      <path d="M32 56.5 C39 77 55 96 79 108 C90 113 100 117 109 119"/>
-      <path d="M37 66 L35 124"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M46 126 C64 125 82 124 96 120"/><path d="M96 120 C112 115 124 104 130 90"/><path d="M130 92 C131 104 132 116 132 126"/><circle cx="137" cy="78" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Bhujangasana</h3>
@@ -3550,13 +3598,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="7" data-aire="exhala">
         <span class="sn-num">08</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="50" cy="74" r="7.5"/>
-      <path d="M66 38 C56 66 42 98 31 122"/>
-      <path d="M68 38 C80 66 94 98 103 122"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M144 126 C136 108 120 82 100 59"/><path d="M100 59 C82 79 64 104 52 126"/><circle cx="119" cy="88" r="8.5"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Adho Mukha Svanasana</h3>
@@ -3567,15 +3611,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="8" data-aire="inhala">
         <span class="sn-num">09</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="79" cy="40" r="7.5"/>
-      <path d="M78 47.5 C76 58 72 70 67 82"/>
-      <path d="M67 82 C60 90 54 100 50 112 L48 126"/>
-      <path d="M67 82 C80 94 94 108 104 124"/>
-      <path d="M75 55 C64 78 52 106 47 123"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M46 126 C58 124 69 121 77 116"/><path d="M77 116 C86 110 94 101 100 92"/><path d="M100 92 C102 80 103 70 104 60"/><path d="M100 92 C112 92 123 95 127 101"/><path d="M127 101 C131 109 132 118 132 126"/><path d="M104 64 C108 82 112 105 114 126"/><circle cx="107" cy="49" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Ashwa Sanchalanasana</h3>
@@ -3586,14 +3624,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="9" data-aire="exhala">
         <span class="sn-num">10</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="47" cy="104" r="7.5"/>
-      <path d="M67 48 C62 66 54 86 49 97"/>
-      <path d="M64 48 L60 126"/><path d="M71 48 L75 126"/>
-      <path d="M54 88 L49 123"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M90 76 C90 92 90 108 90 126"/><path d="M90 126 C94 126 98 126 101 126"/><path d="M90 76 C99 80 106 88 108 97"/><path d="M108 99 C114 108 119 117 120 126"/><circle cx="110" cy="110" r="8.5"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Padahastasana</h3>
@@ -3604,15 +3637,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="10" data-aire="inhala">
         <span class="sn-num">11</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="64" cy="27" r="7.5"/>
-      <path d="M63 34.5 C59 50 57 65 56 80"/>
-      <path d="M61 45 C67 31 71 19 73 11"/>
-      <path d="M61 45 C71 34 79 24 84 16"/>
-      <path d="M56 80 L52 126"/><path d="M56 80 L62 126"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M99 46 C101 59 101 72 100 84"/><path d="M99 50 C93 42 86 31 80 21"/><path d="M80 21 C79 19 78 17 78 16"/><path d="M100 84 C100 96 100 108 100 126"/><path d="M100 126 C104 126 108 126 111 126"/><circle cx="102" cy="31" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Hasta Uttanasana</h3>
@@ -3623,16 +3650,9 @@ footer a:not(.wa-btn-full):not(.mob-wa-bar){ color:var(--gold-claro); }
       <li class="sn-paso" data-i="11" data-aire="exhala">
         <span class="sn-num">12</span>
         <span class="sn-cuerpo-wrap">
+        <span class="sn-aura" aria-hidden="true"></span>
         <span class="sn-anillo" aria-hidden="true"></span>
-        <svg class="sn-fig" viewBox="0 0 120 140" aria-hidden="true">
-          <line class="sn-suelo" x1="8" y1="126" x2="112" y2="126"/>
-          <g class="sn-cuerpo"><circle cx="60" cy="24" r="7.5"/>
-      <path d="M60 31.5 V80"/>
-      <path d="M50 45 H70"/>
-      <path d="M50 45 L44 57 L57 63"/>
-      <path d="M70 45 L76 57 L63 63"/>
-      <path d="M60 80 L55 126"/><path d="M60 80 L66 126"/></g>
-        </svg>
+        <svg class="sn-fig" viewBox="0 0 200 140" aria-hidden="true"><line class="sn-suelo" x1="16" y1="126" x2="184" y2="126"/><g class="sn-cuerpo"><path d="M97 44 C97 58 97 71 97 84"/><path d="M97 51 C96 59 95 66 95 71"/><path d="M95 71 C103 69 111 64 116 57"/><path d="M97 84 C97 96 97 108 97 126"/><path d="M97 126 C101 126 105 126 108 126"/><circle cx="97" cy="31" r="9"/></g></svg>
         </span>
         <div class="sn-txt">
           <span class="sn-aire"><i class="sn-aire-pt"></i><b class="sn-aire-tx"></b></span><h3 class="sn-sans">Pranamasana</h3>
@@ -5950,6 +5970,71 @@ else { boot(); }
     if(t) t.textContent = ETIQ[p.dataset.aire] || 'Respira';
   });
 
+  /* ── LA RED ──
+     PRNG con semilla fija: la misma red en cada visita. Una red
+     distinta cada vez no seria "generativo", seria "inestable" — y
+     ademas haria imposible comparar dos capturas. */
+  function dado(semilla){
+    var x = semilla;
+    return function(){ x = (x * 1664525 + 1013904223) % 4294967296; return x / 4294967296; };
+  }
+  function tejeRed(){
+    var svg = document.getElementById('sn-micelio');
+    var hifas = document.getElementById('sn-hifas');
+    var nodos = document.getElementById('sn-nodos');
+    if(!svg || !hifas) return null;
+    var r = dado(20260822), d = [], puntos = [];
+    /* de cada semilla del suelo sube una rama que se abre */
+    function rama(x, y, ang, largo, nivel){
+      if(nivel > 5 || largo < 9) return;
+      var x2 = x + Math.cos(ang) * largo;
+      var y2 = y + Math.sin(ang) * largo;
+      /* control desplazado: una hifa no es un segmento recto */
+      var cx = x + Math.cos(ang + (r()-0.5)*0.9) * largo * 0.55;
+      var cy = y + Math.sin(ang + (r()-0.5)*0.9) * largo * 0.55;
+      d.push('M' + x.toFixed(1) + ' ' + y.toFixed(1) +
+             'Q' + cx.toFixed(1) + ' ' + cy.toFixed(1) +
+             ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1));
+      if(nivel >= 2) puntos.push([x2, y2, nivel]);
+      var hijas = nivel < 2 ? 3 : (r() < 0.62 ? 2 : 1);
+      for(var i=0;i<hijas;i++){
+        rama(x2, y2, ang + (r()-0.5) * 1.15, largo * (0.62 + r()*0.18), nivel+1);
+      }
+    }
+    for(var i=0;i<5;i++){
+      rama(90 + i*205 + r()*70, 600, -Math.PI/2 + (r()-0.5)*0.5, 96 + r()*44, 0);
+    }
+    hifas.setAttribute('d', d.join(''));
+    /* los nodos, en orden de aparicion */
+    puntos.forEach(function(p){
+      var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', p[0].toFixed(1));
+      c.setAttribute('cy', p[1].toFixed(1));
+      c.setAttribute('r', (3.4 - p[2]*0.42).toFixed(2));
+      nodos.appendChild(c);
+    });
+    var largo = 0;
+    try{ largo = hifas.getTotalLength(); }catch(e){ largo = 4000; }
+    hifas.style.strokeDasharray = largo;
+    hifas.style.strokeDashoffset = largo;
+    return {hifas:hifas, largo:largo, nodos:[].slice.call(nodos.children)};
+  }
+  var red = null;
+
+  /* ── LOS CHAKRAS ──
+     Siete centros repartidos por las doce posiciones: la practica sube
+     por el cuerpo y el color con ella. No es un arcoiris puesto porque
+     si — es la secuencia que la propia disciplina describe. */
+  var CHAKRAS = [
+    'rgba(214,90,84,.34)',   /* raiz */
+    'rgba(226,138,74,.34)',  /* sacro */
+    'rgba(238,196,96,.36)',  /* plexo solar */
+    'rgba(122,198,138,.34)', /* corazon */
+    'rgba(96,176,214,.32)',  /* garganta */
+    'rgba(124,124,204,.32)', /* tercer ojo */
+    'rgba(178,128,206,.34)'  /* corona */
+  ];
+
   var activo = 0, pedido = false, largoVia = 0;
   /* Todo lo que no cambia durante el scroll se mide aqui y se guarda:
      la posicion y el alto de la seccion, el alto de la ventana y el
@@ -5967,6 +6052,10 @@ else { boot(); }
       cieloW = rc.width; cieloH = rc.height;
     }
   }
+  red = tejeRed();
+  var au0 = pasos[0] && pasos[0].querySelector('.sn-aura');
+  if(au0) au0.style.setProperty('--aura', CHAKRAS[0]);
+
   midVia();
   if('ResizeObserver' in window){ new ResizeObserver(midVia).observe(sec); }
   /* en el movil la barra del navegador cambia innerHeight sin cambiar el
@@ -5991,6 +6080,11 @@ else { boot(); }
       pasos[activo].classList.remove('on');
       pasos[i].classList.add('on');
       activo = i;
+      /* el aura toma el color del chakra que toca */
+      var au = pasos[i].querySelector('.sn-aura');
+      if(au) au.style.setProperty('--aura',
+        CHAKRAS[Math.min(CHAKRAS.length-1, Math.round(i / (pasos.length-1) * (CHAKRAS.length-1)))]);
+
       /* el sol respira con el cuerpo: crece al inhalar, se recoge al
          exhalar. Los dos hacen lo mismo, que es la idea del saludo. */
       if(sol){
@@ -6013,6 +6107,20 @@ else { boot(); }
       sol.style.transform = 'translate3d(' + x + 'px,' + yv + 'px,0) translate(-50%,-50%) scale(' + respira + ')';
     }
     if(barra) barra.style.transform = 'scaleX(' + p + ')';
+
+    /* LA RED CRECE. Una sola escritura de propiedad sobre un solo
+       elemento; los nodos se encienden por clase cuando la red los
+       alcanza, y solo cuando cambian. */
+    if(red){
+      red.hifas.style.strokeDashoffset = (red.largo * (1 - p)).toFixed(1);
+      var hasta = Math.floor(p * red.nodos.length);
+      if(hasta !== red.prev){
+        for(var q=0;q<red.nodos.length;q++){
+          red.nodos[q].classList.toggle('viva', q < hasta);
+        }
+        red.prev = hasta;
+      }
+    }
 
     /* EL DIA. Tres cielos y una interpolacion: amanecer -> mediodia ->
        atardecer. Se escribe en variables CSS, asi que el navegador solo
